@@ -258,14 +258,14 @@ def run_optimization_pipeline():
             pred_te_ridge_raw = scaler_y_opt.inverse_transform(ridge_opt.predict(X_te_opt).reshape(-1, 1)).flatten()
 
             # 2. Base Model 2: XGBoost
-            xgb_model = xgb.XGBRegressor(n_estimators=100, max_depth=4, learning_rate=0.03, random_state=42)
+            xgb_model = xgb.XGBRegressor(n_estimators=50, max_depth=4, learning_rate=0.05, n_jobs=-1, random_state=42)
             xgb_model.fit(X_tr_opt, y_tr_t_sc)
 
             pred_v_xgb_raw = scaler_y_opt.inverse_transform(xgb_model.predict(X_v_opt).reshape(-1, 1)).flatten()
             pred_te_xgb_raw = scaler_y_opt.inverse_transform(xgb_model.predict(X_te_opt).reshape(-1, 1)).flatten()
 
             # 3. Base Model 3: Neural Net (MLP/GRU surrogate)
-            mlp_model = MLPRegressor(hidden_layer_sizes=(32, 16), activation="relu", alpha=0.01, early_stopping=True, random_state=42)
+            mlp_model = MLPRegressor(hidden_layer_sizes=(32, 16), activation="relu", alpha=0.01, max_iter=50, early_stopping=True, random_state=42)
             mlp_model.fit(X_tr_opt, y_tr_t_sc)
 
             pred_v_mlp_raw = scaler_y_opt.inverse_transform(mlp_model.predict(X_v_opt).reshape(-1, 1)).flatten()
@@ -292,7 +292,7 @@ def run_optimization_pipeline():
             tr_ridge_lvl = reconstruct_level(pred_tr_ridge_raw, y_tr_base)
             residuals_tr = y_tr_raw - tr_ridge_lvl
 
-            res_model = ExtraTreesRegressor(n_estimators=50, max_depth=5, random_state=42)
+            res_model = ExtraTreesRegressor(n_estimators=30, max_depth=5, n_jobs=-1, random_state=42)
             res_model.fit(X_tr_opt, residuals_tr)
 
             v_res_pred = res_model.predict(X_v_opt)
