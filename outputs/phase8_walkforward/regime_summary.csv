@@ -1,0 +1,6 @@
+window,validation_year,mean_rate,rate_volatility,rate_trend,pct_up_days,pct_down_days,market_regime_label
+Window_1,2021,29545.03,9118.3,10195.0,51.7%,47.9%,"Post-COVID Freight Spike (High Volatility, Upward Boom)"
+Window_2,2022,20807.17,5715.08,-8704.0,42.3%,57.3%,Post-Boom Rate Correction (Steep Downward Normalization)
+Window_3,2023,13924.53,4006.04,6450.0,50.4%,49.2%,"Cyclical Bottom / Rebuilding (Low Volatility, Sideways)"
+Window_4,2024,17952.12,2888.89,-10341.0,39.6%,60.0%,Geopolitical Shock / Red Sea Rerouting (Moderate Uptrend)
+Window_5,2025,16399.72,4268.89,7523.0,54.2%,44.5%,Sustained Upward Market Drift (Current Test Regime)
