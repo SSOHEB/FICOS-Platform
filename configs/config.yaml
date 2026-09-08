@@ -1,0 +1,119 @@
+# ─────────────────────────────────────────────────────────────
+# SIH26006 — Central Configuration
+# ─────────────────────────────────────────────────────────────
+
+paths:
+  dataset_a: "dataset_a_final_clean.csv"
+  dataset_b: "DATASET_B_FINAL_FIXED (1).xlsx"
+  dataset_c: "DATASET_C_FINAL.xlsx"
+  outputs_dir: "outputs"
+  models_dir: "models"
+  reports_dir: "reports"
+  plots_dir: "outputs/plots"
+
+# Freight targets to forecast
+freight_targets:
+  - kdci
+  - cape
+  - panamax
+  - supramax
+  - handy
+
+# Forecast horizons (days ahead)
+horizons:
+  - 1
+  - 7
+  - 14
+  - 30
+
+# Feature engineering — lag periods
+lags: [1, 3, 7, 14, 30, 60, 90]
+
+# Rolling window sizes
+rolling_windows: [7, 14, 30]
+
+# Momentum/change periods
+change_periods: [1, 7, 14, 30]
+
+# GDELT rolling persistence windows (days)
+gdelt_persistence_windows: [3, 7, 14, 30]
+
+# Cyclone rolling windows (days)
+cyclone_rolling_windows: [7, 14, 30]
+
+# Weather engineering indicators (configurable, NOT official classifications)
+weather_indicators:
+  high_wind_kmh: 50        # engineering indicator threshold
+  heavy_precip_mm: 50      # engineering indicator threshold
+  note: >
+    These thresholds are configurable engineering indicators used to flag
+    potentially operationally relevant weather conditions. They are NOT
+    official severe-weather classifications from any meteorological authority.
+
+# East Coast India MVP ports
+mvp_ports:
+  - Haldia
+  - Gangavaram
+  - Dhamra
+  - Paradip
+  - Visakhapatnam
+
+# Vessel classes
+vessel_classes:
+  - HANDY
+  - SUPRA
+  - PANA
+  - CAPE
+
+# Route-relevant countries for GDELT geographic relevance
+# FIPS country codes used by GDELT
+route_relevant_countries:
+  - IN   # India
+  - AS   # Australia
+  - ID   # Indonesia
+  - US   # United States
+  - CH   # China
+  - SF   # South Africa
+  - BR   # Brazil
+  - RS   # Russia
+  - SA   # Saudi Arabia
+  - IR   # Iran
+  - UK   # United Kingdom
+  - JA   # Japan
+  - KS   # South Korea
+
+# Shipping/trade choke points and maritime regions
+maritime_relevant_countries:
+  - SN   # Singapore
+  - MY   # Malaysia
+  - EG   # Egypt (Suez)
+  - YM   # Yemen (Bab el-Mandeb)
+  - PA   # Panama
+  - DJ   # Djibouti
+  - SO   # Somalia
+
+# CAMEO EventRootCode reference (for documentation)
+# The GDELT dataset is pre-filtered to conflict codes 14-20:
+#   14: PROTEST
+#   15: EXHIBIT FORCE
+#   16: REDUCE RELATIONS
+#   17: COERCE
+#   18: ASSAULT
+#   19: FIGHT
+#   20: USE UNCONVENTIONAL MASS VIOLENCE
+cameo_conflict_codes:
+  high_intensity: [18, 19, 20]    # assault, fight, mass violence
+  medium_intensity: [15, 17]      # exhibit force, coerce
+  low_intensity: [14, 16]         # protest, reduce relations
+
+# Train/val/test split — proportions only; exact dates set after data inspection
+split_proportions:
+  train: 0.70
+  validation: 0.15
+  test: 0.15
+
+# Directional target definition
+directional_threshold: 0.0  # zero-change boundary; adjust after volatility analysis
+
+# Random seed for reproducibility
+random_seed: 42

@@ -1,0 +1,623 @@
+{
+  "dataset_a": {
+    "dataset": "A",
+    "shape": [
+      2581,
+      47
+    ],
+    "date_min": "2016-01-04 00:00:00",
+    "date_max": "2026-09-04 00:00:00",
+    "duplicate_dates": 0,
+    "columns": [
+      "date",
+      "kdci",
+      "cape",
+      "panamax",
+      "supramax",
+      "handy",
+      "mc6",
+      "mc7",
+      "mc8",
+      "mc9",
+      "mp1",
+      "mp2",
+      "mp3",
+      "mp4",
+      "mp5",
+      "mp6",
+      "mp7",
+      "ms1",
+      "ms2",
+      "ms4",
+      "ms5",
+      "ms6",
+      "ms7",
+      "mh1",
+      "mh2",
+      "mh3",
+      "mh4",
+      "mh5",
+      "n10d",
+      "gprd",
+      "gprd_act",
+      "gprd_threat",
+      "gprd_ma7",
+      "gprd_ma30",
+      "usd_inr",
+      "brent_usd_per_barrel",
+      "wti_usd_per_barrel",
+      "gscpi",
+      "coal_australian",
+      "coal_south_african",
+      "iron_ore_cfr_spot",
+      "copper",
+      "aluminum",
+      "dap",
+      "tsp",
+      "urea",
+      "potassium_chloride"
+    ],
+    "dtypes": {
+      "date": "datetime64[us]",
+      "kdci": "int64",
+      "cape": "float64",
+      "panamax": "float64",
+      "supramax": "float64",
+      "handy": "float64",
+      "mc6": "float64",
+      "mc7": "float64",
+      "mc8": "float64",
+      "mc9": "float64",
+      "mp1": "float64",
+      "mp2": "float64",
+      "mp3": "float64",
+      "mp4": "float64",
+      "mp5": "float64",
+      "mp6": "float64",
+      "mp7": "float64",
+      "ms1": "float64",
+      "ms2": "float64",
+      "ms4": "float64",
+      "ms5": "float64",
+      "ms6": "float64",
+      "ms7": "float64",
+      "mh1": "float64",
+      "mh2": "float64",
+      "mh3": "float64",
+      "mh4": "float64",
+      "mh5": "float64",
+      "n10d": "float64",
+      "gprd": "float64",
+      "gprd_act": "float64",
+      "gprd_threat": "float64",
+      "gprd_ma7": "float64",
+      "gprd_ma30": "float64",
+      "usd_inr": "float64",
+      "brent_usd_per_barrel": "float64",
+      "wti_usd_per_barrel": "float64",
+      "gscpi": "float64",
+      "coal_australian": "float64",
+      "coal_south_african": "float64",
+      "iron_ore_cfr_spot": "float64",
+      "copper": "int64",
+      "aluminum": "int64",
+      "dap": "float64",
+      "tsp": "float64",
+      "urea": "float64",
+      "potassium_chloride": "float64"
+    },
+    "missingness": {
+      "date": 0,
+      "kdci": 0,
+      "cape": 18,
+      "panamax": 2,
+      "supramax": 2,
+      "handy": 2,
+      "mc6": 18,
+      "mc7": 18,
+      "mc8": 18,
+      "mc9": 18,
+      "mp1": 2,
+      "mp2": 2,
+      "mp3": 2,
+      "mp4": 2,
+      "mp5": 2,
+      "mp6": 2,
+      "mp7": 2,
+      "ms1": 2,
+      "ms2": 2,
+      "ms4": 2,
+      "ms5": 2,
+      "ms6": 2,
+      "ms7": 2,
+      "mh1": 2,
+      "mh2": 2,
+      "mh3": 2,
+      "mh4": 2,
+      "mh5": 2,
+      "n10d": 3,
+      "gprd": 3,
+      "gprd_act": 3,
+      "gprd_threat": 3,
+      "gprd_ma7": 3,
+      "gprd_ma30": 3,
+      "usd_inr": 97,
+      "brent_usd_per_barrel": 45,
+      "wti_usd_per_barrel": 95,
+      "gscpi": 0,
+      "coal_australian": 0,
+      "coal_south_african": 0,
+      "iron_ore_cfr_spot": 0,
+      "copper": 0,
+      "aluminum": 0,
+      "dap": 0,
+      "tsp": 0,
+      "urea": 0,
+      "potassium_chloride": 0
+    },
+    "infinities": {},
+    "total_nulls": 387,
+    "date_gaps": {
+      "max_gap_days": 12,
+      "mean_gap_days": 1.51,
+      "gaps_over_3_days": 63
+    },
+    "freight_target_stats": {
+      "kdci": {
+        "count": 2581,
+        "mean": 16081.14,
+        "std": 7618.89,
+        "min": 491.0,
+        "max": 52376.0,
+        "nulls": 0
+      },
+      "cape": {
+        "count": 2563,
+        "mean": 20898.56,
+        "std": 11450.3,
+        "min": 3132.0,
+        "max": 88256.0,
+        "nulls": 18
+      },
+      "panamax": {
+        "count": 2579,
+        "mean": 14748.7,
+        "std": 6907.79,
+        "min": 1638.0,
+        "max": 39782.0,
+        "nulls": 2
+      },
+      "supramax": {
+        "count": 2579,
+        "mean": 14435.74,
+        "std": 7041.2,
+        "min": 2072.0,
+        "max": 40253.0,
+        "nulls": 2
+      },
+      "handy": {
+        "count": 2579,
+        "mean": 11076.43,
+        "std": 6625.41,
+        "min": 2340.0,
+        "max": 34996.0,
+        "nulls": 2
+      }
+    }
+  },
+  "dataset_b": {
+    "dataset": "B",
+    "sheets": {
+      "ports": {
+        "shape": [
+          5,
+          7
+        ],
+        "columns": [
+          "port_id",
+          "port_name",
+          "port_authority",
+          "location",
+          "country",
+          "status",
+          "notes"
+        ],
+        "nulls": 0
+      },
+      "vessel_types": {
+        "shape": [
+          4,
+          4
+        ],
+        "columns": [
+          "vessel_type_id",
+          "vessel_type",
+          "cargo_scope",
+          "notes"
+        ],
+        "nulls": 0
+      },
+      "berths": {
+        "shape": [
+          89,
+          12
+        ],
+        "columns": [
+          "berth_id",
+          "port_id",
+          "berth_name",
+          "berth_type",
+          "designed_draft_m",
+          "present_depth_m",
+          "quay_length_m",
+          "max_loa_m",
+          "max_dwt_mt",
+          "max_displacement_mt",
+          "status",
+          "notes"
+        ],
+        "nulls": 345
+      },
+      "berth_constraints": {
+        "shape": [
+          162,
+          12
+        ],
+        "columns": [
+          "constraint_id",
+          "berth_id",
+          "constraint_type",
+          "parameter",
+          "operator",
+          "value",
+          "unit",
+          "condition",
+          "effective_from",
+          "effective_to",
+          "source_id",
+          "notes"
+        ],
+        "nulls": 167
+      },
+      "berth_cargo_rules": {
+        "shape": [
+          35,
+          9
+        ],
+        "columns": [
+          "rule_id",
+          "berth_id",
+          "cargo_type",
+          "operation",
+          "allowed",
+          "priority",
+          "condition",
+          "source_id",
+          "notes"
+        ],
+        "nulls": 24
+      },
+      "berth_tide_rules": {
+        "shape": [
+          33,
+          12
+        ],
+        "columns": [
+          "tide_rule_id",
+          "berth_id",
+          "tide_range",
+          "operation",
+          "loading_status",
+          "vessel_class",
+          "draft_condition",
+          "window_start_min",
+          "window_end_min",
+          "window_reference",
+          "source_id",
+          "notes"
+        ],
+        "nulls": 92
+      },
+      "port_operating_rules": {
+        "shape": [
+          24,
+          9
+        ],
+        "columns": [
+          "rule_id",
+          "port_id",
+          "rule_type",
+          "threshold",
+          "unit",
+          "condition",
+          "action",
+          "source_id",
+          "notes"
+        ],
+        "nulls": 11
+      },
+      "port_sources": {
+        "shape": [
+          5,
+          8
+        ],
+        "columns": [
+          "source_id",
+          "port_id",
+          "document_name",
+          "document_version",
+          "effective_date",
+          "source_page",
+          "source_section",
+          "notes"
+        ],
+        "nulls": 1
+      },
+      "cargo_traffic": {
+        "shape": [
+          25,
+          16
+        ],
+        "columns": [
+          "year",
+          "provisional",
+          "deendayal",
+          "mumbai",
+          "jnpt",
+          "mormugao",
+          "new_mangalore",
+          "cochin",
+          "voc_chidambaranar",
+          "chennai",
+          "kamarajar",
+          "visakhapatnam",
+          "paradip",
+          "haldia_dock_complex",
+          "kolkata_dock_system",
+          "total"
+        ],
+        "nulls": 0
+      },
+      "average_output": {
+        "shape": [
+          24,
+          15
+        ],
+        "columns": [
+          "year",
+          "kolkata_dock_system",
+          "haldia_dock_complex",
+          "paradip",
+          "visakhapatnam",
+          "kamarajar",
+          "chennai",
+          "voc_chidambaranar",
+          "cochin",
+          "new_mangalore",
+          "mormugao",
+          "jnpt",
+          "mumbai",
+          "deendayal",
+          "all_ports"
+        ],
+        "nulls": 0
+      },
+      "average_trt": {
+        "shape": [
+          22,
+          16
+        ],
+        "columns": [
+          "year",
+          "kolkata",
+          "kolkata_dock_system",
+          "haldia_dock_complex",
+          "paradip",
+          "visakhapatnam",
+          "kamarajar",
+          "chennai",
+          "voc_chidambaranar",
+          "cochin",
+          "new_mangalore",
+          "mormugao",
+          "jnpt",
+          "mumbai",
+          "deendayal",
+          "all_ports"
+        ],
+        "nulls": 20
+      },
+      "pbdt": {
+        "shape": [
+          250,
+          5
+        ],
+        "columns": [
+          "financial_year",
+          "period_type",
+          "s_no",
+          "port",
+          "pre_berthing_detention_hours"
+        ],
+        "nulls": 50
+      },
+      "commodity_capacity": {
+        "shape": [
+          264,
+          6
+        ],
+        "columns": [
+          "s_no",
+          "port",
+          "financial_year",
+          "capacity_million_tonnes",
+          "unit",
+          "source"
+        ],
+        "nulls": 0
+      },
+      "merchant_fleet": {
+        "shape": [
+          9470,
+          11
+        ],
+        "columns": [
+          "year",
+          "economy_code",
+          "economy",
+          "ship_type_code",
+          "ship_type",
+          "dwt_thousand",
+          "pct_world",
+          "pct_fleet",
+          "number_of_ships",
+          "gross_tonnage_thousand",
+          "average_age_years"
+        ],
+        "nulls": 20287
+      }
+    }
+  },
+  "dataset_c": {
+    "dataset": "C",
+    "sheets": {
+      "port_weather": {
+        "shape": [
+          158310,
+          15
+        ],
+        "date_min": "1940-01-01 00:00:00",
+        "date_max": "2026-09-07 00:00:00",
+        "ports": [
+          "Dhamra",
+          "Gangavaram",
+          "Haldia",
+          "Paradip",
+          "Visakhapatnam"
+        ],
+        "rows_per_port": {
+          "Dhamra": 31662,
+          "Gangavaram": 31662,
+          "Haldia": 31662,
+          "Paradip": 31662,
+          "Visakhapatnam": 31662
+        },
+        "missingness": {
+          "temperature_2m_mean_c": 5,
+          "precipitation_sum_mm": 5
+        }
+      },
+      "cyclone_events": {
+        "shape": [
+          471,
+          17
+        ],
+        "date_min": "1980-10-10 06:00:00",
+        "date_max": "2025-12-02 18:00:00",
+        "basins": [
+          "NI"
+        ],
+        "unique_storms": 471,
+        "seasons": [
+          1980,
+          1981,
+          1982,
+          1983,
+          1984,
+          1985,
+          1986,
+          1987,
+          1988,
+          1989,
+          1990,
+          1991,
+          1992,
+          1993,
+          1994,
+          1995,
+          1996,
+          1997,
+          1998,
+          1999,
+          2000,
+          2001,
+          2002,
+          2003,
+          2004,
+          2005,
+          2006,
+          2007,
+          2008,
+          2009,
+          2010,
+          2011,
+          2012,
+          2013,
+          2014,
+          2015,
+          2016,
+          2017,
+          2018,
+          2019,
+          2020,
+          2021,
+          2022,
+          2023,
+          2024,
+          2025
+        ],
+        "wind_null": 20,
+        "pressure_null": 126
+      },
+      "geopolitical_events": {
+        "shape": [
+          51720,
+          19
+        ],
+        "date_min": "2012-02-18 00:00:00",
+        "date_max": "2026-08-01 00:00:00",
+        "quad_classes": [
+          3,
+          4
+        ],
+        "goldstein_min": -10.0,
+        "goldstein_max": -4.0,
+        "event_root_codes": [
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "unique_events": 51720,
+        "top_countries": {
+          "US": 19813,
+          "IS": 7747,
+          "RS": 2732,
+          "IR": 2528,
+          "IN": 1864,
+          "UP": 1852,
+          "CH": 1317,
+          "LE": 1276,
+          "AS": 1257,
+          "TU": 884,
+          "UK": 665,
+          "SY": 648,
+          "EG": 598,
+          "GZ": 423,
+          "JA": 381
+        },
+        "missingness": {
+          "Actor1Name": 2859,
+          "Actor1CountryCode": 11084,
+          "Actor2Name": 9112,
+          "Actor2CountryCode": 18320,
+          "ActionGeo_FullName": 830,
+          "ActionGeo_CountryCode": 819
+        }
+      }
+    }
+  }
+}
