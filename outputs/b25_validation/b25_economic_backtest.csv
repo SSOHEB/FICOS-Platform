@@ -1,0 +1,11 @@
+asset,horizon,n_test,win_verdict_b2,80pct_interval_width,half_width_gate,n_buy_signals,n_wait_signals,n_flexible,buy_precision%,wait_precision%,buy_expected_pnl_$/day,wait_expected_pnl_$/day,total_pnl_$/day_sum,avg_pnl_per_test_day,delta_macro_f1%,best_naive_baseline,best_naive_f1%,delta_beats_best_naive,delta_margin_f1,high_conf_signals%,delta_smape,level_smape,pers_smape,delta_r2,level_r2
+cape,1d,387,STRONG_WIN,2865.2,1433.0,10,8,369,80.0,87.5,1219.0,1282.0,22444.0,57.99,43.6,PrevDirection,49.4,False,-5.8,4.7,3.13,3.25,3.56,0.9863,0.9852
+cape,7d,381,STRONG_WIN,11751.9,5876.0,0,26,355,,69.2,0.0,3419.0,88906.0,233.35,42.0,PrevDirection,33.1,True,8.8,6.8,13.76,14.81,14.26,0.7456,0.7108
+handy,1d,387,WIN,251.5,126.0,3,2,382,100.0,100.0,107.0,112.0,546.0,1.41,41.9,PrevDirection,52.8,False,-10.9,11.6,0.78,1.38,0.9,0.9979,0.9945
+kdci,1d,387,STRONG_WIN,915.5,458.0,15,15,357,80.0,80.0,542.0,362.0,13555.0,35.03,45.5,PrevDirection,55.8,False,-10.3,8.8,1.65,2.58,1.86,0.9939,0.9862
+kdci,7d,381,STRONG_WIN,4447.3,2224.0,2,18,361,100.0,94.4,2082.0,1743.0,35537.0,93.27,40.7,PrevDirection,31.9,True,8.8,5.2,7.94,13.85,8.22,0.8617,0.6267
+panamax,1d,387,STRONG_WIN,533.8,267.0,19,9,359,94.7,100.0,404.0,440.0,11632.0,30.06,43.4,PrevDirection,55.8,False,-12.4,14.2,1.27,1.51,1.63,0.995,0.9933
+supramax,14d,374,STRONG_WIN,4081.5,2041.0,28,25,321,96.4,76.0,2160.0,2667.0,127154.0,339.98,41.3,PrevDirection,33.3,True,8.0,14.2,8.71,18.31,9.13,0.7421,0.1304
+supramax,1d,387,WIN,416.2,208.0,4,1,382,100.0,100.0,372.0,249.0,1737.0,4.49,37.3,PrevDirection,63.0,False,-25.7,9.6,0.89,1.58,1.06,0.9972,0.9929
+supramax,30d,358,STRONG_WIN,5489.2,2745.0,0,0,358,,,0.0,0.0,0.0,0.0,45.0,7dTrend,28.0,True,16.9,0.0,13.2,22.66,13.76,0.4369,-0.5765
+supramax,7d,381,STRONG_WIN,2588.3,1294.0,4,20,357,100.0,95.0,806.0,2028.0,43778.0,114.9,41.0,PrevDirection,40.8,True,0.3,6.3,5.41,10.51,5.76,0.911,0.6964
