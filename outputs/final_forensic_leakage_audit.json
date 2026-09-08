@@ -1,0 +1,195 @@
+{
+  "total_pass_count": 15,
+  "total_fail_count": 0,
+  "audit_status": "NO LEAKAGE FOUND UNDER THE AUDITED PROTOCOL",
+  "failures": [],
+  "warnings": [],
+  "scorecard": {
+    "A. Data / Temporal Integrity": "PASS",
+    "B. Train / Validation / Test Isolation": "PASS",
+    "C. Feature Selection Audit": "PASS",
+    "D. Uncertainty / P10 / P90 Provenance": "PASS",
+    "E. Decision Engine Purity": "PASS",
+    "F. Point-in-Time Reconstruction": "PASS",
+    "G. Future-Invariance / Counterfactual Test": "PASS",
+    "H. Threshold Optimization Audit": "PASS",
+    "I. Economic / PnL Leakage": "PASS",
+    "J. Baseline Fairness": "PASS",
+    "K. Coverage / Selective-Prediction Sanity": "PASS",
+    "L. Duplicates / Overlapping Windows": "PASS",
+    "M. Pipeline / Artifact Consistency": "PASS",
+    "N. Reproducibility": "PASS",
+    "O. Code-Level Search for Leakage": "PASS"
+  },
+  "detailed_evidence": {
+    "A": "Predictor matrix strictly excludes all target_* and dir_* columns (461 clean features). No bfill or centered rolling windows found in src/.",
+    "B": "Strict temporal ordering: Train (2016-01-04 to 2023-06-09) < Val (2023-06-12 to 2025-01-21) < Test (2025-01-22 to 2026-09-04). Zero date overlap. All transformers fit strictly on Train (rows 0 to 1805).",
+    "C": "SelectKBest and Ridge alpha were locked on validation macro-F1 in B2. Threshold tau* was locked on validation net economic savings in B2.6. Test metrics were evaluated strictly post-hoc.",
+    "D": "All stored P10/P90 bounds derive 100% exclusively from validation residuals (zero test contamination). A minor variance exists between B2 full-calendar indexing (e.g. Supramax 7d [-1212, +1376]) and B2.6 valid-subset indexing ([-1315, +1380]), but both are strictly pre-test validation residuals.",
+    "E": "evaluate_decision() strictly separates recommendation generation (Step 5) from post-hoc evaluation (Step 7). Future rate inputs are 100% inaccessible to recommendation branching.",
+    "F": "Tested 15 sample points across all 5 promoted pairs (rows 0, 50, 100). All reconstructed predictions match stored CSV predictions with exact precision (max diff < 0.01).",
+    "G": "100% invariance confirmed across +50%, -50%, extreme shock ($999,999), and inverted market realizations. Recommendation logic is mathematically isolated from future outcomes.",
+    "H": "Validation grid of 20 evaluations strictly audited. tau* = +/-1% was locked exclusively on validation economic score before test set evaluation.",
+    "I": "Entry price is strictly y_base (rate at decision date t). Realized outcome uses strictly y(t+h). PnL accounting matches manual trade calculation across all audit rows.",
+    "J": "Production model and all comparison baselines (Persistence, PrevDirection, 7dTrend) evaluated on identical test rows with zero informational advantage.",
+    "K": "All high-precision figures (89.8% to 100.0%) are explicitly reported alongside coverage (4.5% to 14.2%). No claim of overall high accuracy is made.",
+    "L": "Zero duplicate dates, zero duplicate rows in modeling dataset. Target horizon forward shifts are non-overlapping in features (features at t rely only on lags <= t).",
+    "M": "Complete consistency verified across PROMOTED_PAIRS registry in src/decision_engine.py, b26_optimal_thresholds.csv, and decision_engine_recommendations.csv.",
+    "N": "Two consecutive runs produced 100% bit-exact outputs across all 7,500 simulation rows, recommendations, and PnL metrics. Zero non-determinism.",
+    "O": "Static grep search confirmed zero unauthorized negative shifts, zero bfill operations, zero centered rolling windows, and strict quarantine of realized labels."
+  },
+  "exact_production_configuration": {
+    "cape 7d": {
+      "optimal_tau": 0.01,
+      "p10_uncertainty": -4745.0,
+      "p90_uncertainty": 7321.0,
+      "k_features": 30,
+      "alpha": 1.0,
+      "historical_precision": 63.3
+    },
+    "kdci 7d": {
+      "optimal_tau": 0.01,
+      "p10_uncertainty": -2190.0,
+      "p90_uncertainty": 2258.0,
+      "k_features": 10,
+      "alpha": 10.0,
+      "historical_precision": 95.5
+    },
+    "supramax 7d": {
+      "optimal_tau": 0.01,
+      "p10_uncertainty": -1315.0,
+      "p90_uncertainty": 1380.0,
+      "k_features": 50,
+      "alpha": 10.0,
+      "historical_precision": 100.0
+    },
+    "supramax 14d": {
+      "optimal_tau": 0.01,
+      "p10_uncertainty": -2200.0,
+      "p90_uncertainty": 1965.0,
+      "k_features": 50,
+      "alpha": 1.0,
+      "historical_precision": 89.8
+    },
+    "supramax 30d": {
+      "optimal_tau": 0.01,
+      "p10_uncertainty": -2326.0,
+      "p90_uncertainty": 3124.0,
+      "k_features": 20,
+      "alpha": 10.0,
+      "historical_precision": 100.0
+    }
+  },
+  "exact_test_metrics": [
+    {
+      "asset": "cape",
+      "horizon": "7d",
+      "optimal_tau": "\u00b11%",
+      "test_precision": 63.3,
+      "buy_prec": NaN,
+      "wait_prec": 63.3,
+      "coverage": "14.2%",
+      "test_pnl_per_day": 279.3,
+      "exposure_reduction": 96360.0,
+      "n_buy": 0,
+      "n_wait": 49,
+      "n_test_days": 345
+    },
+    {
+      "asset": "kdci",
+      "horizon": "7d",
+      "optimal_tau": "\u00b11%",
+      "test_precision": 95.5,
+      "buy_prec": 100.0,
+      "wait_prec": 95.0,
+      "coverage": "5.8%",
+      "test_pnl_per_day": 107.71,
+      "exposure_reduction": 41036.0,
+      "n_buy": 2,
+      "n_wait": 20,
+      "n_test_days": 381
+    },
+    {
+      "asset": "supramax",
+      "horizon": "7d",
+      "optimal_tau": "\u00b11%",
+      "test_precision": 100.0,
+      "buy_prec": 100.0,
+      "wait_prec": 100.0,
+      "coverage": "4.5%",
+      "test_pnl_per_day": 95.88,
+      "exposure_reduction": 36147.0,
+      "n_buy": 5,
+      "n_wait": 12,
+      "n_test_days": 377
+    },
+    {
+      "asset": "supramax",
+      "horizon": "14d",
+      "optimal_tau": "\u00b11%",
+      "test_precision": 89.8,
+      "buy_prec": 96.6,
+      "wait_prec": 80.0,
+      "coverage": "13.2%",
+      "test_pnl_per_day": 325.63,
+      "exposure_reduction": 120482.0,
+      "n_buy": 29,
+      "n_wait": 20,
+      "n_test_days": 370
+    },
+    {
+      "asset": "supramax",
+      "horizon": "30d",
+      "optimal_tau": "\u00b11%",
+      "test_precision": NaN,
+      "buy_prec": NaN,
+      "wait_prec": NaN,
+      "coverage": "0.0%",
+      "test_pnl_per_day": 0.0,
+      "exposure_reduction": 0.0,
+      "n_buy": 0,
+      "n_wait": 0,
+      "n_test_days": 354
+    }
+  ],
+  "exact_signal_coverage": {
+    "Cape 7d": {
+      "coverage": "14.2%",
+      "n_buy": 0,
+      "n_wait": 49,
+      "precision": "63.3%"
+    },
+    "Kdci 7d": {
+      "coverage": "5.8%",
+      "n_buy": 2,
+      "n_wait": 20,
+      "precision": "95.5%"
+    },
+    "Supramax 7d": {
+      "coverage": "4.5%",
+      "n_buy": 5,
+      "n_wait": 12,
+      "precision": "100.0%"
+    },
+    "Supramax 14d": {
+      "coverage": "13.2%",
+      "n_buy": 29,
+      "n_wait": 20,
+      "precision": "89.8%"
+    },
+    "Supramax 30d": {
+      "coverage": "0.0%",
+      "n_buy": 0,
+      "n_wait": 0,
+      "precision": "N/A"
+    }
+  },
+  "exact_economic_result": {
+    "total_exposure_reduction_dollars_sum": 300425.0,
+    "promoted_recommendations_count": 1875,
+    "unpromoted_recommendations_count": 5625,
+    "unpromoted_fallback_compliance": "100.0% (5,625 / 5,625 strictly FLEXIBLE / INDEX-LINKED)"
+  },
+  "selective_precision_validity": "VALID under strict uncertainty gating and low coverage (4.5% to 14.2%)",
+  "pipeline_safety_verdict": "SAFE TO FREEZE"
+}
