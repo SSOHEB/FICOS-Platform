@@ -1,0 +1,6 @@
+asset,horizon,optimal_tau,test_precision,buy_prec,wait_prec,coverage,test_pnl_per_day,exposure_reduction,n_buy,n_wait,n_test_days
+cape,7d,±1%,63.3,,63.3,14.2%,279.3,96360.0,0,49,345
+kdci,7d,±1%,95.5,100.0,95.0,5.8%,107.71,41036.0,2,20,381
+supramax,7d,±1%,100.0,100.0,100.0,4.5%,95.88,36147.0,5,12,377
+supramax,14d,±1%,89.8,96.6,80.0,13.2%,325.63,120482.0,29,20,370
+supramax,30d,±1%,,,,0.0%,0.0,0.0,0,0,354

@@ -1,0 +1,6 @@
+asset,horizon,optimal_tau,p10_bound,p90_bound,val_pnl_per_day,val_total_savings,val_coverage_pct,val_overall_prec
+cape,7d,0.01,-4745.4,7321.3,620.71,240216.0,10.9,88.1
+kdci,7d,0.01,-2189.6,2257.7,83.32,32245.0,4.7,88.9
+supramax,7d,0.01,-1315.0,1379.7,130.16,50371.0,10.3,80.0
+supramax,14d,0.01,-2200.5,1965.5,263.59,102011.0,15.8,86.9
+supramax,30d,0.01,-2326.1,3124.5,117.57,45500.0,6.7,100.0

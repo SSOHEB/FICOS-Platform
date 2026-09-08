@@ -21,11 +21,55 @@ def load_config(config_path="configs/config.yaml"):
     with open(config_path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
+PROMOTED_PAIRS = {
+    ('cape', '7d'): {
+        'optimal_tau': 0.01,
+        'p10': -4745.0,
+        'p90': 7321.0,
+        'k': 30,
+        'alpha': 1.0,
+        'historical_precision': 63.3
+    },
+    ('kdci', '7d'): {
+        'optimal_tau': 0.01,
+        'p10': -2190.0,
+        'p90': 2258.0,
+        'k': 10,
+        'alpha': 10.0,
+        'historical_precision': 95.5
+    },
+    ('supramax', '7d'): {
+        'optimal_tau': 0.01,
+        'p10': -1315.0,
+        'p90': 1380.0,
+        'k': 50,
+        'alpha': 10.0,
+        'historical_precision': 100.0
+    },
+    ('supramax', '14d'): {
+        'optimal_tau': 0.01,
+        'p10': -2200.0,
+        'p90': 1965.0,
+        'k': 50,
+        'alpha': 1.0,
+        'historical_precision': 89.8
+    },
+    ('supramax', '30d'): {
+        'optimal_tau': 0.01,
+        'p10': -2326.0,
+        'p90': 3124.0,
+        'k': 20,
+        'alpha': 10.0,
+        'historical_precision': 100.0
+    },
+}
+
 class ProcurementDecisionEngine:
     def __init__(self, config_path="configs/config.yaml"):
         self.config = load_config(config_path)
         self.outputs_dir = self.config["paths"]["outputs_dir"]
         self.feasibility_engine = FeasibilityEngine(self.config["paths"]["dataset_b"])
+        self.promoted_pairs = PROMOTED_PAIRS
         
         # Load Model Comparison to get Test RMSE (uncertainty sigma_30d) for top model
         comp_path = os.path.join(self.outputs_dir, "model_comparison.csv")
@@ -35,26 +79,32 @@ class ProcurementDecisionEngine:
             self.model_comp = pd.DataFrame()
 
     def get_forecast_uncertainty(self, freight_class, horizon="30d"):
-        """Get 30-day forecast uncertainty (RMSE) derived from validation/test residuals."""
+        """Get forecast uncertainty bounds derived from validation residuals or RMSE."""
+        pair_key = (freight_class.lower(), horizon.lower())
+        if pair_key in self.promoted_pairs:
+            cfg = self.promoted_pairs[pair_key]
+            return {"p10": cfg["p10"], "p90": cfg["p90"], "is_promoted": True}
+        
         if self.model_comp.empty:
-            return 1500.0
+            return {"p10": -1500.0, "p90": 1500.0, "is_promoted": False}
         subset = self.model_comp[(self.model_comp["freight_class"] == freight_class) & 
                                  (self.model_comp["horizon"] == horizon)]
         if not subset.empty:
-            # Use Ridge RMSE if available, else minimum RMSE
             ridge_row = subset[subset["model"] == "Ridge"]
-            if not ridge_row.empty:
-                return float(ridge_row.iloc[0]["RMSE"])
-            return float(subset["RMSE"].min())
-        return 1500.0
+            rmse = float(ridge_row.iloc[0]["RMSE"]) if not ridge_row.empty else float(subset["RMSE"].min())
+            return {"p10": -rmse, "p90": rmse, "is_promoted": False}
+        return {"p10": -1500.0, "p90": 1500.0, "is_promoted": False}
 
-    def evaluate_decision(self, decision_date_str, freight_class, current_rate_y0, forecast_30d_yhat,
-                          gdelt_burst_active, weather_disruption_active, cargo_volume_mt, destination_port,
-                          realized_30d_y30=None):
+    def evaluate_decision(self, decision_date_str, freight_class, current_rate_y0, forecast_30d_yhat=None,
+                          gdelt_burst_active=False, weather_disruption_active=False, cargo_volume_mt=55000, destination_port="Paradip",
+                          realized_30d_y30=None, horizon="7d", forecast_delta=None):
         """
         Generates a point-in-time recommendation at date t.
+        STRICT B3 ARCHITECTURE:
+          1. Promoted in registry? -> NO -> Fallback (FLEXIBLE / INDEX-LINKED)
+          2. Inside uncertainty [P10, P90]? -> YES -> FLEXIBLE / INDEX-LINKED
+          3. Threshold exceeded? -> NO -> FLEXIBLE, + -> BUY NOW, - -> WAIT
         STRICT NO-LOOKAHEAD: Uses ONLY inputs available at or before date t.
-        realized_30d_y30 is used strictly in post-hoc evaluation labels.
         """
         # 1. Feasibility Validation at Decision Time
         feasible_vessels, rejected_vessels, port_risk_score = self.feasibility_engine.validate_feasibility(
@@ -69,14 +119,26 @@ class ProcurementDecisionEngine:
                 "audit_rationale": f"No feasible vessel class available for cargo volume {cargo_volume_mt} MT at {destination_port}. All candidates rejected."
             }
 
-        # Select primary vessel class (e.g. Supramax or Panamax preferred)
+        # Select primary vessel class
         vessel_priority = ["SUPRA", "PANA", "HANDY", "CAPE"]
         rec_vessel = next((v for v in vessel_priority if v in feasible_vessels), feasible_vessels[0])
 
         # 2. Forecasting Signals at Decision Time
-        uncertainty_sigma = self.get_forecast_uncertainty(freight_class, "30d")
-        forecast_trend_delta = forecast_30d_yhat - current_rate_y0
-        trend_sigma_ratio = forecast_trend_delta / uncertainty_sigma if uncertainty_sigma > 0 else 0.0
+        if forecast_delta is not None:
+            delta_val = float(forecast_delta)
+            yhat = current_rate_y0 + delta_val
+        elif forecast_30d_yhat is not None:
+            yhat = float(forecast_30d_yhat)
+            delta_val = yhat - current_rate_y0
+        else:
+            delta_val = 0.0
+            yhat = current_rate_y0
+
+        pair_key = (freight_class.lower(), horizon.lower())
+        unc_info = self.get_forecast_uncertainty(freight_class, horizon)
+        p10 = unc_info["p10"]
+        p90 = unc_info["p90"]
+        is_promoted = unc_info["is_promoted"]
 
         # 3. Disruption Risk Scores at Decision Time
         gdelt_risk = 75.0 if gdelt_burst_active else 10.0
@@ -84,33 +146,50 @@ class ProcurementDecisionEngine:
         disruption_risk_score = max(gdelt_risk, weather_risk)
 
         # 4. Financial Indicative Cost & Risk Score (0-100)
-        # Freight Score normalized relative to baseline price
-        freight_score = np.clip(50.0 + (trend_sigma_ratio * 15.0), 5.0, 95.0)
+        pct_delta = delta_val / (current_rate_y0 + 1e-8)
+        freight_score = np.clip(50.0 + (pct_delta * 200.0), 5.0, 95.0)
         indicative_cost_risk_score = (0.50 * freight_score) + (0.25 * port_risk_score) + (0.25 * disruption_risk_score)
 
-        # 5. Multi-Factor Decision Rules (Decision-Time Logic)
+        # 5. B3 Decision Rules (Selective Registry + P10/P90 Uncertainty Gate + Optimal Threshold)
         recommendation = "FLEXIBLE / INDEX-LINKED"
         rationale = ""
+        gate_status = "UNKNOWN"
 
-        # Rule 1: BUY NOW (Lock Fixed Forward Rate)
-        if (trend_sigma_ratio > 0.75 and (disruption_risk_score > 50.0 or port_risk_score > 60.0)) or (trend_sigma_ratio > 1.50):
-            recommendation = "BUY NOW"
-            rationale = (f"Strong upward forecast trend (+{trend_sigma_ratio:.2f} σ) combined with elevated "
-                         f"risk signals (Port Risk: {port_risk_score}, Disruption Risk: {disruption_risk_score}). "
-                         f"Lock fixed forward rate now to secure tonnage before expected rate surge.")
-        # Rule 2: WAIT (Delay Procurement / Spot Market)
-        elif trend_sigma_ratio < -0.50 and disruption_risk_score < 50.0:
-            recommendation = "WAIT"
-            rationale = (f"Downward forecast trend ({trend_sigma_ratio:.2f} σ) with Low/Moderate disruption risk. "
-                         f"Delay chartering to capitalize on falling spot market rates.")
-        # Rule 3: FLEXIBLE / INDEX-LINKED
-        else:
+        if not is_promoted:
+            # Fallback for unpromoted pairs (e.g. 1d pairs, or non-viable horizons)
+            gate_status = "FALLBACK_UNPROMOTED"
             recommendation = "FLEXIBLE / INDEX-LINKED"
-            uncertainty_ratio = uncertainty_sigma / current_rate_y0
-            if uncertainty_ratio > 0.15:
-                rationale = f"High forecast uncertainty ({uncertainty_ratio*100:.1f}% of price level). Utilize index-linked contract with floating rate option."
+            rationale = (f"Pair ({freight_class} {horizon}) is not in the high-conviction promoted registry. "
+                         f"Naive baseline is superior; defaulting to index-linked floating rate contract.")
+        else:
+            cfg = self.promoted_pairs[pair_key]
+            tau = cfg["optimal_tau"]
+            hist_prec = cfg["historical_precision"]
+
+            # Uncertainty Gate: is delta inside [P10, P90]?
+            if p10 <= delta_val <= p90:
+                gate_status = "INSIDE_UNCERTAINTY"
+                recommendation = "FLEXIBLE / INDEX-LINKED"
+                rationale = (f"Predicted rate move (${delta_val:+.1f}/day, {pct_delta*100:+.1f}%) falls inside "
+                             f"empirical 80% validation noise band [{p10:+.0f}, {p90:+.0f} $/day]. "
+                             f"Uncertainty too high for directional commitment; maintain floating index terms.")
+            elif delta_val > p90 and pct_delta > tau:
+                gate_status = "CONFIDENT_BUY"
+                recommendation = "BUY NOW"
+                rationale = (f"Strong upward Δ-forecast (+${delta_val:.1f}/day, +{pct_delta*100:.1f}%) clears "
+                             f"P90 uncertainty (+${p90:.0f}) and optimal threshold ±{tau*100:.0f}%. "
+                             f"Historical edge precision: {hist_prec:.1f}%. Lock forward charter rate now.")
+            elif delta_val < p10 and pct_delta < -tau:
+                gate_status = "CONFIDENT_WAIT"
+                recommendation = "WAIT"
+                rationale = (f"Strong downward Δ-forecast (${delta_val:.1f}/day, {pct_delta*100:.1f}%) clears "
+                             f"P10 uncertainty (${p10:.0f}) and optimal threshold ±{tau*100:.0f}%. "
+                             f"Historical edge precision: {hist_prec:.1f}%. Delay procurement to float on falling spot rates.")
             else:
-                rationale = f"Neutral rate trend ({trend_sigma_ratio:.2f} σ). Maintain flexible chartering timing with floating index-linked terms."
+                gate_status = "THRESHOLD_NOT_MET"
+                recommendation = "FLEXIBLE / INDEX-LINKED"
+                rationale = (f"Predicted move (${delta_val:+.1f}/day) does not satisfy optimal decision threshold (±{tau*100:.0f}%). "
+                             f"Maintain flexible chartering terms.")
 
         # 6. Build Structured Audit Trace
         audit_trace = {
@@ -122,11 +201,15 @@ class ProcurementDecisionEngine:
             },
             "decision_time_inputs": {
                 "freight_class": freight_class,
+                "horizon": horizon,
+                "is_promoted": bool(is_promoted),
                 "current_rate_y0": round(current_rate_y0, 2),
-                "forecast_30d_yhat": round(forecast_30d_yhat, 2),
-                "forecast_trend_delta": round(forecast_trend_delta, 2),
-                "uncertainty_sigma_30d": round(uncertainty_sigma, 2),
-                "trend_sigma_ratio": round(trend_sigma_ratio, 2),
+                "forecast_yhat": round(yhat, 2),
+                "forecast_trend_delta": round(delta_val, 2),
+                "forecast_pct_delta": round(pct_delta * 100, 2),
+                "uncertainty_p10": round(p10, 2),
+                "uncertainty_p90": round(p90, 2),
+                "gate_status": gate_status,
                 "gdelt_event_burst_active": bool(gdelt_burst_active),
                 "weather_disruption_active": bool(weather_disruption_active),
                 "historical_port_pbdt_risk_score": round(port_risk_score, 1),
@@ -150,75 +233,85 @@ class ProcurementDecisionEngine:
         }
 
         # 7. Post-Hoc Evaluation Labels (Strictly separated)
-        if realized_30d_y30 is not None and not np.isnan(realized_30d_y30):
-            realized_return_pct = (realized_30d_y30 - current_rate_y0) / current_rate_y0 * 100.0
+        realized_rate = realized_30d_y30
+        if realized_rate is not None and not np.isnan(realized_rate):
+            realized_return_pct = (realized_rate - current_rate_y0) / current_rate_y0 * 100.0
+            actual_delta = realized_rate - current_rate_y0
             
-            # Evaluate outcome
-            if recommendation == "BUY NOW" and realized_return_pct > 0:
-                eval_str = f"SUCCESS (BUY NOW avoided +{realized_return_pct:.2f}% price rise)"
-            elif recommendation == "WAIT" and realized_return_pct < 0:
-                eval_str = f"SUCCESS (WAIT captured {realized_return_pct:.2f}% price drop)"
-            elif recommendation == "FLEXIBLE / INDEX-LINKED":
-                eval_str = f"NEUTRAL (Index-linked contract adjusted with {realized_return_pct:+.2f}% market move)"
+            # Evaluate outcome and economic PnL ($/day saved)
+            if recommendation == "BUY NOW":
+                pnl_dollars = actual_delta
+                eval_str = (f"SUCCESS (BUY NOW avoided +{realized_return_pct:.2f}% price rise, saved +${pnl_dollars:.0f}/day)"
+                            if actual_delta > 0 else
+                            f"TIMING_PENALTY (Market dropped {realized_return_pct:.2f}%, penalty -${abs(pnl_dollars):.0f}/day)")
+            elif recommendation == "WAIT":
+                pnl_dollars = -actual_delta
+                eval_str = (f"SUCCESS (WAIT captured {realized_return_pct:.2f}% price drop, saved +${pnl_dollars:.0f}/day)"
+                            if actual_delta < 0 else
+                            f"TIMING_PENALTY (Market rose +{realized_return_pct:.2f}%, missed saving -${abs(pnl_dollars):.0f}/day)")
             else:
-                eval_str = f"SUBOPTIMAL (Market moved {realized_return_pct:+.2f}%)"
+                pnl_dollars = 0.0
+                eval_str = f"NEUTRAL_FLOATING (Index-linked contract adjusted with market {realized_return_pct:+.2f}%)"
 
             audit_trace["post_hoc_evaluation_labels"] = {
-                "realized_30d_rate_y30": round(realized_30d_y30, 2),
-                "realized_30d_return_pct": round(realized_return_pct, 2),
+                "realized_future_rate": round(realized_rate, 2),
+                "realized_return_pct": round(realized_return_pct, 2),
+                "realized_delta": round(actual_delta, 2),
+                "economic_pnl_dollars_per_day": round(pnl_dollars, 2),
                 "decision_success_evaluation": eval_str
             }
 
         return audit_trace
 
     def run_historical_decision_simulation(self):
-        """Runs the decision engine across all 387 test period dates."""
+        """Runs the decision engine across test period dates using B3 promoted registry and Δ forecasts."""
         model_df = pd.read_csv(os.path.join(self.outputs_dir, "modeling_dataset.csv"))
         model_df["date"] = pd.to_datetime(model_df["date"])
         model_df = model_df.sort_values("date").reset_index(drop=True)
 
-        # Load Ridge predictions for 30d Supramax (best performing model)
-        pred_path = os.path.join(self.outputs_dir, "predictions", "ridge", "supramax_30d.csv")
-        if os.path.exists(pred_path):
-            pred_df = pd.read_csv(pred_path)
-            pred_df["date"] = pd.to_datetime(pred_df["date"])
-        else:
-            print("Warning: Ridge predictions for supramax_30d not found. Using raw dataset.")
-            pred_df = pd.DataFrame()
+        pred_file = os.path.join(self.outputs_dir, "delta_forecast", "b2_test_predictions.csv")
+        if not os.path.exists(pred_file):
+            raise FileNotFoundError(f"Missing {pred_file}. Run B2 delta forecasting first.")
 
-        # Merge test dates
-        if not pred_df.empty:
-            test_merged = pd.merge(pred_df, model_df, on="date", how="left")
-        else:
-            # Fallback to test split portion
-            n = len(model_df)
-            test_merged = model_df.iloc[int(n*0.85):].copy()
+        df_preds = pd.read_csv(pred_file)
+        df_preds["date"] = pd.to_datetime(df_preds["date"])
+
+        # Merge with exogenous disruption variables from modeling dataset
+        risk_cols = [c for c in ["date", "gdelt_event_count", "cyclone_dist_1"] if c in model_df.columns]
+        merged = df_preds.merge(model_df[risk_cols], on="date", how="left")
 
         all_audits = []
         csv_rows = []
 
-        print(f"Phase 10: Running point-in-time decision simulation across {len(test_merged)} test-period dates...")
+        print(f"Phase 10 / B3: Running historical decision simulation across {len(merged)} prediction instances...")
 
-        for _, row in test_merged.iterrows():
+        for _, row in merged.iterrows():
             d_str = row["date"].strftime("%Y-%m-%d")
-            y0 = row["y_prev"] if "y_prev" in row else row["supramax"]
-            yhat_30d = row["y_pred"] if "y_pred" in row else (y0 * 1.02)
-            y30_realized = row["y_true"] if "y_true" in row else None
-            
+            asset = str(row["asset"]).lower()
+            horizon = str(row["horizon"]).lower()
+            y0 = float(row["y_base"])
+            y_lvl_pred = float(row["delta_pred"])
+            delta_val = y_lvl_pred - y0
+            y_realized = float(row["y_true"]) if pd.notna(row["y_true"]) else None
+
             gdelt_burst = bool(row.get("gdelt_event_count", 0) > 50)
             weather_disruption = bool(row.get("cyclone_dist_1", 999) < 500)
 
-            # Evaluate decision for 55,000 MT Coal to Paradip
+            # Map asset to cargo and port for feasibility test
+            cargo_vol = 55000 if asset == "supramax" else (75000 if asset == "panamax" else 150000)
+            dest_port = "Paradip" if asset in ["supramax", "panamax"] else "Visakhapatnam"
+
             audit = self.evaluate_decision(
                 decision_date_str=d_str,
-                freight_class="supramax",
+                freight_class=asset,
                 current_rate_y0=y0,
-                forecast_30d_yhat=yhat_30d,
+                forecast_delta=delta_val,
                 gdelt_burst_active=gdelt_burst,
                 weather_disruption_active=weather_disruption,
-                cargo_volume_mt=55000,
-                destination_port="Paradip",
-                realized_30d_y30=y30_realized
+                cargo_volume_mt=cargo_vol,
+                destination_port=dest_port,
+                realized_30d_y30=y_realized,
+                horizon=horizon
             )
 
             all_audits.append(audit)
@@ -232,19 +325,24 @@ class ProcurementDecisionEngine:
             csv_rows.append({
                 "date": d_str,
                 "freight_class": dt_in["freight_class"],
+                "horizon": dt_in["horizon"],
+                "is_promoted": dt_in["is_promoted"],
+                "gate_status": dt_in["gate_status"],
                 "destination_port": audit["cargo_request"]["destination_port"],
                 "current_rate_y0": dt_in["current_rate_y0"],
-                "forecast_30d_yhat": dt_in["forecast_30d_yhat"],
+                "forecast_yhat": dt_in["forecast_yhat"],
                 "forecast_trend_delta": dt_in["forecast_trend_delta"],
-                "uncertainty_sigma_30d": dt_in["uncertainty_sigma_30d"],
-                "trend_sigma_ratio": dt_in["trend_sigma_ratio"],
+                "forecast_pct_delta": dt_in["forecast_pct_delta"],
+                "uncertainty_p10": dt_in["uncertainty_p10"],
+                "uncertainty_p90": dt_in["uncertainty_p90"],
                 "indicative_cost_risk_score": scores["combined_indicative_cost_risk_score"],
                 "feasible_vessel_classes": ", ".join(audit["feasibility_assessment"]["feasible_vessel_classes"]),
                 "recommendation": d_out["recommendation"],
                 "recommended_vessel_class": d_out["recommended_vessel_class"],
                 "audit_rationale": d_out["audit_rationale"],
-                "realized_30d_rate_y30": post.get("realized_30d_rate_y30", np.nan),
-                "realized_30d_return_pct": post.get("realized_30d_return_pct", np.nan),
+                "realized_future_rate": post.get("realized_future_rate", np.nan),
+                "realized_return_pct": post.get("realized_return_pct", np.nan),
+                "economic_pnl_dollars_per_day": post.get("economic_pnl_dollars_per_day", 0.0),
                 "decision_success_evaluation": post.get("decision_success_evaluation", "")
             })
 
@@ -261,7 +359,11 @@ class ProcurementDecisionEngine:
 
         # Summary breakdown
         print("\nDecision Recommendations Distribution:")
-        print(df_csv["recommendation"].value_counts())
+        print(df_csv.groupby(["is_promoted", "recommendation"]).size())
+
+        promoted_df = df_csv[df_csv["is_promoted"]]
+        total_pnl = promoted_df["economic_pnl_dollars_per_day"].sum()
+        print(f"\nTotal Economic PnL across Promoted Pairs: ${total_pnl:+,.0f} ($/day-sum)")
 
         return df_csv
 
