@@ -15,6 +15,7 @@ Evaluation Rules:
 - Output: outputs/phase8_optimization_results.csv & outputs/phase8_final_benchmark.csv
 """
 
+import warnings
 import os
 import yaml
 import numpy as np
@@ -26,6 +27,8 @@ from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor
 from sklearn.linear_model import Ridge, LinearRegression
 from sklearn.neural_network import MLPRegressor
 import xgboost as xgb
+
+warnings.filterwarnings("ignore")
 
 # Set fixed seeds for reproducibility
 np.random.seed(42)
@@ -301,16 +304,16 @@ def run_optimization_pipeline():
             te_res_pred = res_model.predict(X_te_opt)
             te_hybrid_lvl = te_ridge_lvl + te_res_pred
 
-            # Phase 8D: Learn Non-Negative Weighted Ensemble on VALIDATION ONLY
-            val_preds_matrix = np.column_stack([v_ridge_lvl, v_xgb_lvl, v_mlp_lvl, v_hybrid_lvl])
+            # Phase 8D: Learn Non-Negative Weighted Ensemble on VALIDATION ONLY (including Persistence fallback)
+            val_preds_matrix = np.column_stack([v_ridge_lvl, v_xgb_lvl, v_mlp_lvl, v_hybrid_lvl, y_v_base])
             weights, _ = nnls(val_preds_matrix, y_v_raw)
             if np.sum(weights) > 0:
                 weights = weights / np.sum(weights)
             else:
-                weights = np.array([0.5, 0.25, 0.25, 0.0])
+                weights = np.array([0.2, 0.2, 0.2, 0.2, 0.2])
 
             v_ensemble_lvl = val_preds_matrix @ weights
-            test_preds_matrix = np.column_stack([te_ridge_lvl, te_xgb_lvl, te_mlp_lvl, te_hybrid_lvl])
+            test_preds_matrix = np.column_stack([te_ridge_lvl, te_xgb_lvl, te_mlp_lvl, te_hybrid_lvl, y_te_base])
             te_ensemble_lvl = test_preds_matrix @ weights
 
             # Compare Candidate Systems on Validation
@@ -319,6 +322,7 @@ def run_optimization_pipeline():
                 "XGBoost": (v_xgb_lvl, te_xgb_lvl),
                 "Neural_Net": (v_mlp_lvl, te_mlp_lvl),
                 "Ridge_Residual_Hybrid": (v_hybrid_lvl, te_hybrid_lvl),
+                "Naive_Persistence": (y_v_base, y_te_base),
                 "Validation_Weighted_Ensemble": (v_ensemble_lvl, te_ensemble_lvl)
             }
 
