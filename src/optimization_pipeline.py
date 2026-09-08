@@ -102,7 +102,7 @@ def run_optimization_pipeline():
     test_mask = np.zeros(n, dtype=bool)
     test_mask[n_train+n_val:] = True
     
-    feature_cols = [c for c in df.columns if not c.startswith("target_") and c not in ["date"]]
+    feature_cols = [c for c in df.columns if not c.startswith("target_") and not c.startswith("dir_") and c not in ["date"]]
     
     # Fix pandas FutureWarning: Explicitly convert feature columns to float64
     df[feature_cols] = df[feature_cols].astype(np.float64)

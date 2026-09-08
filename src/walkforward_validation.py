@@ -82,7 +82,7 @@ def run_walkforward_validation():
     df = df.sort_values("date").reset_index(drop=True)
     df['year'] = df['date'].dt.year
 
-    feature_cols = [c for c in df.columns if not c.startswith("target_") and c not in ["date", "year"]]
+    feature_cols = [c for c in df.columns if not c.startswith("target_") and not c.startswith("dir_") and c not in ["date", "year"]]
     df[feature_cols] = df[feature_cols].astype(np.float64)
 
     # 1. REGIME ANALYSIS PER VALIDATION YEAR
