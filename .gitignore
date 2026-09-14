@@ -24,8 +24,9 @@ credentials.json
 secrets/
 token.json
 
-# Datasets, Pre-trained Models & Sensitive Market Data (NEVER PUSH TO PUBLIC GITHUB)
-data/
+# Raw Datasets & Binary Model Weights
+data/*
+!data/modeling_dataset.csv
 models/
 *.xlsx
 *.xls
