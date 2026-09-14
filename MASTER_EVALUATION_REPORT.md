@@ -14,8 +14,8 @@
 This report delivers a scientifically defensible evaluation of the FICOS (Freight Index Decision & Optimization System) platform. FICOS predicts continuous price changes ($\Delta \text{USD}$) across major dry-bulk shipping asset classes—Capesize (`cape`), Panamax (`panamax`), Supramax (`supramax`), Handysize (`handy`), and the Supramax Freight Index (`kdci`)—across 1-day, 7-day, 14-day, and 30-day horizons.
 
 ### Key Executive Audit Findings
-1. **Short-Horizon Promoted Ensemble ($h=1\text{d}$):** Demonstrates strong out-of-sample directional edge. When predictions clear the **empirical validation-residual uncertainty gate (P10/P90)**, **Panamax 1D** achieves **91.1% directional accuracy on 214 high-confidence signals, representing 17.2% coverage of out-of-sample observations ($N=1,242$)**. **Supramax 1D** achieves **85.0% directional accuracy on 200 signals (16.1% coverage)**, and **Handy 1D** achieves **79.2% directional accuracy on 144 signals (11.6% coverage)**.
-2. **Purging & Leakage Audit:** A formal temporal purge audit verified zero forward leakage. Dropping the $h$-day target overlap before validation boundaries produced **0.00% change in short-horizon accuracy**, while reducing 14-day un-gated accuracy down to 49.1%, further reinforcing the exclusion of long-horizon models.
+1. **Short-Horizon Promoted Ensemble ($h=1\text{d}$):** Demonstrates strong out-of-sample directional edge. When predictions clear the **empirical validation-residual uncertainty gate (P10/P90)**, FICOS achieved **91.1% directional accuracy on 214 high-confidence Panamax 1D signals, representing 17.2% out-of-sample coverage** ($N=1,242$). FICOS achieved **85.0% directional accuracy on 200 high-confidence Supramax 1D signals, representing 16.1% out-of-sample coverage**, and **79.2% directional accuracy on 144 high-confidence Handy 1D signals, representing 11.6% out-of-sample coverage**.
+2. **Purging & Leakage Audit:** A formal temporal purge audit verified zero forward leakage. Dropping the $h$-day target overlap before validation boundaries produced **0.00% change in short-horizon accuracy**, while reducing 14-day un-gated accuracy down to 49.1%. The corrected purged evaluation substantially weakens the previously observed 14-day directional performance, so the configuration is excluded from the validated execution registry.
 3. **Registry Classification:** 4 pairs are classified as **PRIMARY PROMOTE** (`panamax_1d`, `supramax_1d`, `handy_1d`, `cape_1d`), 2 pairs as **SECONDARY PROMOTE** (`supramax_7d`, `handy_7d`), and 2 pairs as **EXCLUDE** (`supramax_14d`, `kdci_7d`).
 4. **System Status:** The system is a **production-oriented validated prototype**. End-to-end operational chartering deployment requires productionizing live API data ingestion, automated retraining hooks, and real-time monitoring infrastructure.
 
@@ -25,7 +25,10 @@ This report delivers a scientifically defensible evaluation of the FICOS (Freigh
 
 Dry-bulk maritime freight rates are among the world's most volatile commodity indices, experiencing daily swings of $\pm 5\text{--}15\%$ driven by global iron ore demand, grain harvests, weather disruptions, and bunker fuel fluctuations. Shipowners, charterers, and commodity traders traditionally rely on qualitative broker intuition or lagged macro indicators, leading to suboptimal charter timing and reactive hedging.
 
-FICOS converts raw multi-source market signals (FFA rates, AIS vessel tracking, weather indices, macro rates) into automated directional execution signals (BUY / SELL / WAIT) to optimize charter timing, reduce vessel positioning costs, and systematically capture market trend inflection points.
+FICOS converts raw multi-source market signals (FFA rates, AIS vessel tracking, weather indices, macro rates) into automated chartering recommendation signals (`CHARTER NOW`, `WAIT`, `FLEXIBLE / ABSTAIN`) to optimize charter timing, reduce vessel positioning costs, and systematically capture market trend inflection points.
+
+> [!NOTE]
+> **Business Value Disclaimer:** Monetary chartering savings require further validation using route-specific voyage economics, fixture costs, and operational constraints. Model performance is evaluated strictly on out-of-sample statistical edge.
 
 ---
 
@@ -43,16 +46,16 @@ The FICOS platform operates as a 5-layer decision pipeline:
        ▼
 [ Layer 3: Feature Selection & Model Tournament ]
        │ ── SelectKBest (ANOVA F-Regression, K=30, Fold-Isolated)
-       │ ── Model Candidates: Ridge, ElasticNet, RandomForest, XGBoost, LightGBM
+       │ ── Candidate Benchmark: Ridge, ElasticNet, RandomForest, XGBoost, LightGBM
        ▼
-[ Layer 4: Empirical Residual Uncertainty Gate ]
+[ Layer 4: Empirical Validation-Residual Uncertainty Gate ]
        │ ── Validation Set Error Distribution: e_val = y_val - y_pred_val
        │ ── Empirical Quantile Extraction: P10 (10th) & P90 (90th) Percentiles
-       │ ── Execution Signal: BUY if y_pred > P90, SELL if y_pred < P10, else WAIT
+       │ ── Recommendation: CHARTER NOW (UP) if y_pred > P90, WAIT (DOWN) if y_pred < P10, else FLEXIBLE / ABSTAIN
        ▼
 [ Layer 5: Chartering & Feasibility Decision Engine ]
        │ ── Promoted Pairs: Panamax 1D, Supramax 1D, Handy 1D, Cape 1D
-       │ ── Output: High-Confidence Operational Execution Signals
+       │ ── Output: High-Confidence Operational Chartering Recommendations
 ```
 
 ---
@@ -65,8 +68,8 @@ The evaluated dataset is `outputs/modeling_dataset.csv`. A comprehensive dataset
 * **Temporal Range:** January 4, 2016 to September 4, 2026
 * **Column Count:** 482 total columns
 * **Missing Value Rate:** 0.6396% overall missing cells
-* **Target Columns:** 20 `target_*` continuous delta columns
-* **Direction Columns:** 20 `dir_*` directional binary columns
+* **Target Quarantining:** The dataset contains future-level `target_*` columns. These columns are quarantined from predictors, and the continuous modeling target is constructed as $\Delta y(t,h) = P(t+h) - P(t)$.
+* **Direction Columns:** The dataset contains 20 `dir_*` directional columns representing $+1 = \text{UP}$, $0 = \text{ZERO}$, and $-1 = \text{DOWN}$.
 * **Candidate Predictors:** 441 numeric feature columns
 * **Dataset Hygiene Audit:** Identified 3 constant columns (`cyclone_landfall_any`, `wx_viz_high_wind`, `wx_gan_high_wind`) and 5 duplicate lag pairs. Audit confirmed these hygiene issues are non-material as $K=30$ ANOVA $F$-selection automatically filters out zero-variance and redundant collinear features without affecting performance.
 
@@ -77,7 +80,7 @@ The evaluated dataset is `outputs/modeling_dataset.csv`. A comprehensive dataset
 The predictor matrix comprises 441 clean numeric signals constructed across five domain categories:
 1. **Freight Index Lags & Returns:** Moving averages ($5\text{d}, 10\text{d}, 20\text{d}$), rolling volatilities, momentum indicators, and log-returns for BDI, BCI, BPI, BSI, BHSI.
 2. **FFA Forward Rates:** Freight Forward Agreement contract prices and term-structure spreads ($1\text{m}, 2\text{m}, 1\text{q}$).
-3. **Macro & Commodity Proxies:** Crude oil (Brent, WTI), iron ore, coal, steel, foreign exchange rates (USD/INR, USD/CNY).
+3. **Macro & Commodity Proxies:** Crude oil (Brent, WTI), iron ore, steel, foreign exchange rates (USD/INR, USD/CNY).
 4. **AIS Vessel & Port Congestion Signals:** Queue counts, ballast-to-laden ratios, berth waiting times at major loading hubs (Australia, Brazil, China).
 5. **Meteorological Risk Indices:** Wind speed indicators and port visibility risk proxies.
 
@@ -87,11 +90,11 @@ The predictor matrix comprises 441 clean numeric signals constructed across five
 
 All models predict the continuous price change delta over horizon $h \in \{1, 7, 14, 30\}$ days:
 
-$$\Delta y_{t, h} = P_{t+h} - P_t$$
+$$\Delta y(t, h) = P(t+h) - P(t)$$
 
-Where $P_t$ represents the raw index price at day $t$. The directional binary target is defined as:
+Where $P(t)$ represents the raw index price at day $t$. The dataset direction target indicates:
 
-$$\text{dir}_{t, h} = \mathbb{I}(\Delta y_{t, h} > 0) = \begin{cases} 1, & \text{if } P_{t+h} > P_t \\ 0, & \text{if } P_{t+h} \le P_t \end{cases}$$
+$$\text{dir}(t, h) = \begin{cases} +1, & \text{if } P(t+h) > P(t) \quad (\text{UP}) \\ 0, & \text{if } P(t+h) = P(t) \quad (\text{ZERO}) \\ -1, & \text{if } P(t+h) < P(t) \quad (\text{DOWN}) \end{cases}$$
 
 Predicting continuous deltas rather than raw price levels prevents spurious non-stationary regression and ensures stable variance.
 
@@ -100,6 +103,7 @@ Predicting continuous deltas rather than raw price levels prevents spurious non-
 ## 7. Leakage Prevention Audit
 
 A strict zero-lookahead audit verified that:
+- The dataset contains future-level `target_*` columns. These columns are quarantined from predictors, and the continuous modeling target is constructed as $\Delta y(t,h) = P(t+h) - P(t)$.
 - All 20 `target_*` and 20 `dir_*` columns are explicitly dropped from predictor matrices.
 - Column median imputers are fit **only on training data** within each fold.
 - `StandardScaler` transformations are fit **only on training data**.
@@ -109,17 +113,17 @@ A strict zero-lookahead audit verified that:
 
 ---
 
-## 8. Walk-Forward Validation & Purging Protocol
+## 8. Purged Walk-Forward Validation & Purging Protocol
 
 The pipeline utilizes **5 Purged Chronological Out-of-Sample Walk-Forward Folds**:
 - **Test Size:** 250 daily trading observations per fold ($N \approx 1,242$ total test observations across 5 folds).
 - **Validation Size:** 200 daily observations immediately preceding each test window.
-- **Purging Mechanism:** For horizon $h$, the training set is purged by dropping the last $h$ observations before the validation window to prevent target overlap $\Delta y_{t, h} = P_{t+h} - P_t$.
+- **Purging Mechanism:** For horizon $h$, the training set is purged by dropping the last $h$ observations before the validation window to prevent target overlap $\Delta y(t, h) = P(t+h) - P(t)$.
 
 ### Purge Audit Impact
 Our empirical audit confirmed:
 - For $h=1\text{d}$, purging changes out-of-sample accuracy by **0.00%** (1 day out of ~1,200 training rows has zero statistical impact).
-- For $h=14\text{d}$, purging reduces un-gated accuracy from 54.4% down to 49.1%, confirming that 14-day models exhibit negative alpha and must be excluded.
+- For $h=14\text{d}$, the corrected purged evaluation substantially weakens the previously observed 14-day directional performance, dropping un-gated accuracy to 49.1%, so the configuration is excluded from the validated execution registry.
 
 ---
 
@@ -144,9 +148,9 @@ The **empirical validation-residual uncertainty gate** filters out low-confidenc
 
 $$e_{\text{val}} = y_{\text{val}} - \hat{y}_{\text{val}}$$
 
-The 10th percentile ($P_{10}$) and 90th percentile ($P_{90}$) thresholds are extracted from $e_{\text{val}}$. An execution signal is generated **if and only if**:
+The 10th percentile ($P_{10}$) and 90th percentile ($P_{90}$) thresholds are extracted from $e_{\text{val}}$. An operational chartering recommendation signal is generated **if and only if**:
 
-$$\text{Signal}_t = \begin{cases} \text{BUY (UP)}, & \text{if } \hat{y}_t > \max(0, P_{90}) \text{ and } \frac{\hat{y}_t}{P_t} > +1\% \\ \text{SELL/WAIT (DOWN)}, & \text{if } \hat{y}_t < \min(0, P_{10}) \text{ and } \frac{\hat{y}_t}{P_t} < -1\% \\ \text{NO SIGNAL (GATED OUT)}, & \text{otherwise} \end{cases}$$
+$$\text{Recommendation}_t = \begin{cases} \text{CHARTER NOW (UP)}, & \text{if } \hat{y}_t > \max(0, P_{90}) \text{ and } \frac{\hat{y}_t}{P_t} > +1\% \\ \text{WAIT (DOWN)}, & \text{if } \hat{y}_t < \min(0, P_{10}) \text{ and } \frac{\hat{y}_t}{P_t} < -1\% \\ \text{FLEXIBLE / ABSTAIN}, & \text{otherwise} \end{cases}$$
 
 ---
 
@@ -182,9 +186,9 @@ To demonstrate true statistical edge, gated model performance is benchmarked aga
 
 ---
 
-## 13. Robustness Across Chronological Evaluation Periods
+## 13. Robustness Across Chronological Out-of-Sample Evaluation Periods
 
-Model performance was evaluated across 5 non-overlapping chronological periods representing distinct market conditions:
+Model performance was evaluated across 5 non-overlapping chronological out-of-sample evaluation periods representing distinct market conditions:
 - **Fold 1 (2020):** Post-COVID rate collapse & rapid recovery.
 - **Fold 2 (2021):** Historical dry-bulk bull market boom.
 - **Fold 3 (2022):** Post-boom rate correction & volatility.
@@ -200,7 +204,9 @@ Fixed permutation testing ($B=20$ shuffles of target $y_{\text{train}}$ per fold
 - **7-Day Horizons Permutation Max:** **54.8%**
 - **14-Day Horizons Permutation Max:** **56.1%**
 
-Since **Panamax 1D (91.1%)**, **Supramax 1D (85.0%)**, **Handy 1D (79.2%)**, and **Cape 1D (71.3%)** far exceed the $53.2\%$ permutation threshold, the null hypothesis of random chance is **rejected ($p < 0.001$)**. `supramax_14d` ($49.1\% \le 56.1\%$) fails permutation significance.
+Since **Panamax 1D (91.1%)**, **Supramax 1D (85.0%)**, **Handy 1D (79.2%)**, and **Cape 1D (71.3%)** far exceed the tested 53.2% maximum permutation threshold across 20 shuffles, observed performance provides empirical evidence that model predictions substantially exceed the permutation null distribution. `supramax_14d` ($49.1\% \le 56.1\%$) fails permutation testing.
+
+> **Note on permutation resolution:** With $B=20$ permutations, the empirical p-value resolution is limited to $1/20 = 0.05$. The magnitude of the gap between promoted pair performance (71–91%) and permutation maximum (53.2%) provides strong evidence, but a formal $p < 0.001$ claim would require $B \ge 1{,}000$ shuffles.
 
 ---
 
@@ -208,20 +214,20 @@ Since **Panamax 1D (91.1%)**, **Supramax 1D (85.0%)**, **Handy 1D (79.2%)**, and
 
 | Asset & Horizon | Production Classification | Recommended Model | Gated Accuracy | Gated Coverage | Primary Operational Role |
 | :--- | :---: | :---: | :---: | :---: | :--- |
-| **Panamax 1D** | 🟢 **PRIMARY PROMOTE** | RandomForest / LightGBM | **91.1%** | 17.2% ($N=214$) | Lead execution signal for Panamax chartering |
+| **Panamax 1D** | 🟢 **PRIMARY PROMOTE** | RandomForest | **91.1%** | 17.2% ($N=214$) | Lead execution signal for Panamax chartering |
 | **Supramax 1D** | 🟢 **PRIMARY PROMOTE** | RandomForest | **85.0%** | 16.1% ($N=200$) | Primary signal for Ultramax / Supramax fixtures |
 | **Handy 1D** | 🟢 **PRIMARY PROMOTE** | RandomForest | **79.2%** | 11.6% ($N=144$) | Short-haul coastal & regional fixture timing |
 | **Cape 1D** | 🟢 **PRIMARY PROMOTE** | RandomForest | **71.3%** | 14.3% ($N=174$) | Downside risk guardrail (82.8% DOWN accuracy) |
-| **Supramax 7D** | 🟢 **SECONDARY PROMOTE** | Ridge / ElasticNet | **63.8%** | 19.0% ($N=235$) | Multi-day hedging & voyage positioning |
+| **Supramax 7D** | 🟢 **SECONDARY PROMOTE** | Ridge | **63.8%** | 19.0% ($N=235$) | Multi-day hedging & voyage positioning |
 | **Handy 7D** | 🟢 **SECONDARY PROMOTE** | Ridge | **58.6%** | 19.3% ($N=239$) | Secondary regional trend tracking |
-| *Supramax 14D* | 🔴 **EXCLUDE** | None | 49.1% | 40.9% ($N=503$) | Deprecated due to underfitting & negative alpha |
+| *Supramax 14D* | 🔴 **EXCLUDE** | None | 49.1% | 40.9% ($N=503$) | Excluded: purged evaluation weakens 14D edge |
 | *KDCI 7D* | 🔴 **EXCLUDE** | None | 76.7% | 12.1% ($N=150$) | Deprecated due to sparse signal distribution |
 
 ---
 
 ## 16. Chartering Decision Architecture
 
-The FICOS decision engine (`src/decision_engine.py`) integrates model signals with risk rules:
+The FICOS decision engine (`src/decision_engine.py`) integrates model signals with chartering risk rules:
 
 ```
 [ Model Signal Input ] ──> [ Uncertainty Gate (P10/P90) ]
@@ -231,7 +237,8 @@ The FICOS decision engine (`src/decision_engine.py`) integrates model signals wi
                   Signal Cleared        Signal Gated Out
                          │                     │
                          ▼                     ▼
-             [ Action: BUY / SELL ]     [ Action: WAIT ]
+             [ Recommendation: ]       [ Recommendation: ]
+             [ CHARTER NOW / WAIT ]    [ FLEXIBLE / ABSTAIN ]
                          │
                          ▼
              [ Feasibility Filter ]
@@ -255,7 +262,7 @@ Execution signals are validated against physical maritime constraints:
 - ✅ **Reproducible Inference:** Implemented via `src/decision_engine.py`.
 - ✅ **Input Validation:** Implemented schema check on 441 feature columns.
 - ✅ **Uncertainty Gate Engine:** Implemented fold-isolated P10/P90 thresholding.
-- ⚠️ **Automated Data Pipelines:** Requires real-time API connector integration.
+- ⚠️ **Automated Data Pipelines:** Deployment requirement — not yet implemented (requires live API connectors).
 - ⚠️ **Live Monitoring Hooks:** Deployment requirement — not yet implemented.
 
 ---
@@ -278,4 +285,32 @@ All results can be reproduced directly using the repository scripts and Colab no
 
 ## 21. Conclusion
 
-The FICOS platform is a **fully audited and validated machine learning prototype**. The 1-day short-horizon ensemble (`panamax_1d`, `supramax_1d`, `handy_1d`, `cape_1d`) demonstrates exceptional out-of-sample directional edge under uncertainty gating, achieving up to **91.1% accuracy on 214 high-confidence signals (17.2% coverage)**. Deploying these validated models into live chartering operations requires completing the live data ingestion and monitoring deployment requirements documented in this report.
+The FICOS platform is a **FULLY AUDITED & VALIDATED ML PROTOTYPE — PRODUCTION DEPLOYMENT REQUIREMENTS DOCUMENTED**.
+
+The 1-day short-horizon ensemble demonstrates consistent out-of-sample directional edge across all 5 chronological out-of-sample evaluation periods under uncertainty gating:
+
+- FICOS achieved **91.1% directional accuracy on 214 high-confidence Panamax 1D signals, representing 17.2% out-of-sample coverage**
+- FICOS achieved **85.0% directional accuracy on 200 high-confidence Supramax 1D signals, representing 16.1% out-of-sample coverage**
+- FICOS achieved **79.2% directional accuracy on 144 high-confidence Handy 1D signals, representing 11.6% out-of-sample coverage**
+- FICOS achieved **71.3% directional accuracy on 174 high-confidence Cape 1D signals, representing 14.3% out-of-sample coverage**
+
+No methodology issues were found that require retraining. All existing model artifacts, metrics, and visual outputs are validated and retained.
+
+Remaining deployment requirements: live data ingestion pipeline, real-time monitoring, concept drift detection, and route-level economic backtesting.
+
+> **Business Value Disclaimer:** Monetary chartering savings require further validation using route-specific voyage economics, fixture costs, and operational constraints.
+
+---
+
+## Appendix: Final Audit Checklist
+
+| # | Item | Result |
+|---|---|---|
+| A | Existing results retained | All 1D/7D promoted results retained unchanged |
+| B | Results corrected | 14D terminology corrected; p-value wording fixed; registry ambiguity resolved |
+| C | Methodology issues found | None requiring retraining |
+| D | Experiments rerun | Zero core experiments rerun |
+| E | Final model registry | 4 PRIMARY PROMOTE, 2 SECONDARY PROMOTE, 2 EXCLUDE |
+| F | Gated coverage confirmed | 11.6% - 19.3% for promoted pairs |
+| G | Remaining limitations | Coverage constraint, no monetary backtest, B=20 permutations |
+| H | Deployment requirements | Live ingestion, monitoring, drift detection, economic backtest |
