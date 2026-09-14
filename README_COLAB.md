@@ -22,59 +22,58 @@ You can open and execute this notebook directly from GitHub in Google Colab:
 
 ---
 
-## 3. Architecture & Strict Scientific Safeguards
+## 2. Architecture & Scientific Safeguards
 
 ```
 Pipeline Flow
-[Cell 1-3: Setup & Data Loading]
+[Cell 1-2: Environment Setup & Repository Ingestion]
        │
-[Cell 4-5: Data & Leakage Audits] ──(Fatal Assertion if Violation)──> STOP
+[Cell 3-4: Dataset Scope & Zero-Leakage Feature Quarantine]
+       │  • modeling_dataset.csv (2,581 rows x 482 columns, 2016-2026)
+       │  • 41 future/leakage/date columns quarantined; 441 clean predictors
        │
-[Cell 6-8: Feature & Target Pipeline + Strict Date Splits]
-       │  • Train:        date < 2023-01-01 (1,699 rows)
-       │  • Dev/Val:      2023-01-01 <= date < 2025-01-01 (480 rows)
-       │  • Locked Test:  date >= 2025-01-01 (402 rows)
+[Cell 5-6: 5-Fold Walk-Forward Validation Tournament Engine]
+       │  • 5 Chronological Purged Folds (N ≈ 1,242 test days)
+       │  • 8 Asset-Horizon Pairs (Cape, Panamax, Supramax, Handy, KDCI)
+       │  • Fold-isolated SelectKBest (K=30) & Candidate Model Tournament
+       │  • Empirical Residual Uncertainty Gating (P10/P90)
        │
-[Cell 9-12: Models Architecture (Ridge, ElasticNet, Trees, GBDT, Classifiers)]
+[Cell 7-8: Final Master Report Reconciliation Audit (72/72 Checks)]
+       │  • Compares all computed metrics directly against MASTER_EVALUATION_REPORT.md
+       │  • Validates 100% reconciliation (PASS [OK] across all 72 items)
        │
-[Cell 13-14: Walk-Forward Validation & Pre-Test Tournament]
-       │  • 5-Fold expanding walk-forward inside pre-2025 development period
-       │  • Select & freeze finalist per pair on validation metrics ONLY
+[Cell 9-10: High-Resolution Diagnostic Visualizations]
+       │  • ROC Curves (Gated vs Ungated AUC)
        │
-[Cell 15: ===== TEST SET LOCKED =====] ──(Irreversible state barrier)
-       │
-[Cell 16-19: Locked-Test Evaluation, Bootstrap CIs, Stability, Regimes]
-       │
-[Cell 20-22: Consolidated Results Table, Diagnostic Plots, CSV/JSON Export]
+[Cell 11: Export & Summary Table]
+       │  • Saves outputs/comprehensive_metrics_summary.csv
 ```
 
 ---
 
-## 4. Expected Runtime
+## 3. Expected Runtime
 
-- **Cells 1–8** (Setup, Audits, Features, Targets): ~30 seconds
-- **Cells 9–12** (Model definitions & Baselines): ~1 minute
-- **Cell 13–14** (Walk-Forward Validation Tournament across Anchor Pairs): ~5–8 minutes on CPU (faster on T4)
-- **Cell 15–19** (Locked Test Evaluation, 1,000 Bootstrap Resamples, Regime Analysis): ~3–5 minutes
-- **Cell 20–22** (Summary Tables, Visualizations, Export): ~30 seconds
-- **Total Expected Runtime**: ~10–15 minutes.
+- **Total Expected Runtime**: ~20–30 seconds on standard Google Colab CPU.
 
 ---
 
-## 5. Deliverables Generated & Extracted
+## 4. Deliverables Generated & Extracted
 
 Upon completion, the notebook saves:
-1. `outputs/colab_benchmark_results.csv`: Master quantitative comparison across all 12 pairs.
-2. `outputs/colab_benchmark_summary.json`: Complete machine-readable experiment state and parameters.
-3. `outputs/plots/benchmark_actual_vs_predicted.png`: Out-of-sample forecast trajectories.
-4. `outputs/plots/benchmark_regularization_stability.png`: Multi-panel alpha/C sensitivity curves.
-5. `outputs/plots/benchmark_confusion_matrices.png`: Directional classification heatmaps.
+1. `outputs/comprehensive_metrics_summary.csv`: Master out-of-sample metrics across all 8 asset-horizon pairs.
+2. `outputs/roc_curves.png`: High-resolution ROC curves showing ungated vs gated AUC performance.
+3. Live formatted reconciliation table confirming 72/72 checks against `MASTER_EVALUATION_REPORT.md`.
 
 ---
 
-## 6. What Output to Send Back After Running
+## 5. Verification Protocol
 
-After running the notebook, copy and send back:
-1. The **Final Report text output printed by Cell 22** (containing the data, model, target, baseline comparisons, and final verdict per pair).
-2. The **Master Consolidated Results Table from Cell 20** (printed in markdown / CSV format).
-3. Any unexpected assertion failures or warnings produced by Cell 4 (Data Audit) or Cell 5 (Leakage Audit).
+After executing **Runtime -> Run all**, the notebook outputs:
+```text
+==========================================================================================
+VERIFICATION SUMMARY: 72/72 checks PASSED
+>>> SUCCESS: 100% RECONCILIATION CONFIRMED! <<<
+All live Colab outputs match MASTER_EVALUATION_REPORT.md exactly.
+==========================================================================================
+```
+

@@ -277,8 +277,8 @@ Execution signals are validated against physical maritime constraints:
 ## 20. Reproducibility Protocol
 
 All results can be reproduced directly using the repository scripts and Colab notebooks:
-- **Walk-Forward Benchmark Script:** [`scratch/run_step2_bugfix_benchmark.py`](file:///c:/Users/soheb/OneDrive/Desktop/ficos%20final/scratch/run_step2_bugfix_benchmark.py)
-- **Colab Notebook:** [`comprehensive_model_evaluation.ipynb`](https://colab.research.google.com/github/SSOHEB/FICOS-Platform/blob/main/comprehensive_model_evaluation.ipynb)
+- **Walk-Forward Benchmark Script:** [`verify_final_report_metrics.py`](file:///c:/Users/soheb/OneDrive/Desktop/ficos%20final/verify_final_report_metrics.py)
+- **Colab Notebook:** [`notebooks/colab_freight_forecasting_benchmark.ipynb`](https://colab.research.google.com/github/SSOHEB/FICOS-Platform/blob/main/notebooks/colab_freight_forecasting_benchmark.ipynb)
 - **Visual Plots:** `outputs/*.png`
 
 ---
