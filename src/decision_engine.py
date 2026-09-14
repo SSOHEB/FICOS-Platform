@@ -22,45 +22,29 @@ def load_config(config_path="configs/config.yaml"):
         return yaml.safe_load(f)
 
 PROMOTED_PAIRS = {
-    ('cape', '7d'): {
+    ('panamax', '1d'): {
         'optimal_tau': 0.01,
-        'p10': -4745.0,
-        'p90': 7321.0,
+        'p10': -250.0,
+        'p90': 250.0,
         'k': 30,
-        'alpha': 1.0,
-        'historical_precision': 63.3
+        'alpha': 0.1,
+        'historical_precision': 93.5
     },
-    ('kdci', '7d'): {
+    ('handy', '1d'): {
         'optimal_tau': 0.01,
-        'p10': -2190.0,
-        'p90': 2258.0,
-        'k': 10,
+        'p10': -180.0,
+        'p90': 180.0,
+        'k': 30,
         'alpha': 10.0,
-        'historical_precision': 95.5
+        'historical_precision': 90.2
     },
-    ('supramax', '7d'): {
+    ('kdci', '1d'): {
         'optimal_tau': 0.01,
-        'p10': -1315.0,
-        'p90': 1380.0,
-        'k': 50,
+        'p10': -350.0,
+        'p90': 350.0,
+        'k': 30,
         'alpha': 10.0,
-        'historical_precision': 100.0
-    },
-    ('supramax', '14d'): {
-        'optimal_tau': 0.01,
-        'p10': -2200.0,
-        'p90': 1965.0,
-        'k': 50,
-        'alpha': 1.0,
-        'historical_precision': 89.8
-    },
-    ('supramax', '30d'): {
-        'optimal_tau': 0.01,
-        'p10': -2326.0,
-        'p90': 3124.0,
-        'k': 20,
-        'alpha': 10.0,
-        'historical_precision': 100.0
+        'historical_precision': 81.8
     },
 }
 

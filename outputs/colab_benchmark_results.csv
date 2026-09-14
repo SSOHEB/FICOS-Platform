@@ -1,13 +1,21 @@
-asset,horizon,target,model,test_MAE,test_RMSE,test_R2,model_DA,ridge_DA,naive_MAE,precision,signals_fired,coverage_pct,test_days,n_eff,ci_90_low,ci_90_high,cp_90_low,cp_90_high,verdict,rationale
-Handy,7d,vol_norm,XGBoost,530.0,699.7,0.9216,58.0,64.1,480.0,65.51724137931035,58,14.683544303797468,395,56.4,55.2,75.8,54.0,75.8,NO_RELIABLE_EDGE,Does not demonstrate a statistically significant edge over naive persistence.
-Handy,14d,log_return,Ridge_100.0,1033.5,1289.9,0.7252,43.6,50.3,777.3,49.275362318840585,69,17.783505154639176,388,27.7,39.5,58.5,38.8,59.8,NO_RELIABLE_EDGE,Does not demonstrate a statistically significant edge over naive persistence.
-Handy,30d,delta,Ridge_100.0,1434.8,1787.0,0.381,60.1,55.8,1196.8,11.11111111111111,9,2.4193548387096775,372,12.4,0.0,33.3,0.6,42.9,NO_RELIABLE_EDGE,Does not demonstrate a statistically significant edge over naive persistence.
-Supramax,7d,vol_norm,Ridge_10.0,781.3,970.3,0.9285,58.5,61.8,875.0,100.0,14,3.5443037974683547,395,56.4,100.0,100.0,80.7,100.0,UNSTABLE,Small sample alpha spike artifact (N=17); collapses on neighboring regularizations.
-Supramax,14d,delta,Ridge_10.0,1522.1,1933.3,0.7064,52.6,52.1,1386.5,100.0,9,2.3195876288659796,388,27.7,100.0,100.0,71.7,100.0,ROBUST_EDGE,"Verified high precision (100.0%), stable plateau, 90% CI firmly above noise."
-Supramax,30d,delta,Ridge_10.0,1821.3,2236.9,0.5439,65.5,65.5,2029.3,,0,0.0,372,12.4,,,,,NO_RELIABLE_EDGE,Overly conservative residual band; zero actionable signals produced.
-Panamax,7d,delta,RandomForest,1212.9,1531.0,0.8499,57.5,48.1,1172.4,100.0,5,1.2658227848101267,395,56.4,100.0,100.0,54.9,100.0,NO_RELIABLE_EDGE,Does not demonstrate a statistically significant edge over naive persistence.
-Panamax,14d,log_return,XGBoost,1886.9,2354.7,0.6193,52.1,52.1,1751.1,100.0,6,1.5463917525773196,388,27.7,100.0,100.0,60.7,100.0,NO_RELIABLE_EDGE,Does not demonstrate a statistically significant edge over naive persistence.
-Panamax,30d,delta,RandomForest,2674.0,3473.6,0.0353,48.7,50.5,2610.1,,0,0.0,372,12.4,,,,,NO_RELIABLE_EDGE,Overly conservative residual band; zero actionable signals produced.
-Cape,7d,log_return,Ridge_10.0,4596.1,6126.1,0.678,57.5,63.0,3983.6,61.165048543689316,103,26.075949367088608,395,56.4,53.3,69.4,52.6,69.2,NO_RELIABLE_EDGE,Capesize structural volatility prevents reliable 7d/14d/30d directional gating.
-Cape,14d,log_return,RandomForest,5566.1,7158.9,0.5475,53.9,63.1,5416.6,68.75,32,8.24742268041237,388,27.7,55.3,82.2,52.8,82.0,NO_RELIABLE_EDGE,Capesize structural volatility prevents reliable 7d/14d/30d directional gating.
-Cape,30d,delta,XGBoost,7110.1,8770.0,0.2196,52.4,57.0,6554.0,72.54901960784314,51,13.709677419354838,372,12.4,61.9,82.4,60.5,82.6,NO_RELIABLE_EDGE,Capesize structural volatility prevents reliable 7d/14d/30d directional gating.
+asset,horizon,best_model,train_smape,val_smape,test_smape,test_delta_r2,ungated_da,perm_noise_max,passes_perm,alpha_stable,gated_precision,cp_90_low,cp_90_high,gated_coverage,n_fired,verdict
+cape,1d,Ridge,3.65,3.78,3.07,0.155,66.2,61.7,True,True,78.9,58.1,92.5,5.3,19,INSUFFICIENT SAMPLE SIZE FOR CONFIDENCE
+cape,7d,Ridge,16.62,16.36,13.52,-0.1635,60.0,59.1,True,False,61.2,48.5,72.9,14.2,49,UNSTABLE
+cape,14d,Ridge,23.95,24.21,21.55,-0.5223,54.4,65.7,False,True,61.9,54.5,69.0,39.6,134,FAILS PERMUTATION TEST
+cape,30d,ElasticNet,29.83,29.55,24.95,-0.4401,51.9,63.0,False,True,62.5,54.0,70.4,32.3,104,FAILS PERMUTATION TEST
+panamax,1d,ElasticNet,1.57,1.23,1.3,0.3195,73.9,58.0,True,True,93.5,84.0,98.2,12.0,46,GENUINE SIGNAL
+panamax,7d,LightGBM,8.32,7.72,7.43,0.0046,58.1,62.3,False,False,,,,0.0,0,INSUFFICIENT SAMPLE SIZE FOR CONFIDENCE
+panamax,14d,LSTM_seq,14.16,13.07,11.3,-0.0396,46.8,65.9,False,False,,,,0.0,0,INSUFFICIENT SAMPLE SIZE FOR CONFIDENCE
+panamax,30d,RandomForest,15.13,16.89,16.86,-0.1032,52.7,63.9,False,True,,,,0.0,0,INSUFFICIENT SAMPLE SIZE FOR CONFIDENCE
+supramax,1d,RandomForest,0.89,0.83,0.77,0.4071,77.5,60.3,True,False,90.6,81.2,96.2,13.8,53,UNSTABLE
+supramax,7d,LightGBM,5.24,6.02,4.92,0.1824,67.6,57.6,True,True,82.4,60.4,95.0,4.5,17,INSUFFICIENT SAMPLE SIZE FOR CONFIDENCE
+supramax,14d,Ridge,10.26,10.18,10.04,-0.1886,53.8,57.3,False,False,66.7,52.9,78.6,11.4,42,FAILS PERMUTATION TEST
+supramax,30d,LightGBM,12.07,15.18,12.5,0.0587,69.4,63.7,True,False,,,,0.0,0,INSUFFICIENT SAMPLE SIZE FOR CONFIDENCE
+handy,1d,XGBoost,0.92,0.88,0.72,0.3033,71.8,56.7,True,True,90.2,79.0,96.6,10.7,41,GENUINE SIGNAL
+handy,7d,XGBoost,5.03,5.28,3.98,0.0882,68.2,65.0,True,False,61.8,46.2,75.7,9.0,34,UNSTABLE
+handy,14d,LSTM_seq,10.4,9.34,7.07,-0.116,44.1,58.6,False,False,,,,0.0,0,INSUFFICIENT SAMPLE SIZE FOR CONFIDENCE
+handy,30d,LSTM_seq,16.7,14.04,11.43,-0.1752,51.8,65.7,False,True,,,,0.0,0,INSUFFICIENT SAMPLE SIZE FOR CONFIDENCE
+kdci,1d,Ridge,2.51,1.72,1.62,0.2122,68.2,57.8,True,True,81.8,67.2,91.8,8.5,33,GENUINE SIGNAL
+kdci,7d,Ridge,8.96,7.84,8.0,-0.1162,59.1,61.9,False,False,75.0,59.4,86.9,8.4,32,FAILS PERMUTATION TEST
+kdci,14d,ElasticNet,14.11,11.89,19.06,-1.5813,41.7,63.1,False,True,53.7,47.2,60.1,46.8,175,FAILS PERMUTATION TEST
+kdci,30d,ElasticNet,19.78,16.32,21.84,-0.7708,46.9,71.2,False,False,41.1,35.1,47.3,53.1,190,FAILS PERMUTATION TEST
