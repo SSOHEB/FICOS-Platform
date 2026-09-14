@@ -30,13 +30,21 @@ PROMOTED_PAIRS = {
         'alpha': 0.1,
         'historical_precision': 93.5
     },
+    ('supramax', '7d'): {
+        'optimal_tau': 0.01,
+        'p10': -1315.0,
+        'p90': 1380.0,
+        'k': 30,
+        'alpha': 10.0,
+        'historical_precision': 75.0
+    },
     ('handy', '1d'): {
         'optimal_tau': 0.01,
         'p10': -180.0,
         'p90': 180.0,
         'k': 30,
         'alpha': 10.0,
-        'historical_precision': 90.2
+        'historical_precision': 85.7
     },
     ('kdci', '1d'): {
         'optimal_tau': 0.01,
