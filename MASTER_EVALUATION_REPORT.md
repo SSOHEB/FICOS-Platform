@@ -208,6 +208,8 @@ Since **Panamax 1D (91.1%)**, **Supramax 1D (85.0%)**, **Handy 1D (79.2%)**, and
 
 > **Note on permutation resolution:** With $B=20$ permutations, the empirical p-value resolution is limited to $1/20 = 0.05$. The magnitude of the gap between promoted pair performance (71–91%) and permutation maximum (53.2%) provides strong evidence, but a formal $p < 0.001$ claim would require $B \ge 1{,}000$ shuffles.
 
+> **Note on permutation script provenance:** The permutation test was executed in a prior experimental session during benchmark development. The permutation script is not currently maintained in the production repository. The reported values (53.2% / 54.8% / 56.1%) represent the results from that session. The primary validity of all promoted results is independently established by the 72/72 reconciliation in `verify_final_report_metrics.py`, which does not depend on the permutation evidence.
+
 ---
 
 ## 15. Final Validated Model Registry
@@ -250,9 +252,13 @@ The FICOS decision engine (`src/decision_engine.py`) integrates model signals wi
 ## 17. Vessel & Port Feasibility Integration
 
 Execution signals are validated against physical maritime constraints:
-- **Port Draft Limits:** Restricts Capesize/Panamax loading recommendations if port depth $< 14.5\text{m}$.
-- **Bunker Consumption Rate:** Adjusts net voyage yield based on VLSFO / MGO fuel price deltas.
-- **Canal Transit Rules:** Incorporates Panama and Suez Canal transit backlog penalties into voyage duration estimates.
+- **Port Draft Limits:** Restricts Capesize/Panamax loading recommendations if port depth $< 14.5\text{m}$. ✅ Implemented in `src/feasibility_engine.py`.
+- **Historical Port Detention Risk:** PBDT/TRT evidence used to compute a port risk score (0–100). ✅ Implemented in `src/feasibility_engine.py`.
+
+**Production deployment requirements** (not yet implemented in current codebase):
+- **Bunker Consumption Rate:** Adjusting net voyage yield based on VLSFO / MGO fuel price deltas is a production requirement. Currently the indicative cost/risk score (0–100) captures directional freight exposure but does not compute voyage-level bunker cost.
+- **Canal Transit Rules:** Panama and Suez Canal transit backlog penalties are a production requirement. Not implemented in current `decision_engine.py`.
+- **Expected-Cost-of-Waiting Model:** A probability-weighted economic cost comparison between BUY NOW and WAIT actions (using idle vessel cost, delay penalty, and cargo holding cost) is a production requirement. The current engine uses a threshold rule, not an expected-cost calculation.
 
 ---
 
