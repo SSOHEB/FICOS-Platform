@@ -24,6 +24,25 @@ def load_config():
         return yaml.safe_load(f)
 
 
+def _resolve_path(rel_path):
+    """Resolve path checking data/ folder, exact config path, and root directory."""
+    root = _project_root()
+    p = Path(rel_path)
+    # 1. Check data/ directory with basename
+    cand1 = root / "data" / p.name
+    if cand1.exists():
+        return cand1
+    # 2. Check exact relative path from project root
+    cand2 = root / p
+    if cand2.exists():
+        return cand2
+    # 3. Check root directory with basename
+    cand3 = root / p.name
+    if cand3.exists():
+        return cand3
+    return cand1
+
+
 # ──────────────────────────────────────────────
 # Dataset A
 # ──────────────────────────────────────────────
@@ -34,7 +53,7 @@ def load_dataset_a(cfg=None):
     """
     if cfg is None:
         cfg = load_config()
-    path = _project_root() / cfg["paths"]["dataset_a"]
+    path = _resolve_path(cfg["paths"].get("dataset_a", "dataset_a_final_clean.csv"))
 
     df = pd.read_csv(path)
 
@@ -82,7 +101,7 @@ def load_dataset_b(sheet_name=None, cfg=None):
     """
     if cfg is None:
         cfg = load_config()
-    path = _project_root() / cfg["paths"]["dataset_b"]
+    path = _resolve_path(cfg["paths"].get("dataset_b", "DATASET_B_FINAL_FIXED (1).xlsx"))
 
     if sheet_name is None:
         sheets = DATASET_B_SHEETS
@@ -113,7 +132,7 @@ def load_dataset_c(sheet_name=None, cfg=None):
     """
     if cfg is None:
         cfg = load_config()
-    path = _project_root() / cfg["paths"]["dataset_c"]
+    path = _resolve_path(cfg["paths"].get("dataset_c", "DATASET_C_FINAL.xlsx"))
 
     if sheet_name is None:
         sheets = DATASET_C_SHEETS

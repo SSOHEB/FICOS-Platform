@@ -1,15 +1,40 @@
-# Python bytecode & cache
+# Python bytecode & runtime cache
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+.pytest_cache/
 
-# IDE & OS files
+# IDE, OS & System-generated files
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
-
-# System generated logs / cache
+*.swp
 .system_generated/
 .gemini/
 scratch/
+
+# Sensitive Information & Credentials
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+secrets/
+token.json
+
+# Datasets, Pre-trained Models & Sensitive Market Data (NEVER PUSH TO PUBLIC GITHUB)
+data/
+models/
+*.xlsx
+*.xls
+*.parquet
+*.h5
+*.feather
+*.pkl
+*.pickle
+
+# Output data dumps & heavy caches (local runtime outputs)
+outputs/
+!outputs/comprehensive_metrics_summary.csv

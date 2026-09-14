@@ -3,13 +3,16 @@
 # ─────────────────────────────────────────────────────────────
 
 paths:
-  dataset_a: "dataset_a_final_clean.csv"
-  dataset_b: "DATASET_B_FINAL_FIXED (1).xlsx"
-  dataset_c: "DATASET_C_FINAL.xlsx"
+  data_dir: "data"
+  dataset_a: "data/dataset_a_final_clean.csv"
+  dataset_b: "data/DATASET_B_FINAL_FIXED (1).xlsx"
+  dataset_c: "data/DATASET_C_FINAL.xlsx"
+  modeling_dataset: "data/modeling_dataset.csv"
   outputs_dir: "outputs"
   models_dir: "models"
   reports_dir: "reports"
-  plots_dir: "outputs/plots"
+  images_dir: "images"
+  plots_dir: "images"
 
 # Freight targets to forecast
 freight_targets:
