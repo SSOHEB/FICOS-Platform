@@ -1,0 +1,6 @@
+asset,horizon,headline_precision,n_signals_fired,n_test_days,coverage_pct,ci_90_lower,ci_90_upper,ci_95_lower,ci_95_upper,ci_width_90,bootstrap_median_prec,ungated_da_real,ungated_da_ci_90_lower,ungated_da_ci_90_upper,valid_bootstrap_evals
+cape,7d,63.3,49,345,14.2,52.0,74.0,50.0,75.9,22.0,63.0,60.0,55.7,64.3,1000
+kdci,7d,95.5,22,381,5.8,87.5,100.0,85.7,100.0,12.5,95.7,55.6,51.7,59.8,1000
+supramax,7d,100.0,17,377,4.5,100.0,100.0,100.0,100.0,0.0,100.0,61.5,57.6,65.8,1000
+supramax,14d,89.8,49,370,13.2,81.8,96.2,80.4,97.8,14.4,90.0,60.0,56.2,64.3,1000
+supramax,30d,,0,354,0.0,,,,,,,54.7,50.3,59.0,0

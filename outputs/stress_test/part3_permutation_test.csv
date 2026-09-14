@@ -1,0 +1,6 @@
+asset,horizon,real_ungated_DA,real_gated_precision,real_n_fired,perm_ungated_DA_mean,perm_ungated_DA_std,perm_ungated_DA_min,perm_ungated_DA_max,perm_gated_mean,perm_gated_std,perm_gated_min,perm_gated_max,perm_n_fired_mean,perm_runs_with_signals,total_perm_runs
+cape,7d,60.0,63.3,49,50.0,4.2,42.3,57.1,20.7,19.4,0.0,50.0,0.8,5,20
+kdci,7d,55.6,95.5,22,50.4,4.9,40.9,59.6,0.0,0.0,0.0,0.0,0.1,1,20
+supramax,7d,61.5,100.0,17,53.5,4.5,44.3,62.9,56.7,38.9,0.0,100.0,0.5,5,20
+supramax,14d,60.0,89.8,49,53.2,7.6,40.5,66.8,47.2,43.2,0.0,100.0,2.3,11,20
+supramax,30d,54.7,,0,49.1,9.2,35.4,65.2,50.0,50.0,0.0,100.0,0.2,2,20

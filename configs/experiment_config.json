@@ -1,0 +1,133 @@
+{
+  "experiment_name": "colab_freight_forecasting_benchmark",
+  "version": "1.0.0",
+  "random_seed": 42,
+  "data_path": "outputs/modeling_dataset.csv",
+  "remote_repo_url": "https://github.com/SSOHEB/FICOS-Platform.git",
+  "date_splits": {
+    "train_end": "2023-01-01",
+    "val_end": "2025-01-01",
+    "test_start": "2025-01-01",
+    "description": "Train: date < 2023-01-01 (1,699 rows). Dev/Val: 2023-01-01 <= date < 2025-01-01 (480 rows). Locked Test: date >= 2025-01-01 (402 rows). Exactly non-overlapping calendar boundaries."
+  },
+  "assets": ["handy", "supramax", "panamax", "cape"],
+  "horizons": [7, 14, 30],
+  "anchor_pairs": [
+    ["supramax", 14],
+    ["supramax", 7],
+    ["cape", 7],
+    ["panamax", 14]
+  ],
+  "target_formulations": [
+    {
+      "id": "target_a_delta",
+      "name": "Absolute Delta",
+      "formula": "y[t+h] - y[t]"
+    },
+    {
+      "id": "target_b_pct_return",
+      "name": "Percentage Return",
+      "formula": "(y[t+h] - y[t]) / y[t]"
+    },
+    {
+      "id": "target_c_log_return",
+      "name": "Log Return",
+      "formula": "log(y[t+h] / y[t])"
+    },
+    {
+      "id": "target_d_vol_normalized",
+      "name": "Volatility-Normalized Change",
+      "formula": "(y[t+h] - y[t]) / rolling_std_30d[t]"
+    },
+    {
+      "id": "target_e_classification",
+      "name": "3-Class Directional",
+      "formula": "UP: > +tau, DOWN: < -tau, NEUTRAL: between -tau and +tau"
+    }
+  ],
+  "candidate_models": {
+    "regression": [
+      "Naive_Persistence",
+      "Ridge",
+      "ElasticNet",
+      "RandomForest",
+      "XGBoost",
+      "LightGBM",
+      "HistGradientBoosting",
+      "CatBoost"
+    ],
+    "classification": [
+      "Majority_Classifier",
+      "LogisticRegression",
+      "HistGradientBoostingClassifier",
+      "XGBClassifier"
+    ]
+  },
+  "hyperparameter_grids": {
+    "Ridge": {
+      "alpha": [0.1, 1.0, 10.0, 100.0, 1000.0]
+    },
+    "ElasticNet": {
+      "alpha": [0.01, 0.1, 1.0, 10.0],
+      "l1_ratio": [0.1, 0.5, 0.9]
+    },
+    "RandomForest": {
+      "n_estimators": [100],
+      "max_depth": [4, 8],
+      "min_samples_leaf": [5, 20]
+    },
+    "HistGradientBoosting": {
+      "learning_rate": [0.03, 0.1],
+      "max_iter": [100],
+      "max_leaf_nodes": [15, 31],
+      "min_samples_leaf": [20]
+    },
+    "XGBoost": {
+      "n_estimators": [100],
+      "max_depth": [3, 5],
+      "learning_rate": [0.03, 0.1],
+      "subsample": [0.8]
+    },
+    "LightGBM": {
+      "n_estimators": [100],
+      "max_depth": [3, 5],
+      "learning_rate": [0.03, 0.1],
+      "subsample": [0.8]
+    },
+    "CatBoost": {
+      "iterations": [100],
+      "depth": [4, 6],
+      "learning_rate": [0.05],
+      "verbose": [0]
+    },
+    "LogisticRegression": {
+      "C": [0.001, 0.01, 0.1, 1.0, 10.0]
+    },
+    "HistGradientBoostingClassifier": {
+      "learning_rate": [0.03, 0.1],
+      "max_iter": [100],
+      "max_leaf_nodes": [15]
+    },
+    "XGBClassifier": {
+      "n_estimators": [100],
+      "max_depth": [3, 4],
+      "learning_rate": [0.05]
+    }
+  },
+  "feature_selection": {
+    "method": "SelectKBest_f_regression",
+    "k_options": [10, 20, 30, 50],
+    "fit_inside_train_fold_only": true
+  },
+  "decision_thresholds_tau": [0.005, 0.01, 0.02],
+  "walk_forward_validation": {
+    "n_splits": 5,
+    "min_train_size": 800,
+    "max_val_date": "2025-01-01"
+  },
+  "statistical_evaluation": {
+    "bootstrap_iterations": 1000,
+    "confidence_level": 0.90,
+    "exact_binomial": "Clopper-Pearson and Wilson score"
+  }
+}
