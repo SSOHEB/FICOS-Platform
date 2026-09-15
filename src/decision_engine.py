@@ -15,7 +15,13 @@ import json
 import yaml
 import numpy as np
 import pandas as pd
-from feasibility_engine import FeasibilityEngine
+try:
+    from src.operational.feasibility_engine import FeasibilityEngine
+except ImportError:
+    try:
+        from src.feasibility_engine import FeasibilityEngine
+    except ImportError:
+        from feasibility_engine import FeasibilityEngine
 
 def load_config(config_path="configs/config.yaml"):
     with open(config_path, "r", encoding="utf-8") as f:

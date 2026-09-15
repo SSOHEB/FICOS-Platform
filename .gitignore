@@ -45,3 +45,7 @@ models/*.onnx
 
 # Output directories
 outputs/modeling_dataset.csv
+
+# Frontend sub-repo / node_modules
+ficoss/
+node_modules/
