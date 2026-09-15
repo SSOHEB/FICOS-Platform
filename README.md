@@ -1,4 +1,4 @@
-# FICOS — Freight Intelligence & Chartering Optimization System
+# FICOS  Freight Intelligence & Chartering Optimization System
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/SSOHEB/FICOS-Platform/blob/main/notebooks/colab_freight_forecasting_benchmark.ipynb)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
