@@ -1,0 +1,138 @@
+# ─────────────────────────────────────────────────────────────
+# FICOS — Cost Model Configuration
+#
+# IMPORTANT DISCLAIMER:
+# The values below are ASSUMPTIONS used for scenario-based analysis.
+# They are NOT verified commercial rates for SAIL or any specific
+# company. Do not treat these as actual procurement costs.
+# All assumptions are labelled explicitly.
+#
+# Usage: The cost model uses these to compute indicative economics
+# for BUY NOW vs. WAIT analysis. Adjust per actual commercial intelligence.
+# ─────────────────────────────────────────────────────────────
+
+assumptions_disclosure: >
+  All cost parameters marked assumption=true are illustrative placeholders
+  used for economic comparison logic. They do NOT represent actual SAIL,
+  shipper, or broker contractual rates. Present scenario-based results
+  only as "under stated assumptions."
+
+# ─────────────────────────────────────────────────────────────
+# WAITING / HOLDING COST ASSUMPTIONS
+# ─────────────────────────────────────────────────────────────
+waiting_cost:
+  # Daily cost of vessel idle time while waiting for a cheaper rate window
+  vessel_idle_cost_usd_per_day:
+    value: 8000          # assumption: mid-range Supramax daily hire equivalent
+    unit: "USD/day"
+    assumption: true
+    source: "Industry estimate (Supramax TCA equivalent)"
+    confidence: "LOW"
+
+  # Working capital / inventory carrying cost per day of waiting
+  inventory_carrying_cost_usd_per_day:
+    value: 2000          # assumption: 1% annual carrying cost on ~$73M cargo value
+    unit: "USD/day"
+    assumption: true
+    source: "Derived from assumed coal value"
+    confidence: "LOW"
+
+# ─────────────────────────────────────────────────────────────
+# DELAY PENALTY ASSUMPTIONS
+# ─────────────────────────────────────────────────────────────
+delay_cost:
+  # Penalty per day of delivery delay past contracted window
+  delay_penalty_usd_per_day:
+    value: 5000          # assumption: typical supply contract delay clause
+    unit: "USD/day"
+    assumption: true
+    source: "Industry estimate"
+    confidence: "LOW"
+
+  # Probability of delay given WAIT decision (0-1 scale)
+  prob_delay_given_wait:
+    value: 0.2           # assumption: 20% chance waiting causes operational delay
+    unit: "probability"
+    assumption: true
+    source: "Conservative assumption"
+    confidence: "LOW"
+
+# ─────────────────────────────────────────────────────────────
+# PORT / DEMURRAGE COST ASSUMPTIONS
+# ─────────────────────────────────────────────────────────────
+port_costs:
+  # Daily demurrage rate if vessel exceeds agreed laytime
+  demurrage_rate_usd_per_day:
+    value: 10000         # assumption: typical Supramax/Panamax demurrage
+    unit: "USD/day"
+    assumption: true
+    source: "Industry estimate"
+    confidence: "LOW"
+
+  # Expected average demurrage days per shipment (based on Dataset B PBDT averages)
+  expected_demurrage_days:
+    value: null          # loaded from Dataset B PBDT data at runtime; null = use Dataset B
+    unit: "days"
+    assumption: false
+    source: "Dataset B (PBDT historical pre-berthing detention hours)"
+    confidence: "MEDIUM"
+
+# ─────────────────────────────────────────────────────────────
+# BUNKER / CANAL COST ASSUMPTIONS
+# ─────────────────────────────────────────────────────────────
+bunker_costs:
+  status: "NOT_IMPLEMENTED"
+  note: >
+    Bunker cost calculation is NOT currently implemented.
+    Bunker prices are not included in Dataset A and no validated
+    source is connected. This cost component is listed as a
+    placeholder for future implementation.
+  value: null
+  assumption: true
+
+canal_costs:
+  status: "NOT_IMPLEMENTED"
+  note: >
+    Canal charges (Suez, Panama) are NOT currently implemented.
+    These are route-dependent and require route configuration
+    per cargo origin-destination pair.
+  value: null
+  assumption: true
+
+# ─────────────────────────────────────────────────────────────
+# FREIGHT COST SCALING
+# ─────────────────────────────────────────────────────────────
+freight_scaling:
+  # Freight index values are in $/day time-charter equivalent (TCE) terms.
+  # To convert to a voyage cost: multiply by voyage duration.
+  # Typical voyage durations (assumption):
+  voyage_durations_days:
+    australia_to_india: 20       # assumption: ~20 days transit
+    indonesia_to_india: 8        # assumption: ~8 days transit
+    south_africa_to_india: 18    # assumption: ~18 days transit
+    assumption: true
+    source: "Industry routing estimate"
+
+# ─────────────────────────────────────────────────────────────
+# RISK COST PREMIUM ASSUMPTIONS
+# ─────────────────────────────────────────────────────────────
+risk_premium:
+  # Additional cost applied per shipment when risk level is HIGH
+  high_risk_premium_usd:
+    value: 15000         # assumption: risk surcharge for HIGH disruption events
+    unit: "USD/shipment"
+    assumption: true
+    source: "Conservative industry estimate"
+    confidence: "LOW"
+
+  medium_risk_premium_usd:
+    value: 5000          # assumption
+    unit: "USD/shipment"
+    assumption: true
+    source: "Conservative industry estimate"
+    confidence: "LOW"
+
+  low_risk_premium_usd:
+    value: 0
+    unit: "USD/shipment"
+    assumption: false

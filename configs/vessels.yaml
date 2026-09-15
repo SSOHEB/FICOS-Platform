@@ -1,0 +1,94 @@
+# ─────────────────────────────────────────────────────────────
+# FICOS — Vessel Class Configuration
+# Source: IMO / industry standard vessel class specifications.
+# These are TYPICAL/REPRESENTATIVE values for each class.
+# Individual vessel specs vary; this config represents the class envelope.
+# ─────────────────────────────────────────────────────────────
+
+vessel_classes:
+
+  handysize:
+    display_name: "Handysize"
+    code: "HANDY"
+    freight_index: "handy"        # maps to Dataset A column name
+    dwt_min: 20000
+    dwt_max: 40000
+    typical_dwt: 30000
+    typical_draft_m: 10.0
+    typical_loa_m: 180.0
+    typical_beam_m: 28.0
+    cargo_types:
+      - "Thermal Coal"
+      - "Coking Coal"
+      - "Iron Ore"
+      - "Fertilizer"
+      - "Grain"
+      - "Cement"
+      - "General Bulk"
+    notes: >
+      Handysize vessels are the smallest standard dry bulk class.
+      Suitable for smaller Indian coastal ports such as Haldia.
+
+  supramax:
+    display_name: "Supramax"
+    code: "SUPRA"
+    freight_index: "supramax"     # maps to Dataset A column name
+    dwt_min: 45000
+    dwt_max: 62000
+    typical_dwt: 55000
+    typical_draft_m: 12.5
+    typical_loa_m: 200.0
+    typical_beam_m: 32.0
+    cargo_types:
+      - "Thermal Coal"
+      - "Coking Coal"
+      - "Iron Ore"
+      - "Fertilizer"
+      - "Grain"
+    notes: >
+      Supramax is the most common vessel class in Indian dry bulk trade.
+      Self-geared vessels can operate at ports with limited equipment.
+
+  panamax:
+    display_name: "Panamax"
+    code: "PANA"
+    freight_index: "panamax"      # maps to Dataset A column name
+    dwt_min: 63000
+    dwt_max: 85000
+    typical_dwt: 75000
+    typical_draft_m: 14.0
+    typical_loa_m: 225.0
+    typical_beam_m: 32.3
+    cargo_types:
+      - "Thermal Coal"
+      - "Coking Coal"
+      - "Iron Ore"
+    notes: >
+      Panamax vessels are constrained by the original Panama Canal dimensions.
+      Suitable for Paradip, Vizag, Gangavaram, and Dhamra with appropriate berths.
+
+  capesize:
+    display_name: "Capesize"
+    code: "CAPE"
+    freight_index: "cape"         # maps to Dataset A column name
+    dwt_min: 100000
+    dwt_max: 200000
+    typical_dwt: 150000
+    typical_draft_m: 17.5
+    typical_loa_m: 290.0
+    typical_beam_m: 45.0
+    cargo_types:
+      - "Thermal Coal"
+      - "Iron Ore"
+    notes: >
+      Capesize vessels require deep-water berths. Only Gangavaram and
+      Vizag (specific berths) can typically accommodate Capesize in this port set.
+      Very large cargo volumes only.
+
+# Priority order for vessel selection when multiple vessels are feasible
+# and cost model is not yet determinative
+selection_priority:
+  - "SUPRA"
+  - "PANA"
+  - "HANDY"
+  - "CAPE"

@@ -1,0 +1,75 @@
+# ─────────────────────────────────────────────────────────────
+# FICOS — Risk Policy Configuration
+#
+# Controls how Dataset C signals are aggregated into a RiskResult
+# and how risk adjustments flow into the decision economics.
+# ─────────────────────────────────────────────────────────────
+
+# ─────────────────────────────────────────────────────────────
+# RISK LEVEL CLASSIFICATION THRESHOLDS
+# Each sub-score (weather, geopolitical, disruption) is 0-100.
+# The overall risk level is determined by the maximum sub-score.
+# ─────────────────────────────────────────────────────────────
+risk_levels:
+  low_threshold: 30.0      # score < 30 → LOW
+  medium_threshold: 65.0   # 30 ≤ score < 65 → MEDIUM
+  # score ≥ 65 → HIGH
+
+  classifications:
+    low: "LOW"
+    medium: "MEDIUM"
+    high: "HIGH"
+
+# ─────────────────────────────────────────────────────────────
+# WEATHER RISK PARAMETERS
+# Uses Dataset C weather signals and configurable thresholds.
+# ─────────────────────────────────────────────────────────────
+weather_risk:
+  # These must match configs/config.yaml weather_indicators
+  high_wind_kmh: 50
+  heavy_precip_mm: 50
+  cyclone_proximity_km: 500     # cyclone within 500km triggers HIGH risk
+
+  # Score assignments (0-100)
+  cyclone_active_score: 85.0    # cyclone within proximity threshold
+  high_wind_score: 60.0         # high wind indicator active
+  heavy_precip_score: 45.0      # heavy precipitation indicator
+  normal_score: 10.0            # no weather alerts
+
+# ─────────────────────────────────────────────────────────────
+# GEOPOLITICAL RISK PARAMETERS
+# Uses GDELT event burst signals from the modeling dataset.
+# ─────────────────────────────────────────────────────────────
+geopolitical_risk:
+  # GDELT event count thresholds
+  burst_count_threshold: 50     # daily event count > 50 → elevated
+
+  # Score assignments (0-100)
+  burst_active_score: 75.0      # GDELT burst detected
+  elevated_score: 40.0          # elevated but not burst
+  normal_score: 10.0            # no GDELT signal
+
+# ─────────────────────────────────────────────────────────────
+# DISRUPTION RISK AGGREGATION
+# Overall disruption score = max(weather_risk, geopolitical_risk)
+# ─────────────────────────────────────────────────────────────
+disruption_aggregation:
+  method: "max"                  # "max" | "weighted_mean"
+  weights:                       # used if method="weighted_mean"
+    weather: 0.5
+    geopolitical: 0.5
+
+# ─────────────────────────────────────────────────────────────
+# RISK-TO-COST ADJUSTMENT
+# Converts a risk level into an additional cost term that enters
+# the expected cost of waiting calculation.
+# See also: configs/cost_model.yaml risk_premium section.
+# ─────────────────────────────────────────────────────────────
+risk_cost_adjustment:
+  # References cost_model.yaml risk_premium values
+  apply_to_waiting_cost: true    # risk premium is added to expected_cost_wait
+  apply_to_now_cost: false       # risk premium does NOT inflate expected_cost_now
+  note: >
+    High disruption risk increases the expected cost of waiting
+    because a disruption while waiting may prevent chartering altogether
+    or force chartering at a worse rate.

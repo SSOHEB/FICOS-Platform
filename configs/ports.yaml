@@ -1,0 +1,111 @@
+# ─────────────────────────────────────────────────────────────
+# FICOS — Port Configuration (Dataset B)
+# Source: Ministry of Ports / Dataset B (DATASET_B_FINAL_FIXED)
+#
+# IMPORTANT: Values marked "unknown" are NOT fabricated.
+# If a berth-level limit is not in Dataset B, it is listed as null/unknown.
+# Port-level limits here are conservative cross-berth maxima.
+# ─────────────────────────────────────────────────────────────
+
+ports:
+
+  paradip:
+    display_name: "Paradip Port"
+    code: "PARA"
+    country: "India"
+    state: "Odisha"
+    cargo_types_supported:
+      - "Thermal Coal"
+      - "Coking Coal"
+      - "Iron Ore"
+      - "Fertilizer"
+    constraints:
+      max_draft_m: 14.5          # cross-berth max from Dataset B
+      max_loa_m: 250.0           # cross-berth max from Dataset B
+      max_dwt_mt: 100000         # cross-berth max DWT capacity
+    tidal_port: false
+    monsoon_restrictions: false
+    operational_notes: >
+      Paradip is a major East Coast India bulk port. Dataset B berth data
+      used for constraint validation. Draft/LOA/DWT limits are conservative
+      maxima across all surveyed berths.
+
+  visakhapatnam:
+    display_name: "Visakhapatnam Port (Vizag)"
+    code: "VIZAG"
+    country: "India"
+    state: "Andhra Pradesh"
+    cargo_types_supported:
+      - "Thermal Coal"
+      - "Coking Coal"
+      - "Iron Ore"
+      - "Fertilizer"
+      - "General Cargo"
+    constraints:
+      max_draft_m: 16.0          # cross-berth max from Dataset B
+      max_loa_m: 280.0           # cross-berth max from Dataset B
+      max_dwt_mt: 150000         # cross-berth max DWT capacity
+    tidal_port: false
+    monsoon_restrictions: false
+    operational_notes: >
+      Vizag is one of the largest natural harbours in India. Capesize-capable
+      at specific berths. Dataset B berth data used.
+
+  gangavaram:
+    display_name: "Gangavaram Port"
+    code: "GANG"
+    country: "India"
+    state: "Andhra Pradesh"
+    cargo_types_supported:
+      - "Thermal Coal"
+      - "Coking Coal"
+      - "Iron Ore"
+    constraints:
+      max_draft_m: 17.0          # cross-berth max from Dataset B
+      max_loa_m: 300.0           # cross-berth max from Dataset B
+      max_dwt_mt: 200000         # cross-berth max DWT capacity
+    tidal_port: false
+    monsoon_restrictions: false
+    operational_notes: >
+      Gangavaram Port is a private deepwater port capable of handling
+      Capesize vessels. Dataset B berth data used.
+
+  dhamra:
+    display_name: "Dhamra Port"
+    code: "DHAM"
+    country: "India"
+    state: "Odisha"
+    cargo_types_supported:
+      - "Thermal Coal"
+      - "Coking Coal"
+      - "Iron Ore"
+    constraints:
+      max_draft_m: 17.0          # cross-berth max from Dataset B
+      max_loa_m: 300.0           # cross-berth max from Dataset B
+      max_dwt_mt: 180000         # cross-berth max DWT capacity
+    tidal_port: true             # tidal restrictions apply at some berths
+    monsoon_restrictions: true   # monsoon weather constraints from Dataset C
+    operational_notes: >
+      Dhamra Port is a deepwater private port. Tidal restrictions apply
+      for large-draft vessels. Monsoon season (June-September) introduces
+      operational risk. Dataset B berth data used.
+
+  haldia:
+    display_name: "Haldia Dock Complex"
+    code: "HDC"
+    country: "India"
+    state: "West Bengal"
+    cargo_types_supported:
+      - "Thermal Coal"
+      - "Fertilizer"
+      - "General Cargo"
+    constraints:
+      max_draft_m: 8.5           # cross-berth max from Dataset B (tidal river port)
+      max_loa_m: 180.0           # cross-berth max from Dataset B
+      max_dwt_mt: 40000          # cross-berth max DWT capacity
+    tidal_port: true             # tidal restrictions — Hooghly river
+    monsoon_restrictions: true   # flood/siltation risk in monsoon
+    operational_notes: >
+      Haldia Dock Complex is a river port on the Hooghly. Draft is severely
+      constrained by tidal conditions and river siltation. Handysize and
+      small Supramax only. Dataset B berth data used.

@@ -1,0 +1,105 @@
+# ─────────────────────────────────────────────────────────────
+# FICOS — Decision Policy Configuration
+#
+# These parameters govern when the system recommends BUY_NOW,
+# WAIT, or FLEXIBLE_INDEX. All thresholds are exposed here
+# and must NOT be hard-coded in Python.
+# ─────────────────────────────────────────────────────────────
+
+# ─────────────────────────────────────────────────────────────
+# UNCERTAINTY GATE CLASSIFICATION
+# Controls how wide the P10-P90 band must be (relative to current rate)
+# to classify forecast confidence as LOW / MEDIUM / HIGH.
+# ─────────────────────────────────────────────────────────────
+uncertainty:
+  # Interval width as % of current rate
+  low_threshold_pct: 5.0       # < 5% of current rate → LOW uncertainty
+  medium_threshold_pct: 15.0   # 5-15% → MEDIUM uncertainty
+  # > 15% → HIGH uncertainty (default)
+
+  # Classification mapping
+  classification:
+    low: "LOW"
+    medium: "MEDIUM"
+    high: "HIGH"
+
+# ─────────────────────────────────────────────────────────────
+# DIRECTIONAL DECISION THRESHOLDS
+# A forecast delta must EXCEED these thresholds AND clear the
+# uncertainty band (P10/P90) to trigger a directional recommendation.
+# ─────────────────────────────────────────────────────────────
+directional_thresholds:
+  # Minimum absolute percentage change to trigger BUY_NOW or WAIT
+  # (expressed as a fraction, e.g., 0.01 = 1%)
+  minimum_pct_move: 0.01    # from validated PROMOTED_PAIRS registry
+
+  # If cost comparison is available, this threshold is overridden
+  # by the cost-of-waiting margin below.
+  note: >
+    This threshold is the fallback when cost model data is unavailable.
+    Prefer the expected_cost_margin for production decisions.
+
+# ─────────────────────────────────────────────────────────────
+# EXPECTED COST OF WAITING POLICY
+# ─────────────────────────────────────────────────────────────
+cost_of_waiting:
+  # If (expected_cost_wait - expected_cost_now) > cost_indifference_band_usd,
+  # recommend BUY_NOW (waiting is clearly more expensive).
+  # If (expected_cost_now - expected_cost_wait) > cost_indifference_band_usd,
+  # recommend WAIT (chartering now is clearly more expensive).
+  # Otherwise, recommend FLEXIBLE_INDEX.
+  cost_indifference_band_usd: 20000   # within ±$20K → FLEXIBLE
+
+  # Maximum expected idle days before WAIT is penalised heavily
+  max_acceptable_wait_days: 14        # beyond 14 days idle → strong BUY_NOW pressure
+
+# ─────────────────────────────────────────────────────────────
+# RISK OVERRIDE RULES
+# Risk level can override or shift the primary cost-based decision.
+# ─────────────────────────────────────────────────────────────
+risk_overrides:
+  # If risk level is HIGH AND primary decision is WAIT:
+  #   → shift to FLEXIBLE_INDEX (waiting during high disruption is risky)
+  high_risk_converts_wait_to_flexible: true
+
+  # If risk level is HIGH AND primary decision is BUY_NOW:
+  #   → no change; confirms urgency
+  high_risk_strengthens_buy_now: true
+
+  # If risk level is HIGH AND primary decision is FLEXIBLE:
+  #   → no change; flexible contracts provide index protection
+  high_risk_keeps_flexible: true
+
+# ─────────────────────────────────────────────────────────────
+# DECISION PRIORITY ORDER
+# (Defines which considerations take precedence)
+# ─────────────────────────────────────────────────────────────
+decision_priority:
+  1: "operational_feasibility"   # Is shipment physically possible?
+  2: "vessel_feasibility"        # Which vessels are compliant?
+  3: "forecast_signal"           # What does the freight forecast say?
+  4: "cost_of_waiting"           # What does waiting cost?
+  5: "risk_adjustment"           # Does risk change the decision?
+  6: "final_strategy"            # BUY_NOW / WAIT / FLEXIBLE_INDEX
+
+# ─────────────────────────────────────────────────────────────
+# ALLOWED DECISION STATES
+# Do NOT add new decision strings without updating this list.
+# ─────────────────────────────────────────────────────────────
+allowed_decisions:
+  - "BUY_NOW"
+  - "WAIT"
+  - "FLEXIBLE_INDEX"
+  - "ALTERNATIVE_PORT"
+  - "REJECT_SHIPMENT"
+
+# ─────────────────────────────────────────────────────────────
+# FALLBACK STRATEGY
+# Used when no promoted model is available for the requested
+# asset-horizon combination.
+# ─────────────────────────────────────────────────────────────
+fallback:
+  strategy: "FLEXIBLE_INDEX"
+  reason: >
+    Forecast signal is not available for this asset-horizon combination.
+    Defaulting to flexible/index-linked chartering to avoid directional bet.

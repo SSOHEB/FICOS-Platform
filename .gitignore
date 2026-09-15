@@ -24,10 +24,12 @@ credentials.json
 secrets/
 token.json
 
-# Raw Datasets & Binary Model Weights
+# Datasets & Confidential Time-Series Data (HIDDEN)
+data/
 data/*
-!data/modeling_dataset.csv
-models/
+*.csv
+!outputs/comprehensive_metrics_summary.csv
+!outputs/model_reconciliation_summary.csv
 *.xlsx
 *.xls
 *.parquet
@@ -36,6 +38,10 @@ models/
 *.pkl
 *.pickle
 
-# Output data dumps & heavy caches (local runtime outputs)
-outputs/
-!outputs/comprehensive_metrics_summary.csv
+# Binary Model Weights & Heavy Runtime Artifacts
+models/*.joblib
+models/*.pt
+models/*.onnx
+
+# Output directories
+outputs/modeling_dataset.csv

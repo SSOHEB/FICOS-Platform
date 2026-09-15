@@ -75,10 +75,18 @@ def load_dataset_a(cfg=None):
     for c in numeric_cols:
         df[c] = pd.to_numeric(df[c], errors="coerce")
 
-    # Replace infinities with NaN
-    df.replace([np.inf, -np.inf], np.nan, inplace=True)
-
     return df
+
+
+def load_modeling_dataset(path: str = "outputs/modeling_dataset.csv") -> pd.DataFrame:
+    """Load pre-processed modeling dataset if it exists."""
+    p = Path(path)
+    if not p.exists():
+        p = _resolve_path(path)
+    if p.exists():
+        return pd.read_csv(p)
+    raise FileNotFoundError(f"Modeling dataset not found at {path}")
+
 
 
 # ──────────────────────────────────────────────
