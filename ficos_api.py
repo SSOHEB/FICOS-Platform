@@ -12,11 +12,15 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 import uvicorn
+from src.config.settings import get_settings
 from src.application.api import app
+
+settings = get_settings()
 
 if __name__ == "__main__":
     print("=================================================================")
     print("  FICOS MARITIME INTELLIGENCE & CHARTERING DECISION API SERVER   ")
-    print("  Listening on http://localhost:8000 (Swagger docs at /docs)     ")
+    print(f"  Listening on http://{settings.host}:{settings.port} (Swagger: /docs)")
+    print(f"  Environment: {settings.environment} | Version: {settings.model_version}")
     print("=================================================================")
-    uvicorn.run("src.application.api:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host=settings.host, port=settings.port, reload=(settings.environment.lower() == "development"))

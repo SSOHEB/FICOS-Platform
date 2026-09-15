@@ -13,7 +13,7 @@ Verifies:
 
 import pytest
 from fastapi.testclient import TestClient
-from src.application.api import app
+from main import app
 
 client = TestClient(app)
 
@@ -23,8 +23,9 @@ def test_health_check():
     assert response.status_code == 200
     json_data = response.json()
     assert json_data["status"] == "ok"
-    assert json_data["data"]["status"] == "HEALTHY"
-    assert "promoted_pairs" in json_data["data"]
+    assert "service" in json_data
+    assert "promoted_pairs" in json_data
+    assert "model_version" in json_data
 
 
 def test_forecast_promoted_pair():

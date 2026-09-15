@@ -1,0 +1,19 @@
+# FICOS Maritime Intelligence Platform — Dependencies
+# Pinned for reproducible deployment across hosted container and cloud environments
+
+fastapi==0.139.2
+uvicorn==0.51.0
+pydantic==2.13.4
+pydantic-settings==2.14.2
+python-dotenv==1.2.2
+starlette==1.3.1
+PyYAML==6.0.3
+pandas==3.0.5
+numpy==2.5.1
+scikit-learn==1.9.0
+scipy==1.18.0
+joblib==1.5.3
+openpyxl==3.1.5
+httpx==0.28.1
+pytest==9.1.1
+pytest-asyncio==1.4.0

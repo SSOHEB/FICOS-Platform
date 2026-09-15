@@ -30,6 +30,7 @@ from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+from src.config.settings import get_settings
 from src.domain.schemas import (
     CargoRequirement, VesselClass, Port, Route, RiskLevel, UncertaintyLevel
 )
@@ -47,30 +48,27 @@ from src.decision_engine import PROMOTED_PAIRS
 from src.decision.explanation import ExplanationGenerator
 from src.scenario.engine import ScenarioEngine, ScenarioType
 
+# Load environment configuration
+settings = get_settings()
+
 # Initialize FastAPI application
 app = FastAPI(
     title="FICOS Maritime Decision & Freight Forecasting API",
     description="Production REST API wrapping validated ML models, physical feasibility gates, and multi-structure charter optimization.",
-    version="3.0.0"
+    version=settings.model_version
 )
 
-# CORS Configuration allowing local development and cloud deployments
+# CORS Configuration allowing local development and cloud deployments from env
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "http://127.0.0.1:5173",
-        "http://127.0.0.1:3000",
-        "*"  # Deployable placeholder
-    ],
+    allow_origins=settings.get_cors_origins_list(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # Global Service Singletons
-port_repo = PortRepository()
+port_repo = PortRepository(dataset_b_path=str(settings.dataset_b_path) if settings.dataset_b_path.exists() else None)
 vessel_repo = VesselRepository()
 feasibility_engine = FeasibilityEngine(port_repo=port_repo, vessel_repo=vessel_repo)
 forecast_service = ForecastService()
@@ -83,15 +81,15 @@ explanation_generator = ExplanationGenerator()
 scenario_engine = ScenarioEngine()
 
 
-def _envelope(data: Any, status: str = "ok", model_version: str = "3.0.0") -> Dict[str, Any]:
+def _envelope(data: Any, status: str = "ok", model_version: Optional[str] = None) -> Dict[str, Any]:
     """Returns standardized API JSON envelope."""
     return {
         "data": data,
         "status": status,
         "meta": {
-            "model_version": model_version,
+            "model_version": model_version or settings.model_version,
             "computed_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-            "environment": "production"
+            "environment": settings.environment
         }
     }
 
@@ -103,14 +101,19 @@ def _envelope(data: Any, status: str = "ok", model_version: str = "3.0.0") -> Di
 @app.get("/", tags=["Health"])
 @app.get("/health", tags=["Health"])
 def health_check():
-    """System health check and promoted registry summary."""
-    return _envelope({
+    """
+    Standard deployment platform health check returning {status: 'ok'}
+    with active runtime metadata.
+    """
+    return {
+        "status": "ok",
         "service": "FICOS Freight Decision API",
-        "status": "HEALTHY",
+        "environment": settings.environment,
+        "model_version": settings.model_version,
         "promoted_pairs": [f"{k[0].upper()}_{k[1].upper()}" for k in PROMOTED_PAIRS.keys()],
         "ports_indexed": len(port_repo.all_ports()),
         "vessel_classes": len(vessel_repo.all_vessels())
-    })
+    }
 
 
 # =============================================================================
