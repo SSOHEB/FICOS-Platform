@@ -47,6 +47,19 @@ models/*.onnx
 # Output directories
 outputs/modeling_dataset.csv
 
-# Frontend sub-repo / node_modules
-ficoss/
+# Frontend app dependencies, build output, and local artifacts
+ficoss/node_modules/
+ficoss/dist/
+ficoss/.env
+ficoss/.env.*
+ficoss/.agents/
+ficoss/step_*.txt
+ficoss/verify-stack.mjs
+ficoss/vite.config.ts.timestamp-*.mjs
+docs-site/node_modules/
+docs-site/.docusaurus/
+docs-site/build/
+docs-site/docs/project-docs/
+docs-site/docs/reports/
+docs-site/static/img/generated/
 node_modules/

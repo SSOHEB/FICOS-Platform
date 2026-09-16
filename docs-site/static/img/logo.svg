@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="FICOS">
+  <rect width="64" height="64" rx="12" fill="#1D3045"/>
+  <path d="M14 42h36v6H14zM18 17h28v7H25v7h18v7H25v10h-7z" fill="#E8EEF5"/>
+  <path d="M45 17h5v21h-5z" fill="#E05A47"/>
+</svg>

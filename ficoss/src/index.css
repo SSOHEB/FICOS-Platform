@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    overflow-x: hidden;
+    font-family: 'Inter', 'Plus Jakarta Sans', 'Helvetica Neue', Arial, sans-serif;
+    background-color: #EAEFF5;
+    color: #1D3045;
+  }
+}
+
+/* Custom dark nautical cartography filter - 100% free, zero watermarks */
+.dark-maritime-tiles {
+  filter: brightness(0.8) contrast(1.2) hue-rotate(200deg) saturate(1.4) !important;
+}
+
+.leaflet-container {
+  background-color: #0B1724 !important;
+}
+
+.custom-vessel-marker-dark,
+.custom-port-pin-dark {
+  background: transparent !important;
+  border: none !important;
+}
+
