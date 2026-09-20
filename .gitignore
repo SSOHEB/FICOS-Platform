@@ -28,6 +28,8 @@ token.json
 # Datasets & Confidential Time-Series Data (HIDDEN)
 data/
 data/*
+!data/modeling_dataset.csv
+!data/dataset_a_final_clean.csv
 *.csv
 !outputs/comprehensive_metrics_summary.csv
 !outputs/model_reconciliation_summary.csv
