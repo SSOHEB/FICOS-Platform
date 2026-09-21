@@ -67,12 +67,16 @@ class MultiVoyagePlanOutput:
     # Recommendation & Savings vs Spot
     recommended_program_strategy: str           # "COA", "TIME_CHARTER", "FLEXIBLE_INDEX", or "SPOT"
     recommended_aggregate_cost_usd: float
-    cost_difference_vs_spot_usd: float          # spot_aggregate_cost - recommended_cost (positive = savings)
-    cost_difference_pct: float                   # % difference vs spot
+    savings_vs_spot_usd: float                  # spot_aggregate_cost - recommended_cost (positive = savings vs Spot, negative = higher cost)
+    savings_pct: float                          # % savings vs spot: (spot - recommended) / spot * 100
     
     voyage_schedule: List[SingleVoyagePlan]       # Detailed breakdown per voyage
     explanation: Dict[str, Any]                  # Transparent mathematical formulas & reasoning
     important_notes: List[str]
+
+    # Backward compatibility aliases
+    cost_difference_vs_spot_usd: float = 0.0
+    cost_difference_pct: float = 0.0
 
 
 class MultiVoyagePlanner:
@@ -187,8 +191,8 @@ class MultiVoyagePlanner:
             rec_program = min(program_totals.items(), key=lambda x: x[1])[0]
 
         rec_cost_usd = program_totals[rec_program]
-        cost_diff_usd = spot_tot - rec_cost_usd
-        cost_diff_pct = (cost_diff_usd / max(spot_tot, 1e-8)) * 100.0
+        savings_usd = spot_tot - rec_cost_usd
+        savings_pct = (savings_usd / max(spot_tot, 1e-8)) * 100.0
 
         plan_id = f"MVP-{num_voyages}V-{vessel.code.upper()}"
 
@@ -200,18 +204,20 @@ class MultiVoyagePlanner:
                 "independent_spot_total": "Sum of N single spot fixtures at projected market rates",
                 "coa_program_total": "Sum of N voyages at 4% volume discount + 20% delay reduction",
                 "tc_program_total": "Time Charter daily hire across total voyage duration + bunker/port costs",
-                "flexible_index_total": "Floating index rate with floor/ceiling collar optionality cap"
+                "flexible_index_total": "Floating index rate with floor/ceiling collar optionality cap",
+                "savings_vs_spot": "spot_aggregate_cost_usd - recommended_aggregate_cost_usd (positive = savings vs Spot)",
+                "savings_pct": "(savings_vs_spot_usd / spot_aggregate_cost_usd) * 100"
             },
             "strategy_rationale": (
                 f"Selected '{rec_program}' multi-voyage program for {num_voyages} voyages ({total_cargo_mt:,.0f} MT total). "
-                f"Achieves estimated cost difference of ${cost_diff_usd:+,.2f} ({cost_diff_pct:+.2f}%) vs independent spot fixtures."
+                f"Achieves estimated savings vs spot of ${savings_usd:+,.2f} ({savings_pct:+.2f}%)."
             )
         }
 
         notes = [
             f"Multi-voyage program covers {num_voyages} consecutive voyages over {num_voyages * interval_days_between_voyages} days.",
             "All calculations are deterministic and based on FICOS CostModel and ForecastService outputs.",
-            "Counterfactual cost differences reflect evaluated program assumptions, not historical realized savings."
+            "Counterfactual savings reflect evaluated program assumptions vs independent spot fixtures, not historical realized savings."
         ]
 
         return MultiVoyagePlanOutput(
@@ -231,8 +237,10 @@ class MultiVoyagePlanner:
             flexible_cost_per_mt=round(flex_tot / total_cargo_mt, 2),
             recommended_program_strategy=rec_program,
             recommended_aggregate_cost_usd=round(rec_cost_usd, 2),
-            cost_difference_vs_spot_usd=round(cost_diff_usd, 2),
-            cost_difference_pct=round(cost_diff_pct, 2),
+            savings_vs_spot_usd=round(savings_usd, 2),
+            savings_pct=round(savings_pct, 2),
+            cost_difference_vs_spot_usd=round(savings_usd, 2),
+            cost_difference_pct=round(savings_pct, 2),
             voyage_schedule=voyage_schedule,
             explanation=explanation_dict,
             important_notes=notes
