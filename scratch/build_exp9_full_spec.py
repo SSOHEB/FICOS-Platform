@@ -269,6 +269,8 @@ for _, row in df_2025.iterrows():
             "date": dt,
             "vessel": v,
             "horizon": h,
+            "y0": y0,
+            "y_true": y_true,
             "decision": dec,
             "reason": reason,
             "spot_cost": spot_cost,
