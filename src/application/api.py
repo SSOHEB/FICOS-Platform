@@ -281,7 +281,21 @@ def get_forecast(
             "is_promoted": True,
             "fallback_used": bool(fc_res.fallback_used),
             "model_type": fc_res.model_name,
-            "inference_status": "directional" if has_directional_delta else "persistence_no_directional_delta"
+            "inference_status": "directional" if has_directional_delta else "persistence_no_directional_delta",
+            "explanation": {
+                "decision": "NOW" if action == "BUY NOW" else action,
+                "forecast_value": round(p50, 2),
+                "uncertainty_level": "HIGH" if (p90 - p10) > 5.0 else ("MEDIUM" if (p90 - p10) > 2.0 else "LOW"),
+                "confidence_level": "HIGH",
+                "current_freight_cost": round(current_rate, 2),
+                "expected_wait_cost": round(p10, 2) if action == "WAIT" else round(p50, 2),
+                "idle_cost": 0.0,
+                "risk_premium": 0.0,
+                "risk_status": "LOW",
+                "feasibility_status": "FEASIBLE",
+                "selected_strategy": action,
+                "decision_reason": rationale
+            }
         }
         return _envelope(data, status="ok")
     else:
@@ -309,7 +323,21 @@ def get_forecast(
             "coverage_status": "FALLBACK_UNPROMOTED",
             "is_promoted": False,
             "fallback_used": True,
-            "model_type": "PersistenceFallback"
+            "model_type": "PersistenceFallback",
+            "explanation": {
+                "decision": "FLEXIBLE",
+                "forecast_value": round(p50, 2),
+                "uncertainty_level": "HIGH",
+                "confidence_level": "LOW",
+                "current_freight_cost": round(current_rate, 2),
+                "expected_wait_cost": round(p50, 2),
+                "idle_cost": 0.0,
+                "risk_premium": 0.0,
+                "risk_status": "LOW",
+                "feasibility_status": "FEASIBLE",
+                "selected_strategy": "FLEXIBLE",
+                "decision_reason": f"Pair ({v_clean.upper()} {h_str.upper()}) is not in the walk-forward promoted registry. Capital-preserving FLEXIBLE strategy selected."
+            }
         }
         return _envelope(data, status="fallback")
 

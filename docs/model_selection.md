@@ -66,3 +66,13 @@ To prevent costly misallocation during low-predictability regimes:
 - **Time-Series Aware Permutation Testing ($B=200$)**:
   - Circular-shift permutation preserves intra-series autocorrelation.
   - Directional accuracy on promoted pairs achieves **$p < 0.005$** against null distributions (mean null accuracy $51.8\% \pm 3.9\%$).
+
+---
+
+## 6. Economic Backtest & Scientific Disclaimer (Experiment 9)
+
+1. **Forecast Validation vs. Economic Validation**: Forecast validation evaluates statistical accuracy ($R^2$, DA, AUC) under zero-leakage walk-forward protocols. Economic backtesting (Experiment 9) evaluates charter decision policy cost differences against counterfactual baselines.
+2. **Model Promotion Semantics**: Registry promotion indicates verified walk-forward directional signal. It **does NOT constitute proof of monetary savings**.
+3. **Experiment 9 Classification**: Experiment 9 is a decision-level economic validation study evaluating counterfactual cost differences vs. Always Spot on production-promoted pairs ($N=952$).
+4. **Current Economic Conclusion**: The aggregate economic outcome is **inconclusive** (-0.131% backtested cost difference vs spot, 95% CI [-0.265%, +0.005%]).
+5. **WAIT Decision Counterfactual**: WAIT decisions achieved a +3.174% counterfactual cost difference vs spot, which was statistically unusual ($p < 0.0001$) relative to a 10,000-draw placebo distribution. However, this finding is counterfactual evidence under stated evaluation assumptions and **does NOT prove real-world monetary savings**.

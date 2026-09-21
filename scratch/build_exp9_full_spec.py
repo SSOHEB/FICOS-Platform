@@ -281,7 +281,10 @@ p_p975 = df_placebo["aggregate_saving_pct"].quantile(0.975)
 p_min = df_placebo["aggregate_saving_pct"].min()
 p_max = df_placebo["aggregate_saving_pct"].max()
 
-empirical_p = (df_placebo["aggregate_saving_pct"] >= actual_wait_saving_pct).mean()
+exceedances = int((df_placebo["aggregate_saving_pct"] >= actual_wait_saving_pct).sum())
+n_placebo = len(df_placebo)
+finite_sample_p = (exceedances + 1) / (n_placebo + 1)
+p_val_display = "<0.0001" if exceedances == 0 else f"{finite_sample_p:.4f}"
 pct_rank = (df_placebo["aggregate_saving_pct"] < actual_wait_saving_pct).mean() * 100.0
 excess_effect = actual_wait_saving_pct - p_mean
 
@@ -305,7 +308,8 @@ print(f"\\nActual WAIT Performance:")
 print(f"  Observed WAIT Saving: {actual_wait_saving_pct:+.3f}%")
 print(f"  Excess Effect vs Null: {excess_effect:+.3f}% percentage points")
 print(f"  Percentile Rank     : {pct_rank:.2f}%")
-print(f"  Empirical P-Value   : {empirical_p:.4f}")
+print(f"  Placebo draws exceeding observed WAIT saving: {exceedances} / {n_placebo:,}")
+print(f"  Empirical One-Sided P-Value: {p_val_display} (finite-sample p = {finite_sample_p:.4f})")
 print(f"\\nPREDEFINED STATISTICAL RULE RESULT:")
 print(f"  {placebo_verdict}")
 print(f"  Saved: {placebo_csv_path}")
@@ -341,7 +345,10 @@ for i in range(N_DRAWS_DM):
 df_dm = pd.Series(dm_savings)
 dm_mean = df_dm.mean()
 dm_ci = np.percentile(df_dm, [2.5, 97.5])
-dm_p_val = (df_dm >= actual_wait_saving_pct).mean()
+exceedances_dm = int((df_dm >= actual_wait_saving_pct).sum())
+n_dm = len(df_dm)
+finite_sample_p_dm = (exceedances_dm + 1) / (n_dm + 1)
+dm_p_val_display = "<0.0001" if exceedances_dm == 0 else f"{finite_sample_p_dm:.4f}"
 dm_pct_rank = (df_dm < actual_wait_saving_pct).mean() * 100.0
 
 print("=" * 80)
@@ -351,7 +358,8 @@ print(f"  Date-Matched Null Mean  : {dm_mean:+.3f}%")
 print(f"  Date-Matched 95% Interval: [{dm_ci[0]:+.3f}%, {dm_ci[1]:+.3f}%]")
 print(f"  Actual WAIT Saving      : {actual_wait_saving_pct:+.3f}%")
 print(f"  Percentile Rank         : {dm_pct_rank:.2f}%")
-print(f"  Empirical P-Value       : {dm_p_val:.4f}")
+print(f"  Date-Matched Placebo draws exceeding observed WAIT saving: {exceedances_dm} / {n_dm:,}")
+print(f"  Empirical One-Sided P-Value: {dm_p_val_display} (finite-sample p = {finite_sample_p_dm:.4f})")
 print(f"  Diagnostic Status       : CONCURRENT (Replicates primary placebo conclusion)")
 """)
 
@@ -452,7 +460,8 @@ The objective is to test whether the observed economic performance of the produc
 - Placebo 95% Interval: [{p_p25:+.3f}%, {p_p975:+.3f}%]
 - Observed Actual WAIT Saving: {actual_wait_saving_pct:+.3f}%
 - Excess Effect vs Null: {excess_effect:+.3f}% percentage points
-- Empirical One-Sided P-Value: {empirical_p:.4f}
+- Placebo draws exceeding observed WAIT saving: {exceedances} / {n_placebo:,}
+- Empirical One-Sided P-Value: {p_val_display} (finite-sample p = {finite_sample_p:.4f})
 - Actual Percentile Rank: {pct_rank:.2f}%
 
 ## 3. Predefined Statistical Test Verdict
@@ -462,7 +471,7 @@ The objective is to test whether the observed economic performance of the produc
 
 ## 4. Overall 2025 Holdout Context
 Regardless of the WAIT placebo result, the overall 2025 blind holdout result remains:
-- FICOS vs Always Spot Aggregate Saving: -0.135% (95% CI: [-0.270%, +0.003%])
+- Backtested Cost Difference vs Spot: -0.135% (95% CI: [-0.270%, +0.003%])
 - Overall Economic Conclusion: ECONOMIC VALUE INCONCLUSIVE
 '''
 
@@ -499,8 +508,11 @@ final_exec_lines = [
     f"Actual WAIT percentile:",
     f"{pct_rank:.2f}%",
     "",
+    f"Placebo draws exceeding observed WAIT saving:",
+    f"{exceedances} / {n_placebo:,}",
+    "",
     f"Empirical one-sided p-value:",
-    f"{empirical_p:.4f}",
+    f"{p_val_display} (finite-sample p = {finite_sample_p:.4f})",
     "",
     "======================================================",
     "FINAL RESULT:",
@@ -508,7 +520,7 @@ final_exec_lines = [
     "======================================================",
     "",
     "FINAL ECONOMIC INTERPRETATION:",
-    "Overall 2025 Holdout Result: -0.135% aggregate saving (95% CI: [-0.270%, +0.003%]).",
+    "Overall 2025 Holdout Backtested Cost Difference vs Spot: -0.135% (95% CI: [-0.270%, +0.003%]).",
     "Conclusion: ECONOMIC VALUE INCONCLUSIVE.",
     "The WAIT placebo test confirms that the observed +3.174% WAIT saving is statistically unusual relative to randomized selection under the evaluated counterfactual, but does NOT override the overall 2025 holdout result.",
     "======================================================"

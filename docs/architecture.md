@@ -97,6 +97,16 @@ The platform decouples freight rate forecasting (Dataset A machine learning mode
 
 ---
 
+## Research & Economic Validation Scope (Experiment 9)
+- **Forecast Validation vs. Economic Validation**: Forecast validation evaluates statistical accuracy ($R^2$, DA, AUC) under zero-leakage walk-forward protocols. Economic validation (Experiment 9) evaluates decision policy cost differences on historical holdout data.
+- **Model Promotion Scope**: Model promotion in the registry signifies directional accuracy and walk-forward stability, **not proof of monetary savings**.
+- **Experiment 9 Classification**: Experiment 9 is a decision-level economic validation study evaluating counterfactual cost differences vs. Always Spot on production-promoted pairs ($N=952$).
+- **Current Economic Findings**: Aggregate economic cost difference is **inconclusive** (-0.131% backtested cost difference vs spot, 95% CI [-0.265%, +0.005%]).
+- **WAIT Decision Sub-population**: WAIT decisions showed a +3.174% counterfactual cost difference vs spot, which is statistically unusual ($p < 0.0001$) relative to a 10,000-draw placebo distribution, but this does NOT establish proven real-world monetary savings.
+- **Isolation**: Experiment 9 is strictly research/validation evidence and is completely isolated from production API inference.
+
+---
+
 ## Verification & Execution
 
 ### CLI Runner

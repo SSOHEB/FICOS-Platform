@@ -528,3 +528,6 @@ class ModelRegistryEntry:
     p90_bound: Optional[float] = None
     optimal_tau: Optional[float] = None
     historical_precision: Optional[float] = None
+    production_status: Optional[str] = None
+    validation_status: Optional[str] = None
+    economic_evidence: Optional[str] = "inconclusive"

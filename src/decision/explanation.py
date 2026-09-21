@@ -72,11 +72,41 @@ class ExplanationGenerator:
             )
         steps.append(f"Final Decision Rationale: {rationale}")
 
+        # Determine high-level decision category
+        if recommended_strategy == "SPOT":
+            decision_cat = "NOW"
+        elif recommended_strategy == "WAIT":
+            decision_cat = "WAIT"
+        elif recommended_strategy == "REJECT":
+            decision_cat = "REJECT"
+        else:
+            decision_cat = "FLEXIBLE"
+
+        unc_val = getattr(getattr(forecast, "uncertainty", None), "level", "MEDIUM")
+        unc_str = unc_val.value if hasattr(unc_val, "value") else str(unc_val)
+        risk_val = getattr(risk, "overall_level", "LOW")
+        risk_str = risk_val.value if hasattr(risk_val, "value") else str(risk_val)
+        risk_premium = float(getattr(risk, "risk_cost_premium_usd", 0.0))
+
         return {
             "summary_rationale": rationale,
             "decision_steps": steps,
             "gating_status": {
                 "physical_feasibility": feasibility.is_feasible,
                 "risk_within_threshold": risk.overall_risk_score <= 85.0
+            },
+            "structured_explanation": {
+                "decision": decision_cat,
+                "forecast_value": float(forecast.point_forecast),
+                "uncertainty_level": unc_str,
+                "confidence_level": unc_str,
+                "current_freight_cost": float(forecast.point_forecast),
+                "expected_wait_cost": float(getattr(forecast.uncertainty, "p10", forecast.point_forecast)) if decision_cat == "WAIT" else float(forecast.point_forecast),
+                "idle_cost": 0.0,
+                "risk_premium": risk_premium,
+                "risk_status": risk_str,
+                "feasibility_status": "FEASIBLE" if feasibility.is_feasible else "INFEASIBLE",
+                "selected_strategy": recommended_strategy,
+                "decision_reason": rationale
             }
         }
