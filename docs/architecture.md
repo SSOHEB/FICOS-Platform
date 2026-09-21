@@ -95,6 +95,13 @@ The platform decouples freight rate forecasting (Dataset A machine learning mode
 ### 8. Decision Engine v2 & Recommendation Service (`src/decision/`, `src/application/`)
 - Orchestrates all components, enforces physical gating, selects optimal strategy minimizing risk-adjusted cost, and generates human-readable audit explanations.
 
+### 9. Procurement Decision Engine & Multi-Voyage Planner (`src/decision/procurement_engine.py`, `src/decision/multi_voyage_planner.py`, `src/decision/contract_comparison.py`)
+- **SIH 2026 Objective (SIH26006)**: Facilitates transitioning from reactive single spot contracts to structured short/medium-term multiple voyage contracts.
+- **Timing vs. Strategy Separation**: Separates WHEN to commit (`NOW`, `WAIT`, `FLEXIBLE`) from HOW to contract (`SPOT`, `TIME_CHARTER`, `COA`, `FLEXIBLE_INDEX`).
+- **4-Way Contract Comparison**: Evaluates Spot, Time Charter, COA, and Flexible Index structures.
+- **Simple Multi-Voyage Planner**: Deterministic, transparent comparison of $N$-voyage schedules against independent spot charters.
+- **Forecast Provenance Propagation**: Exposes model name, horizon, forecast value, uncertainty bounds, production status, and validation provenance.
+
 ---
 
 ## Research & Economic Validation Scope (Experiment 9)

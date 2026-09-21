@@ -67,6 +67,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from src.decision.procurement_engine import ProcurementDecisionEngine
+from src.decision.multi_voyage_planner import MultiVoyagePlanner
+
 # Global Service Singletons
 port_repo = PortRepository(dataset_b_path=str(settings.dataset_b_path) if settings.dataset_b_path.exists() else None)
 vessel_repo = VesselRepository()
@@ -79,6 +82,13 @@ cost_model = CostModel()
 decision_engine = DecisionEngine()
 explanation_generator = ExplanationGenerator()
 scenario_engine = ScenarioEngine()
+procurement_engine = ProcurementDecisionEngine(
+    forecast_service=forecast_service,
+    feasibility_engine=feasibility_engine,
+    risk_engine=risk_engine,
+    cost_model=cost_model
+)
+multi_voyage_planner = MultiVoyagePlanner(cost_model=cost_model)
 
 
 def _envelope(data: Any, status: str = "ok", model_version: Optional[str] = None) -> Dict[str, Any]:
@@ -711,6 +721,105 @@ def get_fleet_status():
         "fleet": fleet_composition
     }
     return _envelope(data, status="ok")
+
+
+# =============================================================================
+# 8. GET /procurement-decision & GET /multi-voyage-plan (SIH 2026 SIH26006)
+# =============================================================================
+
+@app.get("/procurement-decision", tags=["Procurement & SIH 2026"])
+def get_procurement_decision(
+    vessel_class: str = Query("panamax", description="Vessel class: panamax, supramax, handy, cape"),
+    horizon: str = Query("14d", description="Horizon: 1d, 7d, 14d, 30d"),
+    origin: str = Query("Australia", description="Origin port or region"),
+    destination: str = Query("Dhamra", description="Destination port"),
+    cargo_qty: float = Query(75000.0, description="Cargo quantity in MT"),
+    num_voyages: int = Query(1, description="Number of voyages (1 for single, >1 for multi-voyage program)"),
+    current_rate: Optional[float] = Query(None, description="Current rate benchmark")
+):
+    """
+    Evaluates optimal market entry timing (NOW / WAIT / FLEXIBLE), contract structure
+    (SPOT / TC / COA / FLEXIBLE_INDEX), 4-way strategy comparison, and multi-voyage plan.
+    """
+    v_clean = vessel_class.lower().strip()
+    h_clean = str(horizon).lower().replace("d", "").strip()
+    h_days = int(h_clean) if h_clean.isdigit() else 14
+    corridor = _corridor_profile(origin, destination, f"{origin}-{destination}")
+    cur_rate = float(current_rate if current_rate is not None else corridor["current_rate"])
+
+    c_req = CargoRequirement(
+        cargo_type="Coal",
+        quantity_mt=cargo_qty,
+        origin=origin,
+        destination=destination,
+        laycan_days=h_days,
+        asset_type=v_clean.upper()
+    )
+
+    vessel_obj = vessel_repo.get_vessel_by_code("PANA" if "pan" in v_clean else ("SUPR" if "sup" in v_clean else ("HAND" if "hand" in v_clean else "CAPE")))
+    if not vessel_obj:
+        vessel_obj = list(vessel_repo.all_vessels().values())[0]
+
+    dest_p = port_repo.get_port(destination) or list(port_repo.all_ports().values())[0]
+    orig_p = port_repo.get_port(origin) or Port(code="ORIGIN", display_name=origin, key=origin.lower(), country="Global", state="", constraints=None)
+    route_obj = Route(origin=orig_p.name, destination=dest_p.name)
+
+    proc_out = procurement_engine.evaluate_procurement(
+        cargo=c_req,
+        vessel=vessel_obj,
+        origin_port=orig_p,
+        dest_port=dest_p,
+        route=route_obj,
+        current_rate=cur_rate,
+        num_voyages=num_voyages
+    )
+
+    return _envelope(proc_out.to_dict(), status="ok")
+
+
+@app.get("/multi-voyage-plan", tags=["Procurement & SIH 2026"])
+def get_multi_voyage_plan(
+    vessel_class: str = Query("panamax", description="Vessel class"),
+    origin: str = Query("Australia", description="Origin port"),
+    destination: str = Query("Dhamra", description="Destination port"),
+    cargo_qty: float = Query(75000.0, description="Cargo quantity per voyage in MT"),
+    num_voyages: int = Query(4, description="Number of voyages in term program (e.g. 2, 4, 6, 12)"),
+    current_rate: Optional[float] = Query(None, description="Current rate benchmark")
+):
+    """
+    SIH 2026 Core Feature: Deterministic multi-voyage planner comparing independent spot fixtures
+    against term COA, Time Charter allocation, and Flexible Index programs across N voyages.
+    """
+    v_clean = vessel_class.lower().strip()
+    corridor = _corridor_profile(origin, destination)
+    cur_rate = float(current_rate if current_rate is not None else corridor["current_rate"])
+
+    c_req = CargoRequirement(cargo_type="Coal", quantity_mt=cargo_qty, origin=origin, destination=destination, asset_type=v_clean.upper())
+    vessel_obj = vessel_repo.get_vessel_by_code("PANA" if "pan" in v_clean else ("SUPR" if "sup" in v_clean else ("HAND" if "hand" in v_clean else "CAPE")))
+    if not vessel_obj:
+        vessel_obj = list(vessel_repo.all_vessels().values())[0]
+
+    dest_p = port_repo.get_port(destination) or list(port_repo.all_ports().values())[0]
+    orig_p = port_repo.get_port(origin) or Port(code="ORIGIN", display_name=origin, key=origin.lower(), country="Global", state="", constraints=None)
+    route_obj = Route(origin=orig_p.name, destination=dest_p.name)
+
+    forecast_res = forecast_service.get_forecast(asset_type=v_clean, horizon_days=14, current_rate=cur_rate)
+    feasibility_res = feasibility_engine.check_feasibility(vessel_obj, orig_p, dest_p, c_req)
+    risk_res = risk_engine.evaluate_risk(orig_p.name, dest_p.name, v_clean)
+
+    plan_res = multi_voyage_planner.plan_program(
+        num_voyages=num_voyages,
+        cargo=c_req,
+        vessel=vessel_obj,
+        origin_port=orig_p,
+        dest_port=dest_p,
+        route=route_obj,
+        forecast=forecast_res,
+        feasibility=feasibility_res,
+        risk=risk_res
+    )
+
+    return _envelope(plan_res.__dict__, status="ok")
 
 
 # =============================================================================

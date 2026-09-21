@@ -102,3 +102,25 @@ def test_fleet_status():
     assert json_data["status"] == "ok"
     assert "summary" in json_data["data"]
     assert "fleet" in json_data["data"]
+
+
+def test_procurement_decision_endpoint():
+    response = client.get("/procurement-decision?vessel_class=panamax&horizon=1d&origin=Australia&destination=Dhamra&cargo_qty=75000&num_voyages=4")
+    assert response.status_code == 200
+    json_data = response.json()
+    assert json_data["status"] == "ok"
+    assert "recommended_timing" in json_data["data"]
+    assert "recommended_contract_strategy" in json_data["data"]
+    assert "multi_voyage_plan" in json_data["data"]
+    assert "forecast_provenance" in json_data["data"]
+    assert json_data["data"]["multi_voyage_plan"]["num_voyages"] == 4
+
+
+def test_multi_voyage_plan_endpoint():
+    response = client.get("/multi-voyage-plan?vessel_class=supramax&origin=Australia&destination=Dhamra&cargo_qty=75000&num_voyages=6")
+    assert response.status_code == 200
+    json_data = response.json()
+    assert json_data["status"] == "ok"
+    assert json_data["data"]["num_voyages"] == 6
+    assert "spot_aggregate_cost_usd" in json_data["data"]
+    assert "recommended_program_strategy" in json_data["data"]

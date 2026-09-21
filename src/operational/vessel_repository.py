@@ -85,6 +85,10 @@ class VesselRepository:
             )
         return self._vessels[key]
 
+    def get_vessel_by_code(self, code: str) -> VesselClass:
+        """Alias for get_vessel()."""
+        return self.get_vessel(code)
+
     def get_vessel(self, vessel_name: str) -> VesselClass:
         """Safe accessor for get() with dynamic fallback."""
         try:

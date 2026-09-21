@@ -112,6 +112,9 @@ class ForecastService:
             p90_bound = registry_entry.get("p90_bound", 0.15 * current_rate)
             model_name = registry_entry.get("model_type", "RandomForestRegressor")
             model_version = registry_entry.get("model_version", "1.0.0")
+            prod_status = registry_entry.get("production_status", "promoted")
+            val_status = registry_entry.get("validation_status", "production_validated")
+            econ_evidence = registry_entry.get("economic_evidence", "inconclusive")
             fallback_used = False
         else:
             # Not promoted — use dynamic fallback bounds (±25% of current rate)
@@ -119,6 +122,9 @@ class ForecastService:
             p90_bound = 0.25 * current_rate
             model_name = "PersistenceFallback"
             model_version = "0.0.0"
+            prod_status = "fallback"
+            val_status = "regime_dependent_fallback"
+            econ_evidence = "inconclusive"
             fallback_used = True
             is_promoted = False
 
@@ -143,6 +149,25 @@ class ForecastService:
             current_rate=current_rate,
         )
 
+        provenance_info = {
+            "vessel_class": asset_lower.upper(),
+            "horizon": f"{horizon_days}d",
+            "forecast_value": round(point_forecast, 2),
+            "uncertainty": {
+                "p10": unc["p10"],
+                "p50": unc["p50"],
+                "p90": unc["p90"],
+                "spread": round(unc["interval_width"], 2),
+                "level": unc["confidence"].value if hasattr(unc["confidence"], "value") else str(unc["confidence"])
+            },
+            "model_used": model_name,
+            "model_version": model_version,
+            "production_status": prod_status,
+            "validation_status": val_status,
+            "economic_evidence": econ_evidence,
+            "fallback_used": fallback_used
+        }
+
         return ForecastResult(
             asset=asset_lower,
             forecast_date=forecast_date,
@@ -160,6 +185,10 @@ class ForecastService:
             uncertainty_width=unc["interval_width"],
             is_promoted=is_promoted,
             fallback_used=fallback_used,
+            production_status=prod_status,
+            validation_status=val_status,
+            economic_evidence=econ_evidence,
+            provenance=provenance_info,
             feature_metadata={
                 "p10_bound_delta": p10_bound,
                 "p90_bound_delta": p90_bound,

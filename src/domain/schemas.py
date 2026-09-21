@@ -284,6 +284,10 @@ class ForecastResult:
     fallback_used: bool = False
     feature_metadata: Dict[str, Any] = field(default_factory=dict)
     asset_type: str = ""
+    production_status: str = "promoted"
+    validation_status: str = "production_validated"
+    economic_evidence: str = "inconclusive"
+    provenance: Dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self):
         if not self.asset_type:
@@ -297,6 +301,30 @@ class ForecastResult:
             p90=self.p90,
             confidence_interval_width=self.uncertainty_width or (self.p90 - self.p10)
         )
+
+    def to_provenance_dict(self) -> Dict[str, Any]:
+        """Expose full forecast provenance metadata."""
+        if self.provenance:
+            return self.provenance
+        conf_str = self.confidence.value if hasattr(self.confidence, "value") else str(self.confidence)
+        return {
+            "vessel_class": self.asset_type,
+            "horizon": f"{self.horizon_days}d",
+            "forecast_value": self.point_forecast,
+            "uncertainty": {
+                "p10": self.p10,
+                "p50": self.p50,
+                "p90": self.p90,
+                "spread": round(self.p90 - self.p10, 2),
+                "level": conf_str
+            },
+            "model_used": self.model_name,
+            "model_version": self.model_version,
+            "production_status": self.production_status,
+            "validation_status": self.validation_status,
+            "economic_evidence": self.economic_evidence,
+            "fallback_used": self.fallback_used
+        }
 
 
 # ──────────────────────────────────────────────────────────────
