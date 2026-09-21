@@ -242,7 +242,7 @@ print(f"VOYAGE DURATION VALUE  = {int(VOYAGE_DURATION_VALUE)} days (Australia-In
 print(f"DAILY IDLE COST VALUE  = ${DAILY_IDLE_COST_VALUE:,.0f}/day")
 print(f"COST FORMULATION       = Daily Rate ($/day) x Voyage Duration (20 days)")
 print(f"FLEXIBLE COST STATUS   = SIMULATED COUNTERFACTUAL PROXY")
-print(f"                         ((S_t + S_{t+h})/2) * 20d + $8,000 * h * 0.25")
+print("                         ((S_t + S_{t+h})/2) * 20d + $8,000 * h * 0.25")
 """)
 
 # ===========================================================================
@@ -630,7 +630,7 @@ report_lines = [
     "",
     "============================================================",
 ]
-exec_report = "\n".join(report_lines)
+exec_report = chr(10).join(report_lines)
 
 print(exec_report)
 
