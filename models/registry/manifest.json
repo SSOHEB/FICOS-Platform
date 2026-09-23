@@ -1,0 +1,292 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "description": "FICOS Model Registry Manifest",
+    "last_updated": "2026-09-14",
+    "methodology": "5-fold expanding-window walk-forward validation (2021-2025). Promotion threshold: >=3/5 folds with GENUINE SIGNAL verdict.",
+    "important_note": "Walk-forward benchmark entries (status='excluded' or 'fallback') document evaluation artifacts ONLY. They are NOT production-trained models. A model must have status='promoted' to be used in inference."
+  },
+  "models": [
+    {
+      "asset": "panamax",
+      "horizon_days": 1,
+      "model_type": "RandomForestRegressor",
+      "status": "promoted",
+      "model_artifact_path": null,
+      "training_start": null,
+      "training_end": null,
+      "feature_list_path": null,
+      "uncertainty_path": null,
+      "preprocessing_metadata": {
+        "imputer": "MedianImputer",
+        "scaler": "StandardScaler",
+        "feature_selector": "SelectKBest_f_regression",
+        "k_features": 30,
+        "transform": "absolute_change",
+        "note": "All preprocessing fit strictly on training data per fold. No global leakage."
+      },
+      "hyperparameters": {
+        "note": "Hyperparameters from walk-forward winning model; exact values require retraining from final model pathway."
+      },
+      "validation_metrics": {
+        "walkforward_folds_genuine": 3,
+        "walkforward_folds_total": 5,
+        "mean_r2_walkforward": 0.3344,
+        "genuine_folds": [
+          "F1",
+          "F3",
+          "F4"
+        ],
+        "historical_precision_gated": 91.7,
+        "gated_accuracy": 91.1,
+        "gated_n": 214,
+        "ungated_accuracy": 78.1,
+        "ungated_n": 1242,
+        "auc_gated": 0.924
+      },
+      "walkforward_metrics": {
+        "source": "tests/test_final_report_reconciliation.py reconciliation run",
+        "verified": true
+      },
+      "model_version": "1.0.0",
+      "created_at": "2026-09-14",
+      "promoted_at": "2026-09-14",
+      "p10_bound": -250.0,
+      "p90_bound": 250.0,
+      "optimal_tau": 0.01,
+      "historical_precision": 91.7,
+      "notes": "PRIMARY PROMOTE. Strongest 1D signal. RandomForest dominant across F1, F3, F4.",
+      "production_status": "promoted",
+      "validation_status": "production_validated",
+      "economic_evidence": "inconclusive"
+    },
+    {
+      "asset": "supramax",
+      "horizon_days": 1,
+      "model_type": "RandomForestRegressor",
+      "status": "promoted",
+      "model_artifact_path": null,
+      "training_start": null,
+      "training_end": null,
+      "feature_list_path": null,
+      "uncertainty_path": null,
+      "preprocessing_metadata": {
+        "imputer": "MedianImputer",
+        "scaler": "StandardScaler",
+        "feature_selector": "SelectKBest_f_regression",
+        "k_features": 30,
+        "transform": "absolute_change"
+      },
+      "hyperparameters": {
+        "note": "From walk-forward benchmark; exact values require final model pathway retraining."
+      },
+      "validation_metrics": {
+        "walkforward_folds_genuine": 3,
+        "walkforward_folds_total": 5,
+        "mean_r2_walkforward": 0.2128,
+        "genuine_folds": [
+          "F3",
+          "F4",
+          "F5"
+        ],
+        "historical_precision_gated": 75.0,
+        "gated_accuracy": 85.0,
+        "gated_n": 200,
+        "ungated_accuracy": 75.1,
+        "ungated_n": 1244,
+        "auc_gated": 0.805,
+        "note": "F1 UNDERFIT (high DA, negative R2) \u2014 does not count as GENUINE."
+      },
+      "model_version": "1.0.0",
+      "created_at": "2026-09-14",
+      "promoted_at": "2026-09-14",
+      "p10_bound": -145.0,
+      "p90_bound": 145.0,
+      "optimal_tau": 0.01,
+      "historical_precision": 75.0,
+      "notes": "PRIMARY PROMOTE. Conservative precision due to F1 underfit.",
+      "production_status": "promoted",
+      "validation_status": "production_validated",
+      "economic_evidence": "inconclusive"
+    },
+    {
+      "asset": "handy",
+      "horizon_days": 1,
+      "model_type": "RandomForestRegressor",
+      "status": "promoted",
+      "model_artifact_path": null,
+      "training_start": null,
+      "training_end": null,
+      "feature_list_path": null,
+      "uncertainty_path": null,
+      "preprocessing_metadata": {
+        "imputer": "MedianImputer",
+        "scaler": "StandardScaler",
+        "feature_selector": "SelectKBest_f_regression",
+        "k_features": 30,
+        "transform": "absolute_change"
+      },
+      "validation_metrics": {
+        "walkforward_folds_genuine": 3,
+        "walkforward_folds_total": 5,
+        "mean_r2_walkforward": 0.1947,
+        "genuine_folds": [
+          "F3",
+          "F4",
+          "F5"
+        ],
+        "historical_precision_gated": 85.7,
+        "gated_accuracy": 79.2,
+        "gated_n": 144,
+        "ungated_accuracy": 70.7,
+        "ungated_n": 1244,
+        "auc_gated": 0.75
+      },
+      "model_version": "1.0.0",
+      "created_at": "2026-09-14",
+      "promoted_at": "2026-09-14",
+      "p10_bound": -180.0,
+      "p90_bound": 180.0,
+      "optimal_tau": 0.01,
+      "historical_precision": 85.7,
+      "notes": "PRIMARY PROMOTE.",
+      "production_status": "promoted",
+      "validation_status": "production_validated",
+      "economic_evidence": "inconclusive"
+    },
+    {
+      "asset": "cape",
+      "horizon_days": 1,
+      "model_type": "RandomForestRegressor",
+      "status": "promoted",
+      "model_artifact_path": null,
+      "training_start": null,
+      "training_end": null,
+      "feature_list_path": null,
+      "uncertainty_path": null,
+      "preprocessing_metadata": {
+        "imputer": "MedianImputer",
+        "scaler": "StandardScaler",
+        "feature_selector": "SelectKBest_f_regression",
+        "k_features": 30,
+        "transform": "absolute_change"
+      },
+      "validation_metrics": {
+        "walkforward_folds_genuine": 3,
+        "walkforward_folds_total": 5,
+        "mean_r2_walkforward": 0.2093,
+        "genuine_folds": [
+          "F1",
+          "F3",
+          "F5"
+        ],
+        "historical_precision_gated": 70.8,
+        "gated_accuracy": 71.3,
+        "gated_n": 174,
+        "ungated_accuracy": 66.5,
+        "ungated_n": 1217,
+        "auc_gated": 0.711
+      },
+      "model_version": "1.0.0",
+      "created_at": "2026-09-14",
+      "promoted_at": "2026-09-14",
+      "p10_bound": -122.0,
+      "p90_bound": 122.0,
+      "optimal_tau": 0.01,
+      "historical_precision": 70.8,
+      "notes": "PRIMARY PROMOTE. Lowest precision among promoted pairs.",
+      "production_status": "promoted",
+      "validation_status": "production_validated",
+      "economic_evidence": "inconclusive"
+    },
+    {
+      "asset": "supramax",
+      "horizon_days": 7,
+      "model_type": "RandomForestRegressor",
+      "status": "excluded",
+      "model_artifact_path": null,
+      "training_start": null,
+      "training_end": null,
+      "feature_list_path": null,
+      "uncertainty_path": null,
+      "preprocessing_metadata": {},
+      "hyperparameters": {},
+      "validation_metrics": {
+        "walkforward_folds_genuine": 2,
+        "walkforward_folds_total": 5,
+        "mean_r2_walkforward": -0.0837,
+        "note": "Below promotion threshold (requires >=3/5 GENUINE). Mean R2 negative."
+      },
+      "model_version": "1.0.0",
+      "created_at": "2026-09-14",
+      "notes": "EXCLUDED \u2014 below promotion threshold. Fold-4/Fold-5 collapse confirmed.",
+      "production_status": "excluded",
+      "validation_status": "unpromoted_below_threshold",
+      "economic_evidence": "inconclusive"
+    },
+    {
+      "asset": "kdci",
+      "horizon_days": 1,
+      "model_type": "RandomForestRegressor",
+      "status": "excluded",
+      "model_artifact_path": null,
+      "training_start": null,
+      "training_end": null,
+      "feature_list_path": null,
+      "uncertainty_path": null,
+      "preprocessing_metadata": {},
+      "validation_metrics": {
+        "walkforward_folds_genuine": 2,
+        "walkforward_folds_total": 5,
+        "mean_r2_walkforward": 0.0816,
+        "note": "Below promotion threshold."
+      },
+      "model_version": "1.0.0",
+      "created_at": "2026-09-14",
+      "notes": "EXCLUDED \u2014 below promotion threshold.",
+      "production_status": "excluded",
+      "validation_status": "unpromoted_below_threshold",
+      "economic_evidence": "inconclusive"
+    },
+    {
+      "asset": "cape",
+      "horizon_days": 7,
+      "model_type": "RandomForestRegressor",
+      "status": "fallback",
+      "notes": "REGIME-DEPENDENT \u2014 negative mean R2 across all folds. Use FLEXIBLE_INDEX fallback.",
+      "production_status": "fallback",
+      "validation_status": "regime_dependent_fallback",
+      "economic_evidence": "inconclusive"
+    },
+    {
+      "asset": "panamax",
+      "horizon_days": 7,
+      "model_type": "RandomForestRegressor",
+      "status": "fallback",
+      "notes": "REGIME-DEPENDENT \u2014 negative mean R2 across all folds. Use FLEXIBLE_INDEX fallback.",
+      "production_status": "fallback",
+      "validation_status": "regime_dependent_fallback",
+      "economic_evidence": "inconclusive"
+    },
+    {
+      "asset": "handy",
+      "horizon_days": 7,
+      "model_type": "RandomForestRegressor",
+      "status": "fallback",
+      "notes": "REGIME-DEPENDENT. Use FLEXIBLE_INDEX fallback.",
+      "production_status": "fallback",
+      "validation_status": "regime_dependent_fallback",
+      "economic_evidence": "inconclusive"
+    },
+    {
+      "asset": "kdci",
+      "horizon_days": 7,
+      "model_type": "RandomForestRegressor",
+      "status": "fallback",
+      "notes": "REGIME-DEPENDENT. Use FLEXIBLE_INDEX fallback.",
+      "production_status": "fallback",
+      "validation_status": "regime_dependent_fallback",
+      "economic_evidence": "inconclusive"
+    }
+  ]
+}

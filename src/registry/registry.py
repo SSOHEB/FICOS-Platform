@@ -20,11 +20,19 @@ from src.domain.schemas import ModelRegistryEntry, ModelStatus
 
 def _registry_root() -> Path:
     """Return the registry/ directory relative to the project root."""
-    return Path(__file__).resolve().parent.parent.parent / "registry"
+    root = Path(__file__).resolve().parents[2]
+    if (root / "models" / "registry").exists():
+        return root / "models" / "registry"
+    return root / "registry"
 
 
 def _manifest_path() -> Path:
-    return _registry_root() / "manifest.json"
+    p = _registry_root() / "manifest.json"
+    if not p.exists():
+        fallback = Path(__file__).resolve().parents[2] / "registry" / "manifest.json"
+        if fallback.exists():
+            return fallback
+    return p
 
 
 class ModelRegistry:
