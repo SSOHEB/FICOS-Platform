@@ -1,76 +1,102 @@
-# Python bytecode & runtime cache
+# ==============================================================================
+# FICOS PLATFORM — GITIGNORE SPECIFICATION
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Python Bytecode, Runtime & Cache Artifacts
+# ------------------------------------------------------------------------------
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .pytest_cache/
+.coverage
+htmlcov/
+*.coverage.*
 
-# IDE, OS & System-generated files
-.vscode/
-.idea/
-.DS_Store
-Thumbs.db
-*.swp
-.system_generated/
-.gemini/
-scratch/
-
-# Sensitive Information & Credentials
+# ------------------------------------------------------------------------------
+# 2. Sensitive Files, Secrets & Credentials (STRICTLY PROTECTED)
+# ------------------------------------------------------------------------------
 .env
 .env.*
 !.env.example
 *.pem
 *.key
+*.cert
+*.crt
+*.pfx
+*.p12
 credentials.json
 secrets/
+secret/
 token.json
+tokens.json
+id_rsa
+id_ed25519
+*.secret
 
-# Datasets & Confidential Time-Series Data (HIDDEN)
+# ------------------------------------------------------------------------------
+# 3. Datasets & Large Data Files (STRICTLY IGNORED)
+# ------------------------------------------------------------------------------
 data/
-data/*
-!data/modeling_dataset.csv
-!data/dataset_a_final_clean.csv
+data/**
 *.csv
-!outputs/comprehensive_metrics_summary.csv
-!outputs/model_reconciliation_summary.csv
-!outputs/economic_policy_walk_forward_results.csv
-!outputs/economic_policy_stress_tests.csv
-!outputs/economic_policy_experiment_registry.csv
-!outputs/economic_policy_attribution_final.csv
-!outputs/authoritative_canonical_results.json
-!scratch/canonical_results.json
 *.xlsx
 *.xls
 *.parquet
 *.h5
+*.hdf5
 *.feather
+*.dta
+*.tsv
+
+# ------------------------------------------------------------------------------
+# 4. Heavy Model Weights & Binary Checkpoints
+# ------------------------------------------------------------------------------
 *.pkl
 *.pickle
+*.joblib
+*.pt
+*.pth
+*.onnx
+*.bin
+*.model
 
-# Binary Model Weights & Heavy Runtime Artifacts
-models/*.joblib
-models/*.pt
-models/*.onnx
+# ------------------------------------------------------------------------------
+# 5. System, Editor & Scratch Artifacts
+# ------------------------------------------------------------------------------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.system_generated/
+.gemini/
+scratch/
 
-# Output directories
-outputs/modeling_dataset.csv
-
-# Frontend app dependencies, build output, and local artifacts
+# ------------------------------------------------------------------------------
+# 6. Frontend & Docs-Site Build Artifacts
+# ------------------------------------------------------------------------------
 frontend/node_modules/
 frontend/dist/
+frontend/build/
 frontend/.env
-ficoss/node_modules/
-ficoss/dist/
-ficoss/.env
-ficoss/.env.*
-ficoss/.agents/
-ficoss/step_*.txt
-ficoss/verify-stack.mjs
-ficoss/vite.config.ts.timestamp-*.mjs
+frontend/.env.*
+!frontend/.env.example
+frontend/*.log
+ficoss/
 docs-site/node_modules/
-docs-site/.docusaurus/
 docs-site/build/
-docs-site/docs/project-docs/
-docs-site/docs/reports/
-docs-site/static/img/generated/
-node_modules/
+docs-site/.docusaurus/
+docs-site/.cache/
+
+# ------------------------------------------------------------------------------
+# 7. Generated Runtime Logs & Dynamic Output CSVs
+# ------------------------------------------------------------------------------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+outputs/*.csv
