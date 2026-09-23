@@ -1,0 +1,12 @@
+====================================================
+FICOS EXPERIMENT 6: SCIENTIFIC VALIDITY & LEAKAGE AUDIT
+====================================================
+
+1. No 2025 observations used for threshold selection         : [PASS]
+2. No future targets used in feature construction            : [PASS]
+3. No test outcomes used to determine gate thresholds        : [PASS]
+4. No tuning based on final 2025 results                     : [PASS]
+5. Width deciles calculated within evaluated population      : [PASS]
+6. Existing walk-forward boundaries preserved                : [PASS]
+7. Experiment 5 corrected ACI outputs used exactly           : [PASS]
+8. No production files modified                              : [PASS]

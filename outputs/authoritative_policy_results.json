@@ -1,0 +1,44 @@
+{
+  "certification": {
+    "status": "AUTHORITATIVE / CERTIFIED IMPROVEMENT \u2705",
+    "classification": "CERTIFIED IMPROVEMENT",
+    "git_commit": "ef6970f3f96ac2bc55dcc02e40c490102ea10df3",
+    "dataset_sha256": "e0f4c91eed7b4919200472c3fe7e0735e4fd12433383727b58f73c2fd8945fd5",
+    "timestamp": "2026-09-23T20:00:44Z"
+  },
+  "model_benchmark": {
+    "model": "RF_STANDARD (1D)",
+    "n_estimators": 100,
+    "seed": 42,
+    "n_jobs": 1,
+    "canonical_net_loss": -503745.0
+  },
+  "certified_policy": {
+    "policy_id": "EXP-06_WALK_FORWARD_LOCKED",
+    "description": "Chronological walk-forward tuned WAIT threshold policy (NOW and FLEX default to pure Spot Index)",
+    "total_observations": 4804,
+    "wait_decisions_count": 1509,
+    "wait_coverage_pct": 31.41,
+    "gated_precision_pct": 80.52,
+    "total_net_savings_usd": 7607420.0,
+    "savings_pct_vs_baseline": 0.4183,
+    "mean_savings_per_voyage_usd": 1583.56,
+    "2025_wait_net_savings_usd": 944960.0,
+    "leakage_free": true,
+    "walk_forward_validated": true
+  },
+  "retired_figures": [
+    {
+      "figure": "+$7,781,432 / +0.42%",
+      "status": "RETIRED \u2014 unexecuted Colab output"
+    },
+    {
+      "figure": "-$340,885 / -0.019%",
+      "status": "RETIRED \u2014 50-tree speed approximation"
+    },
+    {
+      "figure": "POL-003 +$4,006,900",
+      "status": "PRELIMINARY SENSITIVITY ONLY \u2014 replaced by EXP-06 Walk-Forward Locked (+$3,981,540.00)"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+============================================================
+FICOS UNCERTAINTY GATE ARCHITECTURE & AUDIT DEFINITION
+============================================================
+
+1. UNCERTAINTY QUANTITY USED:
+   - Production Gate (src/decision_engine.py): Uses empirical residual bounds [P10, P90] around predicted move delta = (y_hat - y_0).
+   - Decision Condition: Evaluates whether the predicted move delta falls inside the noise band [P10, P90].
+   - Relative Threshold: Also requires relative predicted move |delta| / y_0 > optimal_tau (default tau = 1.0%).
+   - Benchmark Gate (Research Experiments 4-5): Evaluates abstention using relative interval width and point prediction magnitude:
+       Abstained if (interval_width / y_0 > 0.45) OR (|y_hat - y_0| / y_0 < 0.01)
+
+2. EXACT THRESHOLDS:
+   - Production Gate: Vessel & horizon specific empirical residual bounds from registry:
+       * CAPE 1d    : P10 = -$122/day, P90 = +$122/day, tau = 1.0%
+       * PANAMAX 1d : P10 = -$250/day, P90 = +$250/day, tau = 1.0%
+       * SUPRAMAX 1d: P10 = -$145/day, P90 = +$145/day, tau = 1.0%
+       * HANDY 1d   : P10 = -$180/day, P90 = +$180/day, tau = 1.0%
+   - Research Benchmark Gate: Relative width threshold = 45% (0.45), Relative move threshold = 1% (0.01).
+
+3. SCOPE & GRANULARITY:
+   - Production Gate: Vessel-specific, horizon-specific, selective registry (promoted pairs only).
+   - Research Benchmark Gate: Evaluated across all prediction cases to test calibration vs directional accuracy.
+
+4. DEFINITION OF METRICS:
+   - Abstention: Case where forecast is deemed too uncertain / small-signal for directional commitment.
+   - Retained Prediction: Case that satisfies uncertainty gate criteria, generating BUY NOW or WAIT recommendation.
+   - Gated Precision: Directional accuracy evaluated STRICTLY on retained predictions:
+       Gated_Precision = Mean( sign(y_true - y_0) == sign(y_hat - y_0) ) for retained cases.
+   - Directional Correctness: Binary indicator (1 if sign(y_hat - y_0) == sign(y_true - y_0) else 0).
+
+5. FORMULA LOGIC:
+   [Production Decision Engine Logic]
+     if p10 <= delta <= p90: recommendation = 'FLEXIBLE / INDEX-LINKED' (Abstain)
+     elif delta > p90 and delta/y_0 > tau: recommendation = 'BUY NOW' (Retained)
+     elif delta < p10 and delta/y_0 < -tau: recommendation = 'WAIT' (Retained)
+     else: recommendation = 'FLEXIBLE / INDEX-LINKED' (Abstain)
+
+   [Research Benchmark Logic]
+     abstained = (interval_width / y_0 > 0.45) | (abs(y_hat - y_0) / y_0 < 0.01)
+     retained  = ~abstained
+============================================================

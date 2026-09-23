@@ -1,0 +1,20 @@
+====================================================
+FICOS EXPERIMENT 6: INPUT MANIFEST & DATASET VERIFICATION
+====================================================
+
+Primary Dataset Path: data/modeling_dataset.csv
+Total Dataset Rows  : 2,581
+Date Range           : 2016-01-04 to 2026-09-04
+Feature Count        : 441
+
+EVALUATION PROTOCOL:
+  - 5 Purged Expanding Walk-Forward Windows (2021-2025)
+  - 4 Vessel Classes: CAPE, PANAMAX, SUPRAMAX, HANDY
+  - 4 Forecast Horizons: 1d, 7d, 14d, 30d
+  - 6 Evaluated Models: Ridge Empirical, Raw Quantile LGBM, Global CQR 80, Global CQR 90, Corrected ACI 80, Corrected ACI 90
+  - Total Out-Of-Sample Case Rows Generated: 43,488
+
+VERIFICATION CHECKS:
+  [PASS] Target definitions identical to Experiments 4A/4B/4C/5
+  [PASS] Vessel classes & horizons identical across all models
+  [PASS] Walk-forward windows & 2025 blind holdout strictly aligned
