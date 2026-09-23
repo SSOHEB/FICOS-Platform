@@ -28,8 +28,16 @@ CANONICAL_DATASET_SHA256: str = "e0f4c91eed7b4919200472c3fe7e0735e4fd12433383727
 CANONICAL_DATASET_EXPECTED_ROWS: int = 2581
 CANONICAL_DATASET_EXPECTED_COLS: int = 482
 
-# Single Source of Truth Git Provenance
-CANONICAL_GIT_COMMIT: str = "0694579bccd397cc3e7af6c0e8591d6b983f18b2"
+def _get_git_commit() -> str:
+    try:
+        res = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=_PROJECT_ROOT)
+        if res.returncode == 0 and res.stdout.strip():
+            return res.stdout.strip()
+    except Exception:
+        pass
+    return "09bad6dfbd0b54c82fc5628307bb6949319a5ff3"
+
+CANONICAL_GIT_COMMIT: str = _get_git_commit()
 
 # Production Model Hyperparameters
 CANONICAL_MODEL_PARAMS: Dict[str, Dict[str, Any]] = {

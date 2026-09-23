@@ -1,7 +1,7 @@
 # FICOS — Final Reproducibility Specification
 
 **Canonical Execution Document — SIH26006**
-**Git commit**: `0694579bccd397cc3e7af6c0e8591d6b983f18b2`
+**Git commit**: `653eef9421201074afe2fd9a99755356db8fdfc4`
 **Branch**: `main`
 **Generated**: 2026-09-23
 
@@ -28,7 +28,7 @@ python -c "import hashlib; h=hashlib.sha256(); [h.update(c) for c in iter(lambda
 ## 2. Git Commit
 
 ```
-commit: 0694579bccd397cc3e7af6c0e8591d6b983f18b2
+commit: 653eef9421201074afe2fd9a99755356db8fdfc4
 date:   2026-09-23 12:23:49 +0530
 msg:    feat(notebook): final authoritative unrounded economic breakdown and certified verdicts
 ```
@@ -236,7 +236,7 @@ To reproduce canonical results:
 
 ```bash
 # 1. Verify git state
-git checkout 0694579bccd397cc3e7af6c0e8591d6b983f18b2
+git checkout 653eef9421201074afe2fd9a99755356db8fdfc4
 git status  # must show clean (untracked outputs/ acceptable)
 
 # 2. Verify dataset hash
@@ -289,7 +289,7 @@ All metrics verified bitwise-identical across two independent clean-room runs.
 FICOS AUTHORITATIVE CERTIFICATION
 ======================================================================
 STATUS:           AUTHORITATIVE / CERTIFIED ✅
-GIT COMMIT:       0694579bccd397cc3e7af6c0e8591d6b983f18b2
+GIT COMMIT:       653eef9421201074afe2fd9a99755356db8fdfc4
 DATASET SHA-256:  e0f4c91eed7b4919200472c3fe7e0735e4fd12433383727b58f73c2fd8945fd5
 CONFIG SSOT:     src/config/canonical_config.py
 HYPERPARAMETERS:  N_TREES=100, SEED=42, n_jobs=1

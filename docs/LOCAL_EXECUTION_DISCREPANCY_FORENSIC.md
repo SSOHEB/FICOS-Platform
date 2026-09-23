@@ -1,7 +1,7 @@
 # FICOS — Local Execution Discrepancy Forensic Report
 
 **Executed**: 2026-09-23
-**Git commit**: `0694579bccd397cc3e7af6c0e8591d6b983f18b2` (branch: `main`)
+**Git commit**: `653eef9421201074afe2fd9a99755356db8fdfc4` (branch: `main`)
 **Dataset SHA-256**: `e0f4c91eed7b4919...d8945fd5` (2,581 rows x 482 cols)
 **Python**: 3.13.14 | numpy 2.5.1 | pandas 3.0.5 | sklearn 1.9.0 | lgb 4.7.0 | xgb 3.4.1 | catboost: NOT INSTALLED (GBR fallback)
 
