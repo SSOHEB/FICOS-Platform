@@ -33,6 +33,8 @@ data/*
 *.csv
 !outputs/comprehensive_metrics_summary.csv
 !outputs/model_reconciliation_summary.csv
+!outputs/authoritative_canonical_results.json
+!scratch/canonical_results.json
 *.xlsx
 *.xls
 *.parquet
