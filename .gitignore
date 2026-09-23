@@ -33,6 +33,10 @@ data/*
 *.csv
 !outputs/comprehensive_metrics_summary.csv
 !outputs/model_reconciliation_summary.csv
+!outputs/economic_policy_walk_forward_results.csv
+!outputs/economic_policy_stress_tests.csv
+!outputs/economic_policy_experiment_registry.csv
+!outputs/economic_policy_attribution_final.csv
 !outputs/authoritative_canonical_results.json
 !scratch/canonical_results.json
 *.xlsx
