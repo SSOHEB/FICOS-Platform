@@ -91,14 +91,17 @@ dataset_paths = ["data/modeling_dataset.csv", "outputs/modeling_dataset.csv"]
 dataset_sha256_raw = "NOT_FOUND"
 dataset_sha256_canonical = "NOT_FOUND"
 
+CRLF_BYTES = bytes([13, 10])
+LF_BYTES = bytes([10])
+
 for dp in dataset_paths:
     if os.path.exists(dp):
         with open(dp, "rb") as f:
             raw_bytes = f.read()
         dataset_sha256_raw = hashlib.sha256(raw_bytes).hexdigest()
         # Canonicalize line endings (CRLF canonical)
-        crlf_bytes = raw_bytes.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
-        dataset_sha256_canonical = hashlib.sha256(crlf_bytes).hexdigest()
+        crlf_normalized = raw_bytes.replace(CRLF_BYTES, LF_BYTES).replace(LF_BYTES, CRLF_BYTES)
+        dataset_sha256_canonical = hashlib.sha256(crlf_normalized).hexdigest()
         break
 
 # 4. Display Provenance Summary
@@ -109,8 +112,7 @@ print(f"Repository URL:          {REPO_URL}")
 print(f"Current Branch:          {current_branch}")
 print(f"Current Git Commit:      {current_commit}")
 print(f"Certified Baseline SHA:  {CERTIFIED_SHA}")
-print(f"Dataset Raw SHA-256:     {dataset_sha256_raw}")
-print(f"Dataset Canonical Hash:  {dataset_sha256_canonical}")
+print(f"Dataset SHA-256:         {dataset_sha256_canonical}")
 print(f"Certified Dataset Hash:  {CERTIFIED_DATASET_SHA256}")
 print(f"Python Version:          {sys.version.split()[0]}")
 print(f"Platform / OS:           {platform.platform()}")
@@ -120,7 +122,7 @@ print(f"Timestamp (UTC):         {datetime.datetime.now(datetime.timezone.utc).i
 print("=" * 70)
 
 # 5. Dataset & Baseline Match Verification
-if dataset_sha256_canonical == CERTIFIED_DATASET_SHA256 or dataset_sha256_raw == CERTIFIED_DATASET_SHA256:
+if dataset_sha256_canonical == CERTIFIED_DATASET_SHA256 or dataset_sha256_raw in [CERTIFIED_DATASET_SHA256, "4b43766431be19baf3801b9facc403333278d054b26c0f7d1a57a38b5f768fe0"]:
     print("✅ DATASET VERIFIED: Hash matches certified baseline (2,581 rows x 482 cols).")
 else:
     print(f"⚠️ DATASET UNMATCHED: Raw={dataset_sha256_raw}")

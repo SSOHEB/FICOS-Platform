@@ -1,0 +1,2 @@
+# Enforce CRLF for canonical dataset to preserve bitwise SHA-256 hash
+data/modeling_dataset.csv text eol=crlf
