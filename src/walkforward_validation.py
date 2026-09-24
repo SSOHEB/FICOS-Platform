@@ -77,7 +77,8 @@ def run_walkforward_validation():
     out_dir = "outputs/phase8_walkforward"
     os.makedirs(out_dir, exist_ok=True)
 
-    df = pd.read_csv("outputs/modeling_dataset.csv")
+    dataset_path = "data/modeling_dataset.csv" if os.path.exists("data/modeling_dataset.csv") else "outputs/modeling_dataset.csv"
+    df = pd.read_csv(dataset_path)
     df["date"] = pd.to_datetime(df["date"])
     df = df.sort_values("date").reset_index(drop=True)
     df['year'] = df['date'].dt.year

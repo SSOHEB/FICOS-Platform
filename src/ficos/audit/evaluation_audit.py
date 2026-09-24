@@ -42,7 +42,7 @@ from sklearn.feature_selection import SelectKBest, f_regression
 warnings.filterwarnings("ignore")
 np.random.seed(42)
 
-AUDIT_DIR = "outputs"
+AUDIT_DIR = os.path.join("outputs", "backtests")
 os.makedirs(AUDIT_DIR, exist_ok=True)
 
 # ──────────────────────────────────────────────────────────────────────────────

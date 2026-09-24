@@ -20,8 +20,13 @@ class DecisionBacktestEngine:
     Simulates decision policy over historical walk-forward windows.
     """
 
-    def __init__(self, data_path: str = "outputs/modeling_dataset.csv"):
-        self.data_path = Path(data_path)
+    def __init__(self, data_path: str = "data/modeling_dataset.csv"):
+        p = Path(data_path)
+        if not p.exists() and Path("outputs/modeling_dataset.csv").exists():
+            p = Path("outputs/modeling_dataset.csv")
+        elif not p.exists() and Path("data/modeling_dataset.csv").exists():
+            p = Path("data/modeling_dataset.csv")
+        self.data_path = p
         self.rec_service = RecommendationService()
 
     def run_backtest(

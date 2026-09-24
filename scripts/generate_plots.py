@@ -54,7 +54,7 @@ plt.rcParams['grid.alpha'] = 0.8
 
 ARTIFACT_DIR = r"C:\Users\soheb\.gemini\antigravity-ide\brain\7cd9deed-2fb0-497b-8e7e-caf9a0b6a7c2"
 IMAGES_DIR = r"images"
-OUTPUTS_DIR = r"outputs"
+OUTPUTS_DIR = os.path.join(r"outputs", "figures")
 
 os.makedirs(IMAGES_DIR, exist_ok=True)
 os.makedirs(OUTPUTS_DIR, exist_ok=True)

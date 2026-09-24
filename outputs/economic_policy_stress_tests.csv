@@ -1,8 +1,0 @@
-Scenario,Idle_Cost_Per_Day_USD,Voyage_Duration_Mult,Prediction_Noise_Std_USD,WAIT_Count,Total_Net_Savings_USD,2025_WAIT_Net_USD,Mean_Net_USD,Status
-"Baseline Stress Test ($2500 idle, no noise)",2500.0,1.0,0.0,1509,7607420.0,944960.0,1583.56,PASSED (POSITIVE)
-High Idle Cost ($3500/day),3500.0,1.0,0.0,1509,6098420.0,745960.0,1269.45,PASSED (POSITIVE)
-Extreme Idle Cost ($5000/day),5000.0,1.0,0.0,1509,3834920.0,447460.0,798.28,PASSED (POSITIVE)
-Low Idle Cost ($1000/day),1000.0,1.0,0.0,1509,9870920.0,1243460.0,2054.73,PASSED (POSITIVE)
-Prediction Error Degradation ($50 noise std),2500.0,1.0,50.0,1510,7578840.0,1013260.0,1577.61,PASSED (POSITIVE)
-Severe Error Degradation ($100 noise std),2500.0,1.0,100.0,1509,7181060.0,955840.0,1494.81,PASSED (POSITIVE)
-Combined High Idle ($3500) + Error Noise ($50),3500.0,1.0,50.0,1510,6068840.0,782260.0,1263.29,PASSED (POSITIVE)

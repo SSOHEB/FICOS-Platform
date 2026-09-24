@@ -62,7 +62,7 @@ N_FOLDS    = 5
 FOLD_SIZE  = 250
 VAL_SIZE   = 200
 
-OUT_DIR = "outputs"
+OUT_DIR = os.path.join("outputs", "backtests")
 os.makedirs(OUT_DIR, exist_ok=True)
 
 
