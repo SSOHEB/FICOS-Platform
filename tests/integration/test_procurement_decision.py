@@ -11,15 +11,15 @@ Verifies:
 """
 
 import pytest
-from src.domain.schemas import CargoRequirement, VesselClass, Port, Route, ForecastResult, UncertaintyLevel
-from src.forecast.service import ForecastService
-from src.operational.feasibility_engine import FeasibilityEngine
-from src.operational.port_repository import PortRepository
-from src.operational.vessel_repository import VesselRepository
-from src.risk.engine import RiskEngine
-from src.cost.model import CostModel
-from src.decision.contract_comparison import ContractStrategyComparator
-from src.decision.procurement_engine import ProcurementDecisionEngine
+from backend.domain.schemas import CargoRequirement, VesselClass, Port, Route, ForecastResult, UncertaintyLevel
+from ml.forecasting.service import ForecastService
+from backend.operational.feasibility_engine import FeasibilityEngine
+from backend.operational.port_repository import PortRepository
+from backend.operational.vessel_repository import VesselRepository
+from backend.risk.engine import RiskEngine
+from backend.cost.model import CostModel
+from backend.decision.contract_comparison import ContractStrategyComparator
+from backend.decision.procurement_engine import ProcurementDecisionEngine
 
 
 @pytest.fixture

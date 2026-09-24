@@ -9,14 +9,14 @@ Verifies:
 """
 
 import pytest
-from src.domain.schemas import CargoRequirement, VesselClass, Port, Route, ForecastResult, UncertaintyLevel
-from src.forecast.service import ForecastService
-from src.operational.feasibility_engine import FeasibilityEngine
-from src.operational.port_repository import PortRepository
-from src.operational.vessel_repository import VesselRepository
-from src.risk.engine import RiskEngine
-from src.cost.model import CostModel
-from src.decision.multi_voyage_planner import MultiVoyagePlanner
+from backend.domain.schemas import CargoRequirement, VesselClass, Port, Route, ForecastResult, UncertaintyLevel
+from ml.forecasting.service import ForecastService
+from backend.operational.feasibility_engine import FeasibilityEngine
+from backend.operational.port_repository import PortRepository
+from backend.operational.vessel_repository import VesselRepository
+from backend.risk.engine import RiskEngine
+from backend.cost.model import CostModel
+from backend.decision.multi_voyage_planner import MultiVoyagePlanner
 
 
 @pytest.fixture
@@ -147,7 +147,7 @@ def test_savings_semantics_cheaper_than_spot(setup_planner):
 
 def test_savings_semantics_equal_to_spot():
     """When a strategy equals Spot in cost, savings must be zero (0.00 / 0.0%)."""
-    from src.decision.multi_voyage_planner import MultiVoyagePlanOutput
+    from backend.decision.multi_voyage_planner import MultiVoyagePlanOutput
     
     spot_cost = 5000000.0
     rec_cost = 5000000.0
@@ -186,7 +186,7 @@ def test_savings_semantics_equal_to_spot():
 
 def test_savings_semantics_more_expensive_than_spot():
     """When a strategy is more expensive than Spot, savings must be strictly negative."""
-    from src.decision.multi_voyage_planner import MultiVoyagePlanOutput
+    from backend.decision.multi_voyage_planner import MultiVoyagePlanOutput
     
     spot_cost = 5000000.0
     rec_cost = 6000000.0  # $1M more expensive (+20% cost increase)

@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Dict, Any, Optional
 import yaml
 
-from src.domain.schemas import (
+from backend.domain.schemas import (
     CargoRequirement, VesselClass, Port, Route, CostBreakdown, CostComponent
 )
 

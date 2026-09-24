@@ -7,7 +7,7 @@ or canal transit points based on weather, congestion, and port constraints.
 from __future__ import annotations
 
 from typing import Dict, Any, List
-from src.domain.schemas import Port, RiskResult, IdleTimeAssessment
+from backend.domain.schemas import Port, RiskResult, IdleTimeAssessment
 
 
 class IdleAssessmentEngine:

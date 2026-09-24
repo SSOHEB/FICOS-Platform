@@ -2,7 +2,7 @@
 Tests for domain schemas and dataclasses.
 """
 import pytest
-from src.domain.schemas import (
+from backend.domain.schemas import (
     CargoRequirement, VesselClass, Port, Route, ForecastResult, FeasibilityResult, RiskResult
 )
 

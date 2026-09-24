@@ -1,8 +1,8 @@
 """
 Tests for Forecast Service and Uncertainty Engine.
 """
-from src.forecast.service import ForecastService
-from src.forecast.uncertainty import UncertaintyEngine
+from ml.forecasting.service import ForecastService
+from ml.forecasting.uncertainty import UncertaintyEngine
 
 def test_forecast_service_promoted_model():
     service = ForecastService()

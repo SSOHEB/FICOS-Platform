@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Dict, Optional
 import yaml
 
-from src.domain.schemas import Port, PortConstraints
+from backend.domain.schemas import Port, PortConstraints
 
 
 def _project_root() -> Path:

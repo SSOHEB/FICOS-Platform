@@ -14,8 +14,8 @@ from pathlib import Path
 # Add project root to sys.path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-from src.application.recommendation_service import RecommendationService
-from src.registry.registry import ModelRegistry
+from backend.api.recommendation_service import RecommendationService
+from ml.registry.registry import ModelRegistry
 
 
 def main():

@@ -34,9 +34,9 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
-from src.domain.schemas import ForecastResult, UncertaintyLevel
-from src.registry.registry import ModelRegistry, get_registry
-from src.forecast.uncertainty import UncertaintyEngine
+from backend.domain.schemas import ForecastResult, UncertaintyLevel
+from ml.registry.registry import ModelRegistry, get_registry
+from ml.forecasting.uncertainty import UncertaintyEngine
 
 warnings.filterwarnings("ignore")
 

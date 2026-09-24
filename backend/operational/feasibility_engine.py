@@ -17,11 +17,11 @@ from typing import List, Optional
 import yaml
 from pathlib import Path
 
-from src.domain.schemas import (
+from backend.domain.schemas import (
     CargoRequirement, VesselClass, Port, FeasibilityResult, ConstraintCheck
 )
-from src.operational.port_repository import PortRepository
-from src.operational.vessel_repository import VesselRepository
+from backend.operational.port_repository import PortRepository
+from backend.operational.vessel_repository import VesselRepository
 
 
 def _project_root() -> Path:

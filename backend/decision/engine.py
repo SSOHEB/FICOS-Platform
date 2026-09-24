@@ -10,18 +10,18 @@ import uuid
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 
-from src.domain.schemas import (
+from backend.domain.schemas import (
     CargoRequirement, VesselClass, Port, Route, ForecastResult,
     FeasibilityResult, RiskResult
 )
-from src.forecast.service import ForecastService
-from src.operational.feasibility_engine import FeasibilityEngine
-from src.operational.port_repository import PortRepository
-from src.operational.vessel_repository import VesselRepository
-from src.risk.engine import RiskEngine
-from src.policy.expected_cost_policy import ExpectedCostPolicy
-from src.decision.schemas import RecommendationOutput
-from src.decision.explanation import ExplanationGenerator
+from ml.forecasting.service import ForecastService
+from backend.operational.feasibility_engine import FeasibilityEngine
+from backend.operational.port_repository import PortRepository
+from backend.operational.vessel_repository import VesselRepository
+from backend.risk.engine import RiskEngine
+from backend.policy.expected_cost_policy import ExpectedCostPolicy
+from backend.decision.schemas import RecommendationOutput
+from backend.decision.explanation import ExplanationGenerator
 
 
 class DecisionEngine:

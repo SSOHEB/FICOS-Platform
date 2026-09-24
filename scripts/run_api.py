@@ -12,12 +12,12 @@ _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from src.config.settings import get_settings
+from backend.config.settings import get_settings
 
 def main():
     settings = get_settings()
     uvicorn.run(
-        "src.application.api:app",
+        "backend.api.api:app",
         host=settings.api_host,
         port=settings.api_port,
         reload=settings.api_reload,

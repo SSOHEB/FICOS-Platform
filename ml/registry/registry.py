@@ -15,7 +15,7 @@ import json
 import os
 from pathlib import Path
 from typing import List, Optional, Dict, Any
-from src.domain.schemas import ModelRegistryEntry, ModelStatus
+from backend.domain.schemas import ModelRegistryEntry, ModelStatus
 
 
 def _registry_root() -> Path:

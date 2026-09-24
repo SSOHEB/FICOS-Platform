@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Optional
 import yaml
 
-from src.domain.schemas import RiskLevel, RiskResult, RiskAlert
+from backend.domain.schemas import RiskLevel, RiskResult, RiskAlert
 
 
 def _project_root() -> Path:

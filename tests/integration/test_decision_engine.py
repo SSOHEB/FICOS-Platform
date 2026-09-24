@@ -1,9 +1,9 @@
 """
 Tests for Risk Engine and Decision Engine.
 """
-from src.risk.engine import RiskEngine
-from src.decision.engine import DecisionEngine
-from src.application.recommendation_service import RecommendationService
+from backend.risk.engine import RiskEngine
+from backend.decision.engine import DecisionEngine
+from backend.api.recommendation_service import RecommendationService
 
 def test_risk_engine_evaluation():
     re = RiskEngine()

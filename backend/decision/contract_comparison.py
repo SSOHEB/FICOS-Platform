@@ -15,13 +15,13 @@ from __future__ import annotations
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass, field
 
-from src.domain.schemas import (
+from backend.domain.schemas import (
     CargoRequirement, VesselClass, Port, Route, ForecastResult,
     FeasibilityResult, RiskResult
 )
-from src.cost.model import CostModel
-from src.cost.idle_assessment import IdleAssessmentEngine
-from src.policy.expected_cost_policy import ExpectedCostPolicy
+from backend.cost.model import CostModel
+from backend.cost.idle_assessment import IdleAssessmentEngine
+from backend.policy.expected_cost_policy import ExpectedCostPolicy
 
 
 @dataclass

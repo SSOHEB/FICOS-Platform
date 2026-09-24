@@ -23,8 +23,8 @@ project_root = Path(__file__).resolve().parent.parent.parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
-from src.data_loader import DataLoader
-from src.features import FeatureEngineer
+from ml.data.data_loader import DataLoader
+from ml.features.features import FeatureEngineer
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("FICOS-RegimeAnalysis")

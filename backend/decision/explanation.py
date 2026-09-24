@@ -6,7 +6,7 @@ Builds human-readable audit trails and explanations for decision engine outputs.
 from __future__ import annotations
 
 from typing import Dict, Any, List
-from src.domain.schemas import ForecastResult, FeasibilityResult, RiskResult, PolicyEvaluation
+from backend.domain.schemas import ForecastResult, FeasibilityResult, RiskResult, PolicyEvaluation
 
 
 class ExplanationGenerator:

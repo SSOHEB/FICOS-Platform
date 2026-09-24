@@ -1,10 +1,10 @@
 """FICOS Evaluation, Validation & Metrics package."""
-from .metrics import directional_accuracy, calculate_all_metrics, compute_metrics
+from .metrics import evaluate_model, directional_accuracy, smape
 from .decision_backtest import DecisionBacktestEngine
 
 __all__ = [
+    "evaluate_model",
     "directional_accuracy",
-    "calculate_all_metrics",
-    "compute_metrics",
+    "smape",
     "DecisionBacktestEngine",
 ]

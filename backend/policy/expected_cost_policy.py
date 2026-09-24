@@ -10,12 +10,12 @@ from pathlib import Path
 from typing import Dict, Any, List, Optional
 import yaml
 
-from src.domain.schemas import (
+from backend.domain.schemas import (
     CargoRequirement, VesselClass, Port, Route, ForecastResult,
     FeasibilityResult, RiskResult, CostBreakdown, PolicyEvaluation
 )
-from src.cost.model import CostModel
-from src.cost.idle_assessment import IdleAssessmentEngine
+from backend.cost.model import CostModel
+from backend.cost.idle_assessment import IdleAssessmentEngine
 
 
 class ExpectedCostPolicy:

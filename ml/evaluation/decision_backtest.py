@@ -11,8 +11,8 @@ import numpy as np
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 
-from src.application.recommendation_service import RecommendationService
-from src.data_loader import load_modeling_dataset
+from backend.api.recommendation_service import RecommendationService
+from ml.data.data_loader import load_modeling_dataset
 
 
 class DecisionBacktestEngine:

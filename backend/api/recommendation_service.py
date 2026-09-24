@@ -9,11 +9,11 @@ from __future__ import annotations
 from typing import Dict, Any, Optional
 from datetime import datetime
 
-from src.domain.schemas import CargoRequirement, Route
-from src.operational.port_repository import PortRepository
-from src.operational.vessel_repository import VesselRepository
-from src.decision.engine import DecisionEngine
-from src.decision.schemas import RecommendationOutput
+from backend.domain.schemas import CargoRequirement, Route
+from backend.operational.port_repository import PortRepository
+from backend.operational.vessel_repository import VesselRepository
+from backend.decision.engine import DecisionEngine
+from backend.decision.schemas import RecommendationOutput
 
 
 class RecommendationService:

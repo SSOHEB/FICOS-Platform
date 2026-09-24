@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Optional
 import yaml
 
-from src.domain.schemas import UncertaintyLevel
+from backend.domain.schemas import UncertaintyLevel
 
 
 def _load_policy() -> dict:
@@ -74,7 +74,7 @@ class UncertaintyEngine:
         p90: float
     ) -> UncertaintyResult:
         """Calculate uncertainty result object."""
-        from src.domain.schemas import UncertaintyResult
+        from backend.domain.schemas import UncertaintyResult
         width = abs(p90 - p10)
         return UncertaintyResult(p10=p10, p50=point_forecast, p90=p90, confidence_interval_width=width)
 

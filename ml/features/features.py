@@ -18,7 +18,7 @@ import sys
 import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from src.data_loader import load_dataset_a, load_config
+from ml.data.data_loader import load_dataset_a, load_config
 
 
 def create_lag_features(df, columns, lags, prefix=""):

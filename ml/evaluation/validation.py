@@ -10,7 +10,7 @@ import sys
 import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from src.data_loader import (
+from ml.data.data_loader import (
     load_dataset_a, load_dataset_b, load_port_weather,
     load_cyclone_events, load_geopolitical_events,
     load_config, check_duplicate_dates, check_missingness, check_infinities,

@@ -30,23 +30,23 @@ from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from src.config.settings import get_settings
-from src.domain.schemas import (
+from backend.config.settings import get_settings
+from backend.domain.schemas import (
     CargoRequirement, VesselClass, Port, Route, RiskLevel, UncertaintyLevel
 )
-from src.operational.port_repository import PortRepository
-from src.operational.vessel_repository import VesselRepository
-from src.operational.feasibility_engine import FeasibilityEngine
-from src.forecast.service import ForecastService
-from src.forecast.uncertainty import UncertaintyEngine
-from src.risk.engine import RiskEngine
-from src.cost.idle_assessment import IdleAssessmentEngine
-from src.cost.model import CostModel
-from src.policy.expected_cost_policy import ExpectedCostPolicy
-from src.decision.engine import DecisionEngine
-from src.domain.schemas import PROMOTED_PAIRS
-from src.decision.explanation import ExplanationGenerator
-from src.scenario.engine import ScenarioEngine, ScenarioType
+from backend.operational.port_repository import PortRepository
+from backend.operational.vessel_repository import VesselRepository
+from backend.operational.feasibility_engine import FeasibilityEngine
+from ml.forecasting.service import ForecastService
+from ml.forecasting.uncertainty import UncertaintyEngine
+from backend.risk.engine import RiskEngine
+from backend.cost.idle_assessment import IdleAssessmentEngine
+from backend.cost.model import CostModel
+from backend.policy.expected_cost_policy import ExpectedCostPolicy
+from backend.decision.engine import DecisionEngine
+from backend.domain.schemas import PROMOTED_PAIRS
+from backend.decision.explanation import ExplanationGenerator
+from backend.scenario.engine import ScenarioEngine, ScenarioType
 
 # Load environment configuration
 settings = get_settings()
@@ -67,8 +67,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from src.decision.procurement_engine import ProcurementDecisionEngine
-from src.decision.multi_voyage_planner import MultiVoyagePlanner
+from backend.decision.procurement_engine import ProcurementDecisionEngine
+from backend.decision.multi_voyage_planner import MultiVoyagePlanner
 
 # Global Service Singletons
 port_repo = PortRepository(dataset_b_path=str(settings.dataset_b_path) if settings.dataset_b_path.exists() else None)
@@ -829,4 +829,4 @@ def get_multi_voyage_plan(
 if __name__ == "__main__":
     import uvicorn
     print(">> Starting FICOS FastAPI Server on http://localhost:8000...")
-    uvicorn.run("src.application.api:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("backend.api.api:app", host="0.0.0.0", port=8000, reload=True)

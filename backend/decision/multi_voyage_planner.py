@@ -20,12 +20,12 @@ from __future__ import annotations
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass, field
 
-from src.domain.schemas import (
+from backend.domain.schemas import (
     CargoRequirement, VesselClass, Port, Route, ForecastResult,
     FeasibilityResult, RiskResult
 )
-from src.cost.model import CostModel
-from src.decision.contract_comparison import ContractStrategyComparator
+from backend.cost.model import CostModel
+from backend.decision.contract_comparison import ContractStrategyComparator
 
 
 @dataclass

@@ -5,7 +5,7 @@ and not tracked in git (11 MB). They are skipped when the dataset is absent.
 """
 import os
 import pytest
-from src.evaluation.decision_backtest import DecisionBacktestEngine
+from ml.evaluation.decision_backtest import DecisionBacktestEngine
 from tests.evaluation.run_permutation_test import run_permutation_test
 
 DATASET_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "data", "processed", "modeling_dataset.csv")

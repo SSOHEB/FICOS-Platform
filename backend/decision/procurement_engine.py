@@ -20,20 +20,20 @@ from datetime import datetime, timezone
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass, field
 
-from src.domain.schemas import (
+from backend.domain.schemas import (
     CargoRequirement, VesselClass, Port, Route, ForecastResult,
     FeasibilityResult, RiskResult
 )
-from src.forecast.service import ForecastService
-from src.operational.feasibility_engine import FeasibilityEngine
-from src.operational.port_repository import PortRepository
-from src.operational.vessel_repository import VesselRepository
-from src.risk.engine import RiskEngine
-from src.cost.model import CostModel
-from src.policy.expected_cost_policy import ExpectedCostPolicy
-from src.decision.contract_comparison import ContractStrategyComparator, ContractStrategyDetail
-from src.decision.multi_voyage_planner import MultiVoyagePlanner, MultiVoyagePlanOutput
-from src.decision.explanation import ExplanationGenerator
+from ml.forecasting.service import ForecastService
+from backend.operational.feasibility_engine import FeasibilityEngine
+from backend.operational.port_repository import PortRepository
+from backend.operational.vessel_repository import VesselRepository
+from backend.risk.engine import RiskEngine
+from backend.cost.model import CostModel
+from backend.policy.expected_cost_policy import ExpectedCostPolicy
+from backend.decision.contract_comparison import ContractStrategyComparator, ContractStrategyDetail
+from backend.decision.multi_voyage_planner import MultiVoyagePlanner, MultiVoyagePlanOutput
+from backend.decision.explanation import ExplanationGenerator
 
 
 @dataclass

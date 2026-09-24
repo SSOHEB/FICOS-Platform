@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 import yaml
 
-from src.domain.schemas import VesselClass
+from backend.domain.schemas import VesselClass
 
 
 def _project_root() -> Path:

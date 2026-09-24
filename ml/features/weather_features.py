@@ -25,7 +25,7 @@ import sys
 import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from src.data_loader import load_port_weather, load_config
+from ml.data.data_loader import load_port_weather, load_config
 
 
 def build_weather_features(save=True):

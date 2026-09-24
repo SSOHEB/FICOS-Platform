@@ -1,9 +1,9 @@
 """
 Tests for ScenarioEngine.
 """
-from src.domain.schemas import ScenarioType, CargoRequirement, Port, VesselClass, Route
-from src.scenario.engine import ScenarioEngine
-from src.decision.engine import DecisionEngine
+from backend.domain.schemas import ScenarioType, CargoRequirement, Port, VesselClass, Route
+from backend.scenario.engine import ScenarioEngine
+from backend.decision.engine import DecisionEngine
 
 def test_scenario_engine_execution():
     se = ScenarioEngine()

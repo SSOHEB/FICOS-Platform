@@ -9,7 +9,7 @@ The DecisionEngine is re-run on each scenario to show how decisions change.
 from __future__ import annotations
 
 from typing import Optional, Dict, Any
-from src.domain.schemas import (
+from backend.domain.schemas import (
     CargoRequirement, ForecastResult, RiskResult, ScenarioType, ScenarioResult, DecisionType
 )
 

@@ -1,8 +1,8 @@
 """
 Tests for Cost Model Engine.
 """
-from src.cost.model import CostModel
-from src.domain.schemas import CargoRequirement, VesselClass, Port, Route, PortConstraints
+from backend.cost.model import CostModel
+from backend.domain.schemas import CargoRequirement, VesselClass, Port, Route, PortConstraints
 
 def test_cost_model_calculation():
     cm = CostModel()

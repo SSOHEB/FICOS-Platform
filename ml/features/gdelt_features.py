@@ -24,7 +24,7 @@ import sys
 import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from src.data_loader import load_geopolitical_events, load_config
+from ml.data.data_loader import load_geopolitical_events, load_config
 
 
 # ──────────────────────────────────────────────

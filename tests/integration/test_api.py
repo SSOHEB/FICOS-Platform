@@ -13,7 +13,7 @@ Verifies:
 
 import pytest
 from fastapi.testclient import TestClient
-from src.application.api import app
+from backend.api.api import app
 
 client = TestClient(app)
 

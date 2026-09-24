@@ -1,10 +1,10 @@
 """
 Tests for physical feasibility engine.
 """
-from src.operational.port_repository import PortRepository
-from src.operational.vessel_repository import VesselRepository
-from src.operational.feasibility_engine import FeasibilityEngine
-from src.domain.schemas import CargoRequirement
+from backend.operational.port_repository import PortRepository
+from backend.operational.vessel_repository import VesselRepository
+from backend.operational.feasibility_engine import FeasibilityEngine
+from backend.domain.schemas import CargoRequirement
 
 def test_feasibility_check_pass():
     port_repo = PortRepository()
