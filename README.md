@@ -1,277 +1,545 @@
-# FICOS  Freight Intelligence & Chartering Optimization System
+# FICOS — Freight Intelligence & Chartering Optimization System
 
 <div align="center">
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/SSOHEB/FICOS-Platform/blob/main/notebooks/colab_freight_forecasting_benchmark.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/SSOHEB/FICOS-Platform/blob/main/ml/notebooks/02_modeling/colab_freight_forecasting_benchmark.ipynb)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Status](https://img.shields.io/badge/status-audited%20%26%20validated-brightgreen.svg)](reports/MASTER_EVALUATION_REPORT.md)
-[![Reconciliation](https://img.shields.io/badge/reconciliation-72%2F72%20PASS%20(100%25)-success.svg)](reports/MASTER_EVALUATION_REPORT.md)
+[![Model: RF_STANDARD](https://img.shields.io/badge/model-RF__STANDARD%20(100%20trees)-orange.svg)](configs/canonical_config.py)
+[![Policy: EXP-06](https://img.shields.io/badge/policy-EXP--06%20Walk--Forward-green.svg)](outputs/authoritative/authoritative_policy_results.json)
+[![Certified Savings](https://img.shields.io/badge/certified%20savings-%2B%247.6M-brightgreen.svg)](outputs/authoritative/authoritative_policy_results.json)
+[![Tests](https://img.shields.io/badge/tests-38%20passed-success.svg)](tests/)
+[![Reproducibility](https://img.shields.io/badge/reproducibility-32%2F32%20%7C%204%2F4-success.svg)](tests/reproducibility/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Architecture: Zero--Leakage](https://img.shields.io/badge/architecture-zero--leakage-purple.svg)](docs/architecture.md)
 
-**An End-to-End, Statistically Audited Maritime Freight Rate Forecasting & Chartering Decision Optimization Engine**
+**A Reproducibility-Hardened Freight Forecasting → Uncertainty → Economic-Policy → Procurement-Decision System**
 
-*Bridging Zero-Leakage Machine Learning (Ridge & Random Forest) with Physical Port/Vessel Constraints, Geopolitical/Weather Risk, and Multi-Structure Cost Minimization across Capesize, Panamax, Supramax, and Handysize Markets.*
+*RF_STANDARD + EXP-06 certified 1D production path · FLEXIBLE_INDEX fallback for horizons without demonstrated predictive superiority · +$7,607,420 certified net savings vs spot baseline.*
 
 </div>
 
 ---
 
-## 🏛️ System Architecture Flowchart
+## 🏛️ System Architecture
 
-```mermaid
-flowchart TD
-    %% Styling definitions
-    classDef inputStyle fill:#FDE8E8,stroke:#9B1C1C,stroke-width:2px,color:#1F2937,font-weight:bold;
-    classDef handlerStyle fill:#E1EFFE,stroke:#1E429F,stroke-width:2px,color:#1F2937,font-weight:bold;
-    classDef mlStyle fill:#FCE8E6,stroke:#C81E1E,stroke-width:2px,color:#1F2937,font-weight:bold;
-    classDef yellowStyle fill:#FEF08A,stroke:#CA8A04,stroke-width:2px,color:#1F2937,font-weight:bold;
-    classDef dataStyle fill:#EBF5FF,stroke:#2563EB,stroke-width:2px,stroke-dasharray: 5 5,color:#1E40AF,font-weight:bold;
-    classDef costStyle fill:#BAE6FD,stroke:#0284C7,stroke-width:2px,color:#0369A1,font-weight:bold;
-    classDef outputStyle fill:#BBF7D0,stroke:#16A34A,stroke-width:3px,color:#14532D,font-weight:bold;
+FICOS is a **freight procurement decision system**. Its architectural principle is the strict separation of prediction from decision-making:
 
-    %% Main pipeline nodes
-    A["INPUT DATA<br/><small>cargo | origin | destination | quantity</small>"]:::inputStyle
-    B["REQUEST HANDLER<br/><small>checks inputs | identifies routes | starts analysis</small>"]:::handlerStyle
-    
-    C["FREIGHT FORECAST<br/><small>Predicts future freight + confidence</small>"]:::mlStyle
-    D["FORECAST MODELS<br/><small>RIDGE REGRESSION +<br/>RANDOM FOREST REGRESSOR</small>"]:::mlStyle
-    E["MACHINE LEARNING<br/>FEATURE ENGINE<br/><small>SelectKBest(k=30)</small>"]:::mlStyle
-    
-    F["RISK CHECK<br/><small>weather, Political Events, Route Problems, Port Delay</small>"]:::yellowStyle
-    G["VESSEL & PORT CHECK<br/><small>ship size | port size | cargo ship<br/>date check | vessel match</small>"]:::yellowStyle
-    
-    H["COST CHECK AND DECISION MAKING<br/><small>Evaluates Spot vs TC vs COA vs Flexible Index</small>"]:::costStyle
-    
-    I["FICOS OUTPUT<br/><b>BUY / WAIT / FLEXIBLE &nbsp;|&nbsp; Suitable Ship Type &nbsp;|&nbsp; Charter Option (SPOT / TC / COA / FLEX)</b><br/><small>Freight Prediction • Confidence • Expected Cost • Risk Warnings</small>"]:::outputStyle
+```
+Market / Operational Data
+          ↓
+  Feature Engineering
+          ↓
+  Freight Forecasting          ← RF_STANDARD (1D) | FLEXIBLE_INDEX (7D/14D/30D)
+          ↓
+Uncertainty / Confidence       ← P10/P90 Empirical Residual Gating
+          ↓
+   Decision Policy             ← EXP-06 Walk-Forward Locked Policy
+          ↓
+BUY_NOW / WAIT / FLEXIBLE_INDEX
+          ↓
+  Economic Evaluation          ← Observation-level attribution · Walk-forward validated
+```
 
-    %% Data sources box
-    subgraph DATA_SOURCES ["DATA SOURCES & INTEGRATION"]
-        DS_A["DATASET A: MODELING DATA<br/><small>2,581 Daily Indices, Macro, Bunker, Spreads</small>"]:::dataStyle
-        DS_C["DATASET C: RISK / EVENT DATA<br/><small>Chokepoints, Weather, Seasonality, Port Congestion</small>"]:::dataStyle
-        DS_B["DATASET B: OPERATIONAL DATA<br/><small>Port Drafts, LOA, DWT, Vessel Speeds & Fuel Specs</small>"]:::dataStyle
-    end
+> **The model forecasts. The uncertainty layer determines actionability. The policy layer determines economic action. The evaluation layer proves whether the complete system creates value.**
 
-    %% Routing
-    A --> B
-    B --> C
-    DS_A --> E --> D --> C
-    
-    B --> F
-    DS_C --> F
-    
-    F --> G
-    DS_B --> G
-    
-    C --> H
-    G --> H
-    
-    H --> I
+### Multi-Horizon Routing
+
+FICOS does **not** force the same model onto every horizon. Longer-horizon models are only promoted if their directional improvement meets the statistical promotion criterion:
+
+```
+                    FICOS
+                      │
+       ┌──────────────┼──────────────┐
+       ↓              ↓              ↓
+      1D             7D            14D / 30D
+       │              │              │
+  RF_STANDARD   FLEXIBLE_INDEX  FLEXIBLE_INDEX
+       │
+  EXP-06 Policy
+       │
+  BUY_NOW / WAIT / FLEXIBLE_INDEX
 ```
 
 ---
 
-## ⚡ Executive Summary & Core Value Proposition
+## ⚡ Current Certified Production State
 
-Chartering dry bulk vessels in global shipping involves millions of dollars in freight commitments subject to intense market volatility, port congestion, weather disruptions, and canal chokepoints. **FICOS** replaces subjective guesswork with an integrated quantitative framework:
+### Production Predictive Model (Frozen)
 
-1. **Zero-Leakage Machine Learning Core**:
-   - **Models**: Regularized linear **Ridge Regression** ($\ell_2$) for macro stability + **Random Forest Regressor** for non-linear freight spread dynamics.
-   - **Validation Protocol**: 5-fold expanding-window walk-forward validation (2021–2025, $N \approx 1,242$ out-of-sample days).
-   - **No Look-Ahead**: Preprocessing (scaling, median imputation, `SelectKBest` $k=30$) is fit strictly on training masks.
+| Parameter | Value |
+| :--- | :--- |
+| **Algorithm** | `RandomForestRegressor` — `RF_STANDARD` |
+| **n_estimators** | `100` ← canonical, hardware-locked |
+| **random_state** | `42` |
+| **n_jobs** | `1` (deterministic single-thread) |
+| **MAE** | **$396.94 / MT** |
+| **Directional Accuracy** | **74.60%** (ungated full population) |
+| **Gated Precision** | **79.10%** (on actionable gate) |
+| **Retained (Actionable) N** | **641 / 4,804** observations |
+| **Status** | 🔒 **FROZEN — do not alter** |
 
-2. **Empirical Residual Uncertainty Gating ($P_{10} / P_{90}$)**:
-   - Derives confidence thresholds solely from validation residual distributions.
-   - Filters out high-noise market chop: Directional Accuracy jumps from **$78.1\%$ to $91.1\%$** on Panamax 1D ($F_1: 91.3\%$, AUC: $0.924$) and **$75.1\%$ to $85.0\%$** on Supramax 1D ($F_1: 83.0\%$).
+> **Why frozen?** A seemingly harmless change from 100 → 50 trees altered the residual distribution → P10/P90 bounds → gating → retained observations → economic result. The canonical population shifted from 641 to 639, with materially different economics. The configuration is hardened as SSOT in [`configs/canonical_config.py`](configs/canonical_config.py).
 
-3. **Honest Scientific Abstention**:
-   - On unpromoted or unpredictable regimes (e.g. Supramax 14D and Handysize 7D where accuracy is $\le 50\%$), the model **explicitly abstains** from directional betting, automatically routing charter allocation to **FLEXIBLE_INDEX** floating-rate contracts.
+### Certified Economic Policy (EXP-06)
 
-4. **Maritime Feasibility & Multi-Factor Risk**:
-   - Checks vessel draft, LOA, beam, and DWT limits against origin/destination ports.
-   - Computes multi-factor risk scores (Red Sea / Suez disruption, monsoon seasons, port waiting delays).
-   - Evaluates 4 charter structures (**Spot Voyage, Time Charter, COA, Flexible Index**) to minimize risk-adjusted cost per metric ton ($\$/\text{MT}$).
+| Metric | Value |
+| :--- | :--- |
+| **Policy** | EXP-06 — Walk-Forward Locked |
+| **Total Observations** | 4,804 |
+| **WAIT Decisions** | 1,509 (31.41% coverage) |
+| **Gated Precision** | 80.52% |
+| **Net Portfolio Savings** | **+$7,607,420** vs spot baseline |
+| **Savings %** | **+0.4183%** on ~$1.818B baseline portfolio |
+| **2025 Locked Holdout** | **+$944,960** (+5.15% on WAIT decisions) |
+| **Walk-Forward Validated** | ✅ Leakage-free |
+| **Certification Status** | ✅ **AUTHORITATIVE / CERTIFIED IMPROVEMENT** |
 
----
+> **Canonical baseline context:** The RF_STANDARD canonical model with the default policy layer produced `-$503,745`. EXP-06 supersedes this by freezing the predictive model and optimizing only the policy layer — the correct architectural diagnosis when the signal is real but the cost-routing is destroying value.
 
-## 🔬 Comprehensive Ablation Study
+### Dataset Provenance
 
-The table below demonstrates the cumulative quantitative performance gains delivered across each subsystem in the FICOS architecture:
-
-| Pipeline Configuration & Component | Mean Ungated DA (%) | Mean Gated DA (%) | Gated Coverage (%) | Mean $R^2$ | Gated $F_1$ Score (%) | Physical Feasibility Rate (%) | Risk-Adjusted Cost Saving (%) |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **1. Naive Baseline (Unregularized OLS)** | 51.2% | N/A | 100.0% | -0.241 | 48.9% | N/A | Baseline (0.0%) |
-| **2. + Multi-Domain Features (441 Clean Predictors)** | 61.4% | N/A | 100.0% | 0.082 | 60.1% | N/A | +4.2% |
-| **3. + Fold-Isolated SelectKBest & Scaling** | 68.5% | N/A | 100.0% | 0.174 | 67.2% | N/A | +7.8% |
-| **4. + Regularized Model Tournament (Ridge / RF)** | **75.1%** | N/A | 100.0% | **0.258** | **74.8%** | N/A | +11.5% |
-| **5. + Out-of-Sample $P_{10}/P_{90}$ Uncertainty Gating** | 75.1% | **85.0% – 91.1%** | 16.1% – 17.2% | **0.334** | **83.0% – 91.3%** | N/A | +15.2% |
-| **6. + Operational Feasibility & Risk Engine (FICOS Final)** | **75.1%** | **91.1% (Panamax)** | **17.2%** | **0.334** | **91.3%** | **100.0% [OK]** | **+18.4%** |
-
----
-
-## 📊 Master Performance & Validation Benchmark (72/72 Checks Reconciled)
-
-| Asset & Horizon | Winning Model | Ungated DA (%) | Gated DA (%) | Coverage (%) | Gated Precision (%) | Gated Recall (%) | Gated $F_1$ (%) | Gated ROC-AUC | Production Verdict |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **PANAMAX 1D** | RandomForest / Ridge | **78.1%** | **91.1%** | 17.2% ($N=214$) | **91.7%** | **90.9%** | **91.3%** | **0.924** | 🟢 **PROMOTED (Primary)** |
-| **SUPRAMAX 1D** | RandomForest / XGBoost | **75.1%** | **85.0%** | 16.1% ($N=200$) | **76.0%** | **91.2%** | **83.0%** | **0.805** | 🟢 **PROMOTED** |
-| **HANDY 1D** | RandomForest / LightGBM | **70.7%** | **79.2%** | 11.6% ($N=144$) | **72.2%** | **87.7%** | **79.2%** | **0.750** | 🟢 **PROMOTED** |
-| **CAPE 1D** | RandomForest / Ridge | **66.5%** | **71.3%** | 14.3% ($N=174$) | **58.3%** | **48.3%** | **52.8%** | **0.711** | 🟡 **PROMOTED (Conservative)** |
-| **KDCI 7D** | RandomForest / GBDT | **58.7%** | **76.7%** | 12.1% ($N=150$) | **59.5%** | **52.4%** | **55.7%** | **0.801** | 🟡 **FALLBACK (Index-Linked)** |
-| **SUPRAMAX 7D** | GBDT / Ridge | **62.0%** | **63.8%** | 19.0% ($N=235$) | **66.7%** | **41.1%** | **50.9%** | **0.744** | ⚠️ **FALLBACK (Flexible Index)** |
-| **HANDY 7D** | Linear / RF | **60.3%** | **58.6%** | 19.3% ($N=239$) | **52.4%** | **62.9%** | **57.1%** | **0.593** | 🛑 **EXCLUDED (Abstain)** |
-| **SUPRAMAX 14D**| Linear / GBDT | **54.4%** | **49.1%** | 40.9% ($N=503$) | **49.1%** | **11.0%** | **17.9%** | **0.564** | 🛑 **EXCLUDED (Abstain)** |
+| Property | Value |
+| :--- | :--- |
+| **SHA-256** | `e0f4c91eed7b4919200472c3fe7e0735e4fd12433383727b58f73c2fd8945fd5` |
+| **Rows** | 2,581 |
+| **Columns** | 482 |
+| **Validation Folds** | 5 (expanding-window, 2021–2025) |
 
 ---
 
-## 📈 Structured Visual Diagnostics Gallery
+## 🔬 Uncertainty & Gating Architecture
 
-<div align="center">
+The uncertainty layer evolved through multiple stages before reaching the canonical residual-based gating approach:
 
-### 1. Feature Importance & Cross-Model Performance
+```
+Point prediction
+      ↓
+Quantile models
+      ↓
+CQR (Conformal Quantile Regression)
+      ↓
+Grouped / Mondrian approaches
+      ↓
+Adaptive conformal approaches
+      ↓
+Residual-based gating           ← current canonical approach
+      ↓
+Canonical RF gating (P10/P90)
+      ↓
+Economic policy gating (EXP-06)
+```
 
-| Top 15 Predictive Features (ANOVA F-Score) | Gated Performance Comparison |
-| :---: | :---: |
-| <img src="images/feature_importance.png" width="95%" alt="Feature Importance" /> | <img src="images/metrics_comparison.png" width="95%" alt="Metrics Comparison" /> |
-| *Mako-palette ranking of top non-lookahead predictors.* | *Gated Accuracy (Green), Precision (Blue), and F1 (Orange).* |
+| Parameter | Value |
+| :--- | :--- |
+| `tau` | 0.01 (1% directional move threshold) |
+| `q_low` | P10 empirical residual bound |
+| `q_high` | P90 empirical residual bound |
 
----
-
-### 2. Discrimination & Sensitivity Diagnostics
-
-| Receiver Operating Characteristic (ROC) Curves | Precision-Recall (PR) Curves & Average Precision |
-| :---: | :---: |
-| <img src="images/roc_curves.png" width="95%" alt="ROC Curves" /> | <img src="images/pr_curves.png" width="95%" alt="PR Curves" /> |
-| *Out-of-sample ROC curves (Gated AUC up to 0.924).* | *Precision-Recall curves showing high precision retention.* |
-
----
-
-### 3. Classification Rigor & Uncertainty Bounds
-
-| Directional Confusion Matrices | Empirical Residual Uncertainty Gate ($P_{10}/P_{90}$) |
-| :---: | :---: |
-| <img src="images/confusion_matrices.png" width="95%" alt="Confusion Matrices" /> | <img src="images/residual_distribution.png" width="95%" alt="Residual Distributions" /> |
-| *8-panel matrices on high-conviction gated trade days.* | *Out-of-sample error distributions used for gating thresholds.* |
-
----
-
-### 4. Scatter Correlation & Fold Stability
-
-| Predicted vs Actual Freight Rate Delta ($\Delta$) | 5-Fold Walk-Forward Cross-Validation Stability |
-| :---: | :---: |
-| <img src="images/regression_scatter.png" width="95%" alt="Regression Scatter" /> | <img src="images/fold_variance.png" width="95%" alt="Fold Stability" /> |
-| *Gated trade execution points against identity line ($y=x$).* | *Temporal tracking across 2021–2025 proving regime stability.* |
-
-</div>
+The system only treats a prediction as actionable when the predicted movement clears these empirical thresholds. High-conviction gated observations jump from 74.60% → 79.10%+ directional accuracy.
 
 ---
 
-## 🚀 Quick Start & Usage
+## 📊 Economic Attribution Decomposition
 
-### 1. Run Complete Benchmark in Google Colab (Recommended)
-Run the 5-fold walk-forward validation tournament and 72-point verification test in Google Colab with GPU/High RAM:  
-👉 **[Open In Google Colab](https://colab.research.google.com/github/SSOHEB/FICOS-Platform/blob/main/notebooks/colab_freight_forecasting_benchmark.ipynb)**  
-Select **Runtime → Run all** (`Ctrl+F9`). Runtime is $\sim 20\text{–}30$ seconds.
+The canonical RF baseline decomposition revealed the source of the -$503,745 result and guided EXP-06 design:
 
-### 2. Local CLI Decision Evaluation
-Evaluate real-time operational chartering requirements using the CLI:
+| Decision Class | Portfolio Contribution |
+| :--- | ---: |
+| BUY_NOW | $0 |
+| WAIT | **+$3,725,220** |
+| FLEXIBLE_INDEX | **-$4,228,965** |
+| **Total (Canonical Baseline)** | **-$503,745** |
+
+This established that the predictive signal (WAIT class) was generating real value, but the FLEXIBLE_INDEX cost-routing was destroying it. **The fix was a policy problem, not a model problem.**
+
+---
+
+## 📈 Experiment Timeline: Policy Layer
+
+| Experiment | Description | Outcome |
+| :--- | :--- | :--- |
+| EXP-00 | Canonical baseline (RF_STANDARD default policy) | -$503,745 |
+| EXP-01 | FLEX pure spot | Evaluated |
+| EXP-02 | FLEX bounded premium | Evaluated |
+| EXP-03 | WAIT-only gating | Evaluated |
+| EXP-04 | Monetary EV gate | Evaluated |
+| EXP-05 | Dynamic volatility gate | Evaluated |
+| **EXP-06** | **Walk-forward locked policy** | **✅ +$7,607,420 CERTIFIED** |
+
+EXP-06 was tuned chronologically and evaluated out-of-sample. This is not a backfit result.
+
+---
+
+## 🚀 Quick Start
+
+### 1. Install Dependencies
 ```bash
-# Evaluate a 75,000 MT Panamax shipment from Tubarao to Qingdao
-python ficos_cli.py evaluate --asset PANAMAX_1D --quantity 75000 --origin Tubarao --dest Qingdao
+pip install -r requirements/requirements.txt
+```
+For Google Colab:
+```bash
+pip install -r requirements/requirements_colab.txt
 ```
 
-Example CLI Output:
-```text
+### 2. Configure Environment
+```bash
+cp .env.example .env   # fill in your API keys
+```
+
+### 3. Run Benchmark in Colab (Recommended)
+👉 **[Open In Google Colab](https://colab.research.google.com/github/SSOHEB/FICOS-Platform/blob/main/ml/notebooks/02_modeling/colab_freight_forecasting_benchmark.ipynb)**
+Select **Runtime → Run all** (`Ctrl+F9`). Runtime: ~20–30 seconds.
+
+### 4. Start the API Server
+```bash
+python scripts/run_api.py
+```
+
+### 5. Run the CLI Decision Evaluator
+```bash
+python scripts/run_cli.py evaluate --asset PANAMAX_1D --quantity 75000 --origin Tubarao --dest Qingdao
+```
+
+Example output:
+```
 =================================================================
  FICOS FREIGHT DECISION RECOMMENDATION
 =================================================================
 Recommendation ID : REC-A5B07063
 Asset / Cargo     : PANAMAX_1D (75,000 MT)
 Route             : Tubarao -> Qingdao
-Vessel Class      : Panamax_1D
+Vessel Class      : Panamax
 -----------------------------------------------------------------
-RECOMMENDED ACTION: TIME_CHARTER
-Expected Total Cost: $769,340.70
-Cost per MT       : $10.26/MT
------------------------------------------------------------------
-Freight Rate Forecast: $25.00/MT (P10: $18.75, P90: $31.25)
-Physical Feasibility : PASSED [OK]
-Overall Risk Score   : 10.0/100 (LOW Weather / LOW Disruption)
------------------------------------------------------------------
-DECISION RATIONALE:
-  Selected 'TIME_CHARTER' strategy because it achieved the lowest risk-adjusted expected cost while satisfying all physical feasibility gates and risk thresholds.
+RECOMMENDED ACTION: WAIT
+Expected Total Cost: $769,340.70   |   Cost per MT: $10.26/MT
+Freight Forecast:    $25.00/MT     |   P10: $18.75  P90: $31.25
+Physical Feasibility: PASSED [OK]
+Overall Risk Score:   10.0/100 (LOW Weather / LOW Disruption)
 =================================================================
 ```
 
-### 3. Inspect Registry Manifest
-```bash
-python ficos_cli.py registry
-```
-
-### 4. Run Automated Test Suite
+### 6. Run Automated Test Suite
 ```bash
 python -m pytest
 ```
-*Output: `15 passed in 9.20s`.*
+*Output: `38 passed` — unit + integration + evaluation + reproducibility.*
 
 ---
 
-## 📁 Repository Directory Structure
+## 📁 Repository Structure
 
-```text
-FICOS-Platform/
-├── configs/                   # Production YAML configurations
-│   ├── cost_model.yaml        # Bunker prices, port dues, canal fees, OPEX
-│   ├── decision_policy.yaml   # Strategy thresholds, margin caps, fallback rules
-│   ├── ports.yaml             # Port coordinates, max draft, beam, LOA constraints
-│   ├── risk_policy.yaml       # Chokepoint multipliers, seasonal weather weights
-│   ├── threshold_config.yaml  # Gating parameter bounds
-│   └── vessels.yaml           # Vessel DWT, eco-speed consumption, draft limits
-├── docs/                      # Scientific documentation & methodology
-│   ├── architecture.md        # Technical architecture specifications
-│   └── model_selection.md     # Walk-forward tournament criteria & routing rules
-├── images/                    # Master publication-grade diagnostic plots (300 DPI)
-├── notebooks/                 # Cloud training & validation notebooks
-│   ├── colab_freight_forecasting_benchmark.ipynb  (Official Turnkey Colab Benchmark)
-│   └── phase8_gru_lstm_colab.ipynb
-├── registry/                  # Production Model Registry
-│   └── manifest.json          # Audited model statuses, bounds, and metrics
-├── reports/                   # Audit reports & schemas
-│   ├── MASTER_EVALUATION_REPORT.md
-│   └── FINAL_BACKEND_AUDIT_REPORT.md
-├── src/                       # Modular Production Package
-│   ├── application/           # CLI & Recommendation Service entry points
-│   ├── audit/                 # Leakage audit, gate comparison & regime analysis
-│   ├── cost/                  # 4-structure maritime cost model & idle assessment
-│   ├── decision/              # Decision engine, explanation generator & schemas
-│   ├── domain/                # Strongly-typed Pydantic/dataclass schemas
-│   ├── evaluation/            # Backtest engine & metric calculations
-│   ├── forecast/              # Forecast service & P10/P90 uncertainty gating
-│   ├── operational/           # Port/vessel repositories & feasibility engine
-│   ├── policy/                # Risk-adjusted expected cost policy
-│   ├── registry/              # Manifest reader & model version manager
-│   ├── risk/                  # Multi-factor geopolitical/weather risk engine
-│   └── scenario/              # Scenario simulation engine
-├── tests/                     # Automated unit and integration test suite
-│   ├── test_backtest.py
-│   ├── test_config.py
-│   ├── test_cost_model.py
-│   ├── test_decision_engine.py
-│   ├── test_domain.py
-│   ├── test_feasibility.py
-│   ├── test_forecast_service.py
-│   └── test_scenario_engine.py
-├── .gitignore                 # Strict data privacy rules (hides all dataset files)
-├── ficos_cli.py               # Top-level executable CLI
-├── generate_diagnostic_plots.py
-└── README.md
+> **Read order:** `frontend/` → `backend/` + configs & scripts → `ml/` + outputs → `tests/` → support files.
+
 ```
+FICOS-Platform/
+│
+│  ── PRESENTATION LAYER ─────────────────────────────────────────────────────
+│
+├── frontend/                          ← React/TypeScript Web Dashboard
+│   ├── src/
+│   │   ├── App.tsx                    # Root router & layout
+│   │   ├── Dashboard.tsx              # Main analytics dashboard
+│   │   ├── VesselIntelligence.tsx     # Vessel-level market intelligence
+│   │   ├── IdleIntelligence.tsx       # Idle vessel cost analysis
+│   │   ├── Services.tsx               # Services & API status page
+│   │   ├── apiClient.ts               # Typed HTTP client → backend API
+│   │   └── dashboardData.ts           # Dashboard data & chart configs
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.ts
+│   └── netlify.toml                   # Netlify deployment config
+│
+│  ── APPLICATION LAYER ──────────────────────────────────────────────────────
+│
+├── backend/                           ← Python Application & Business Logic
+│   ├── api/
+│   │   ├── api.py                     # FastAPI REST endpoints
+│   │   ├── recommendation_service.py  # Decision pipeline orchestrator
+│   │   └── __main__.py                # Uvicorn server entry point
+│   ├── config/
+│   │   ├── settings.py                # .env loader & app settings
+│   │   └── canonical_config.py        # Pointer to root canonical SSOT
+│   ├── cost/
+│   │   ├── model.py                   # Spot / TC / COA / Flexible Index cost model
+│   │   └── idle_assessment.py         # Idle vessel opportunity cost engine
+│   ├── decision/
+│   │   ├── engine.py                  # Core chartering decision engine
+│   │   ├── explanation.py             # Human-readable rationale generator
+│   │   ├── procurement_engine.py      # Procurement strategy optimizer
+│   │   ├── contract_comparison.py     # 4-way charter contract evaluator
+│   │   ├── multi_voyage_planner.py    # Multi-leg voyage planner
+│   │   └── schemas.py                 # Pydantic request/response schemas
+│   ├── domain/
+│   │   └── schemas.py                 # Typed domain models (vessel, port, cargo)
+│   ├── operational/
+│   │   ├── feasibility_engine.py      # Physical feasibility checker
+│   │   ├── port_repository.py         # Port draft/beam/LOA constraint data
+│   │   └── vessel_repository.py       # Vessel spec & capability data
+│   ├── policy/
+│   │   └── expected_cost_policy.py    # Risk-adjusted expected cost policy
+│   ├── risk/
+│   │   └── engine.py                  # Multi-factor risk scorer (0–100)
+│   └── scenario/
+│       └── engine.py                  # Scenario simulation engine
+│
+├── configs/                           ← ★ SSOT — All Production Configurations
+│   ├── canonical_config.py            # Locked: n_trees=100, seed=42, SHA-256
+│   ├── cost_model.yaml                # Bunker prices, port dues, canal fees
+│   ├── decision_policy.yaml           # BUY_NOW/WAIT/FLEX thresholds
+│   ├── ports.yaml                     # Port draft, beam, LOA constraints
+│   ├── risk_policy.yaml               # Chokepoint & weather risk weights
+│   └── vessels.yaml                   # Vessel DWT, speed, draft limits
+│
+├── scripts/                           ← Backend Entry Points
+│   ├── run_api.py                     # Launch FastAPI backend server
+│   ├── run_cli.py                     # Launch CLI decision evaluator
+│   ├── run_verification.py            # Run canonical verification checks
+│   └── generate_plots.py              # Generate diagnostic plots
+│
+│  ── MACHINE LEARNING LAYER ─────────────────────────────────────────────────
+│
+├── ml/                                ← Machine Learning — Research & Production
+│   ├── data/
+│   │   └── data_loader.py             # Dataset ingestion & preprocessing
+│   ├── features/
+│   │   ├── features.py                # Core feature engineering (441 predictors)
+│   │   ├── cyclone_features.py        # Cyclone/typhoon signals
+│   │   ├── weather_features.py        # Monsoon & seasonal weather signals
+│   │   └── gdelt_features.py          # GDELT geopolitical risk signals
+│   ├── forecasting/
+│   │   ├── service.py                 # Forecast orchestration service
+│   │   └── uncertainty.py             # P10/P90 empirical residual gating
+│   ├── models/
+│   │   ├── xgboost/                   # 40 XGBoost API inference models
+│   │   │   └── xgb_<vessel>_<horizon>.json + _meta.pkl
+│   │   ├── ridge/                     # Ridge weights (reserved)
+│   │   ├── gru_lstm/                  # GRU/LSTM research checkpoints
+│   │   ├── experimental/              # Challenger experiments
+│   │   ├── production/                # Promoted production snapshots
+│   │   └── registry/manifest.json     # Model version & status manifest
+│   ├── evaluation/
+│   │   ├── metrics.py                 # DA, F1, AUC metric calculations
+│   │   ├── validation.py              # Walk-forward cross-validation
+│   │   ├── walkforward_validation.py  # 5-fold expanding-window validator
+│   │   └── decision_backtest.py       # Charter decision backtest engine
+│   ├── audit/
+│   │   ├── evaluation_audit.py        # Leakage audit framework
+│   │   ├── gate_aware_comparison.py   # Gate-aware performance comparison
+│   │   └── regime_analysis.py         # Market regime analysis
+│   ├── registry/
+│   │   ├── registry.py                # Manifest reader & version manager
+│   │   └── manifest.json
+│   └── notebooks/                     # Research evidence chain
+│       ├── 01_data/                   # Data exploration
+│       ├── 02_modeling/               # ← Start here: model tournament & selection
+│       │   ├── colab_freight_forecasting_benchmark.ipynb
+│       │   ├── forecasting_architecture_benchmark.ipynb
+│       │   ├── experiment_8_final_production_model_challenger.ipynb
+│       │   └── (+ 4 more modeling notebooks)
+│       ├── 03_uncertainty/            # CQR → Mondrian → ACI → Residual gating
+│       │   └── (8 uncertainty quantification notebooks)
+│       ├── 04_policy/                 # EXP-00 through EXP-06 policy research
+│       │   └── (4 policy & decision notebooks)
+│       └── 05_proof/                  # Authoritative evidence — final numbers
+│           ├── 01_live_proof_of_outcome.ipynb
+│           └── 02_authoritative_research_evidence.ipynb
+│
+├── outputs/                           ← Authoritative Result Payloads
+│   ├── authoritative/
+│   │   ├── authoritative_canonical_results.json  # RF_STANDARD certified metrics
+│   │   └── authoritative_policy_results.json     # EXP-06 certified economics
+│   ├── backtests/
+│   ├── figures/
+│   ├── experiment_6_gate_quality/
+│   ├── experiment_7_sharper_base_sparse_groups/
+│   └── experiment_9_economic_backtest/
+│
+│  ── QUALITY & SUPPORT ──────────────────────────────────────────────────────
+│
+├── tests/                             ← Automated Test Suite (38 tests)
+│   ├── unit/                          # Config, cost, domain, feasibility (4)
+│   ├── integration/                   # API, decision, forecast, scenario (6)
+│   ├── evaluation/                    # Backtest & permutation significance (2)
+│   └── reproducibility/               # Canonical reproducibility regression (3)
+│
+├── requirements/                      ← Dependency Management
+│   ├── requirements.txt               # Local development & production
+│   └── requirements_colab.txt         # Google Colab (lighter)
+│
+├── docs/                              ← Scientific & Technical Documentation
+│   ├── architecture.md                # ← Full technical architecture spec
+│   ├── model_selection.md
+│   ├── ECONOMIC_POLICY_CERTIFICATION_REPORT.md
+│   ├── ECONOMIC_POLICY_ATTRIBUTION_AUDIT.md
+│   ├── FICOS_COMPLETE_PROJECT_EVOLUTION_REPORT.md
+│   ├── FINAL_REPRODUCIBILITY_SPEC.md
+│   └── LOCAL_EXECUTION_DISCREPANCY_FORENSIC.md
+│
+├── reports/                           ← Audit Reports & Result Artefacts
+│   ├── MASTER_EVALUATION_REPORT.md    # 72-point reconciliation benchmark
+│   ├── FINAL_BACKEND_AUDIT_REPORT.md
+│   ├── FINAL_MODEL_SELECTION_REPORT.md
+│   ├── LEAKAGE_AUDIT_CHECKLIST.md
+│   ├── RESULTS_SCHEMA.md
+│   └── final_model_family_*.csv       # Per-dimension scoring CSVs
+│
+├── data/                              ← Raw & processed data (git-ignored)
+├── images/                            ← Publication-grade plots (300 DPI)
+├── registry/manifest.json             ← Shared root model registry
+├── docs-site/                         ← Documentation site source
+├── archive/                           ← Historical research lineage
+│
+├── main.py                            # Top-level entry point
+├── .env.example                       # Environment variable template
+├── pytest.ini                         # pytest configuration
+└── .gitignore                         # Data privacy rules
+```
+
+---
+
+
+## 🧩 Component Breakdown
+
+### 🖥️ Frontend (`frontend/`)
+A **React + TypeScript + Vite** single-page application providing the analyst-facing UI.
+
+| Component | Purpose |
+| :--- | :--- |
+| `Dashboard.tsx` | Main operational dashboard — freight rate charts, market overview, KPIs |
+| `VesselIntelligence.tsx` | Vessel-level deep-dive — route performance, rate comparisons, suitability |
+| `IdleIntelligence.tsx` | Idle vessel cost analytics — opportunity cost calculations, layup scenarios |
+| `Services.tsx` | Backend service health, API status, system diagnostics |
+| `apiClient.ts` | Typed HTTP client connecting UI → backend REST API |
+| `dashboardData.ts` | Dashboard seed data and static chart configurations |
+
+---
+
+### ⚙️ Backend (`backend/`)
+The **Python application layer** — all business logic, API endpoints, decision orchestration.
+
+| Module | Key Files | Purpose |
+| :--- | :--- | :--- |
+| `api/` | `api.py`, `recommendation_service.py` | FastAPI REST application — all HTTP endpoints, decision pipeline orchestrator |
+| `config/` | `settings.py`, `canonical_config.py` | `.env` loader + canonical reproducibility pointer |
+| `cost/` | `model.py`, `idle_assessment.py` | Four-structure maritime cost model: Spot Voyage, TC, COA, Flexible Index |
+| `decision/` | `engine.py`, `procurement_engine.py`, `contract_comparison.py`, `multi_voyage_planner.py` | Core chartering decision engine; procurement optimizer; 4-way contract comparator; multi-leg voyage planner |
+| `domain/` | `schemas.py` | Strongly-typed Pydantic domain models (vessel, port, cargo, recommendation) |
+| `operational/` | `feasibility_engine.py`, `port_repository.py`, `vessel_repository.py` | Physical feasibility checker — draft, LOA, beam, DWT vs port limits |
+| `policy/` | `expected_cost_policy.py` | Risk-adjusted expected cost policy — selects optimal charter strategy |
+| `risk/` | `engine.py` | Multi-factor risk scorer — geopolitical events, chokepoints, weather, port delays |
+| `scenario/` | `engine.py` | Scenario simulation — stress-tests decisions under alternate market conditions |
+
+---
+
+### 🤖 ML (`ml/`)
+All **machine learning** code: data ingestion, feature engineering, forecasting, uncertainty quantification, evaluation, and the research evidence trail.
+
+| Module | Key Files | Purpose |
+| :--- | :--- | :--- |
+| `data/` | `data_loader.py` | Dataset loader and preprocessing pipeline — missing values, scaling |
+| `features/` | `features.py`, `cyclone_features.py`, `weather_features.py`, `gdelt_features.py` | 441-predictor feature engineering: freight indices, macro, bunker, cyclone/weather, GDELT geopolitical risk |
+| `forecasting/` | `service.py`, `uncertainty.py` | Forecast orchestration service + P10/P90 empirical residual gating |
+| `models/xgboost/` | 40 × `.json` + `.pkl` | **40 XGBoost models** — 5 vessels (Cape/Panamax/Supramax/Handy/KDCI) × 4 horizons (1D/7D/14D/30D); these are the **API inference models** |
+| `models/ridge/` | *(reserved)* | Ridge regression weights (experimental track) |
+| `models/gru_lstm/` | *(empty — Colab-trained)* | GRU/LSTM deep learning architecture (research track, trained on Colab GPU) |
+| `models/experimental/` | ridge/, xgboost/ sub-tracks | Challenger model experiment artefacts |
+| `models/production/` | *(empty — SSOT in canonical_config)* | Promoted production snapshots (RF_STANDARD promoted via configuration) |
+| `models/registry/` | `manifest.json` | Model version & status manifest |
+| `evaluation/` | `metrics.py`, `validation.py`, `walkforward_validation.py`, `decision_backtest.py` | Walk-forward validation, DA/F1/AUC metrics, charter decision backtest |
+| `audit/` | `evaluation_audit.py`, `gate_aware_comparison.py`, `regime_analysis.py` | Leakage audit framework, gate-aware performance comparison, regime analysis |
+| `registry/` | `registry.py`, `manifest.json` | Manifest reader & version manager |
+
+#### Notebooks (`ml/notebooks/`)
+
+| Section | Notebooks | Purpose |
+| :--- | :--- | :--- |
+| `02_modeling/` (7 notebooks) | `colab_freight_forecasting_benchmark.ipynb`, `forecasting_architecture_benchmark.ipynb`, `experiment_8_final_production_model_challenger.ipynb`, + 4 more | Core training & benchmarking — **start here**; RF vs Ridge vs XGBoost vs LightGBM vs GRU/LSTM tournaments |
+| `03_uncertainty/` (8 notebooks) | `cqr_experiment.ipynb`, `experiment_4a/4b/4c`, `experiment_5_aci_audit.ipynb`, `experiment_6/7` | Full uncertainty quantification lineage: CQR → Mondrian → ACI → Adaptive → Residual gating |
+| `04_policy/` (4 notebooks) | `experiment_9_economic_charter_decision_backtest.ipynb`, `final_model_family_decision_audit.ipynb`, + 2 more | Economic policy & charter decision research: EXP-00 through EXP-06 |
+| `05_proof/` (2 notebooks) | `01_live_proof_of_outcome.ipynb`, `02_authoritative_research_evidence.ipynb` | Live reproducible proof & authoritative research evidence trail |
+
+---
+
+### 🧪 Tests (`tests/`)
+
+| Suite | Tests | Purpose |
+| :--- | :---: | :--- |
+| `unit/` | 4 | Config validation, cost arithmetic, domain schema checks, feasibility gate logic |
+| `integration/` | 6 | Full API contract, decision engine, forecast service, scenario, multi-voyage planner, procurement decision |
+| `evaluation/` | 2 | Backtest correctness, permutation significance test |
+| `reproducibility/` | 3 | Canonical reproducibility regression — verifies identical predictions/decisions/economics |
+| **Total** | **38** | **All passing** |
+
+---
+
+### 📦 Requirements (`requirements/`)
+
+| File | Used For |
+| :--- | :--- |
+| `requirements.txt` | Local development, production server |
+| `requirements_colab.txt` | Google Colab (lighter; pre-installed libs stripped) |
+
+---
+
+### 🔧 Configs (`configs/`)
+
+| File | Purpose |
+| :--- | :--- |
+| `canonical_config.py` | **SSOT** — locks `N_TREES=100`, `SEED=42`, `n_jobs=1`, dataset SHA-256, gating policy, cost model |
+| `cost_model.yaml` | Bunker prices (VLSFO/MGO), port dues, canal fees, demurrage rates |
+| `decision_policy.yaml` | BUY_NOW/WAIT/FLEX thresholds, fallback rules |
+| `ports.yaml` | Port draft, beam, LOA, DWT constraints |
+| `risk_policy.yaml` | Chokepoint & weather risk weights |
+| `vessels.yaml` | Vessel DWT, speed, draft, fuel specs |
+| `app_config.yaml` / `config.yaml` | Application-level environment settings |
+
+---
+
+### 📂 Outputs (`outputs/`)
+
+| Directory | Contents |
+| :--- | :--- |
+| `authoritative/` | **Certified result payloads** — `authoritative_canonical_results.json` (RF metrics) + `authoritative_policy_results.json` (EXP-06 economics) |
+| `backtests/` | Decision backtest run outputs |
+| `figures/` | Generated diagnostic plots |
+| `experiment_6_gate_quality/` | Gate quality experiment artefacts |
+| `experiment_7_sharper_base_sparse_groups/` | Sharper gating experiment artefacts |
+| `experiment_9_economic_backtest/` | EXP-00 through EXP-06 economic backtest artefacts |
+
+---
+
+## 🔍 Proof Infrastructure
+
+FICOS has moved beyond "here is a notebook with results." The system has layered, independent evidence:
+
+```
+Production implementation
+        ↓
+Canonical configuration (SSOT)
+        ↓
+Authoritative result payload (JSON)
+        ↓
+Observation-level results
+        ↓
+Automated reconciliation
+        ↓
+Reproducibility tests
+        ↓
+Certification report
+        ↓
+Proof notebook (05_proof/)
+```
+
+Latest certified state:
+- ✅ **32/32** unit + integration tests passing
+- ✅ **4/4** reproducibility tests passing
+- ✅ **72/72** verification checks passing
+- ✅ Clean Git working tree
 
 ---
 
 ## 🔒 Security & Data Privacy
 
-> **Proprietary Data Protection:** In compliance with enterprise best practices and proprietary dataset protection, all raw maritime fixtures, AIS vessel tracking records, and dataset files (`data/`, `*.csv`, `*.xlsx`, `*.parquet`, `*.pkl`) are **strictly excluded via `.gitignore`** and are not tracked in public version control.
+> **Proprietary Data Protection:** All raw maritime fixtures, AIS vessel tracking records, and dataset files (`data/`, `*.csv`, `*.xlsx`, `*.parquet`, `*.pkl`) are **strictly excluded via `.gitignore`** and are not tracked in public version control.
 
 ---
 

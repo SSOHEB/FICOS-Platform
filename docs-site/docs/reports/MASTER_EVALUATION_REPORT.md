@@ -231,7 +231,7 @@ Since **Panamax 1D (91.1%)**, **Supramax 1D (85.0%)**, **Handy 1D (79.2%)**, and
 
 ## 16. Chartering Decision Architecture
 
-The FICOS decision engine (`src/decision_engine.py`) integrates model signals with chartering risk rules:
+The FICOS decision engine (`backend/decision/engine.py`) integrates model signals with chartering risk rules:
 
 ```
 [ Model Signal Input ] ──> [ Uncertainty Gate (P10/P90) ]
@@ -263,7 +263,7 @@ Execution signals are validated against physical maritime constraints:
 ## 18. Production Readiness & Software Audit
 
 ### Implementation Status
-- ✅ **Reproducible Inference:** Implemented via `src/decision_engine.py`.
+- ✅ **Reproducible Inference:** Implemented via `backend/decision/engine.py`.
 - ✅ **Input Validation:** Implemented schema check on 441 feature columns.
 - ✅ **Uncertainty Gate Engine:** Implemented fold-isolated P10/P90 thresholding.
 - ⚠️ **Automated Data Pipelines:** Deployment requirement — not yet implemented (requires live API connectors).
@@ -282,7 +282,7 @@ Execution signals are validated against physical maritime constraints:
 
 All results can be reproduced directly using the repository scripts and Colab notebooks:
 - **Walk-Forward Benchmark Script:** [`verify_final_report_metrics.py`](file:///c:/Users/soheb/OneDrive/Desktop/ficos%20final/verify_final_report_metrics.py)
-- **Colab Notebook:** [`notebooks/colab_freight_forecasting_benchmark.ipynb`](https://colab.research.google.com/github/SSOHEB/FICOS-Platform/blob/main/notebooks/colab_freight_forecasting_benchmark.ipynb)
+- **Colab Notebook:** [`ml/notebooks/colab_freight_forecasting_benchmark.ipynb`](https://colab.research.google.com/github/SSOHEB/FICOS-Platform/blob/main/ml/notebooks/colab_freight_forecasting_benchmark.ipynb)
 - **Visual Plots:** `outputs/*.png`
 
 ---

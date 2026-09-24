@@ -6,7 +6,7 @@ title: README
 
 
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/SSOHEB/FICOS-Platform/blob/main/notebooks/colab_freight_forecasting_benchmark.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/SSOHEB/FICOS-Platform/blob/main/ml/notebooks/colab_freight_forecasting_benchmark.ipynb)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Status](https://img.shields.io/badge/status-audited%20%26%20validated-brightgreen.svg)](/reports/MASTER_EVALUATION_REPORT.md)
 [![Reconciliation](https://img.shields.io/badge/reconciliation-72%2F72%20PASS%20(100%25)-success.svg)](/reports/MASTER_EVALUATION_REPORT.md)
@@ -174,7 +174,7 @@ The table below demonstrates the cumulative quantitative performance gains deliv
 
 ### 1. Run Complete Benchmark in Google Colab (Recommended)
 Run the 5-fold walk-forward validation tournament and 72-point verification test in Google Colab with GPU/High RAM:  
-👉 **[Open In Google Colab](https://colab.research.google.com/github/SSOHEB/FICOS-Platform/blob/main/notebooks/colab_freight_forecasting_benchmark.ipynb)**  
+👉 **[Open In Google Colab](https://colab.research.google.com/github/SSOHEB/FICOS-Platform/blob/main/ml/notebooks/colab_freight_forecasting_benchmark.ipynb)**  
 Select **Runtime → Run all** (`Ctrl+F9`). Runtime is $\sim 20\text&#123;–&#125;30$ seconds.
 
 ### 2. Local CLI Decision Evaluation

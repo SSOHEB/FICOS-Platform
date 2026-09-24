@@ -19,19 +19,19 @@ All 15 unit tests pass. Forecast semantics produce non-negative rate bounds. No 
 | Architectural Component | File(s) | Status |
 |---|---|---|
 | Domain Knowledge → Config Layer | `configs/*.yaml` | ✅ IMPLEMENTED |
-| Typed Domain Schemas | `src/domain/schemas.py` | ✅ IMPLEMENTED |
-| Model & Config Registry | `registry/manifest.json`, `src/registry/registry.py` | ✅ IMPLEMENTED |
-| Forecast Service + Uncertainty | `src/forecast/service.py`, `uncertainty.py` | ✅ IMPLEMENTED |
-| Operational Layer (Dataset B) | `src/operational/port_repository.py`, `vessel_repository.py`, `feasibility_engine.py` | ✅ IMPLEMENTED |
-| Risk Engine (Dataset C) | `src/risk/engine.py` | ✅ IMPLEMENTED |
-| Cost Model | `src/cost/model.py`, `idle_assessment.py` | ✅ IMPLEMENTED |
-| Expected-Cost Policy | `src/policy/expected_cost_policy.py` | ✅ IMPLEMENTED |
-| Decision Engine v2 | `src/decision/engine.py`, `schemas.py`, `explanation.py` | ✅ IMPLEMENTED |
-| Recommendation Service | `src/application/recommendation_service.py` | ✅ IMPLEMENTED |
-| CLI Entry-Point | `ficos_cli.py`, `src/application/__main__.py` | ✅ IMPLEMENTED |
-| Historical Decision Backtest | `src/evaluation/decision_backtest.py` | ✅ IMPLEMENTED |
-| Scenario Engine | `src/scenario/engine.py` | ✅ IMPLEMENTED |
-| Walk-Forward Validation (ML) | `src/walkforward_validation.py` | ✅ PRESERVED |
+| Typed Domain Schemas | `backend/domain/schemas.py` | ✅ IMPLEMENTED |
+| Model & Config Registry | `registry/manifest.json`, `ml/registry/registry.py` | ✅ IMPLEMENTED |
+| Forecast Service + Uncertainty | `ml/forecasting/service.py`, `uncertainty.py` | ✅ IMPLEMENTED |
+| Operational Layer (Dataset B) | `backend/operational/port_repository.py`, `vessel_repository.py`, `feasibility_engine.py` | ✅ IMPLEMENTED |
+| Risk Engine (Dataset C) | `backend/risk/engine.py` | ✅ IMPLEMENTED |
+| Cost Model | `backend/cost/model.py`, `idle_assessment.py` | ✅ IMPLEMENTED |
+| Expected-Cost Policy | `backend/policy/expected_cost_policy.py` | ✅ IMPLEMENTED |
+| Decision Engine v2 | `backend/decision/engine.py`, `schemas.py`, `explanation.py` | ✅ IMPLEMENTED |
+| Recommendation Service | `backend/api/recommendation_service.py` | ✅ IMPLEMENTED |
+| CLI Entry-Point | `ficos_cli.py`, `backend/api/__main__.py` | ✅ IMPLEMENTED |
+| Historical Decision Backtest | `ml/evaluation/decision_backtest.py` | ✅ IMPLEMENTED |
+| Scenario Engine | `backend/scenario/engine.py` | ✅ IMPLEMENTED |
+| Walk-Forward Validation (ML) | `ml/evaluation/walkforward_validation.py` | ✅ PRESERVED |
 | Permutation Testing | `tests/run_permutation_test.py` | ✅ IMPLEMENTED |
 
 All 15 components traced to concrete code files. No phantom components.
@@ -50,7 +50,7 @@ All 15 components traced to concrete code files. No phantom components.
 - **Pairs evaluated:** 8 (PANAMAX_1D, SUPRAMAX_1D, HANDY_1D, CAPE_1D, SUPRAMAX_7D, HANDY_7D, SUPRAMAX_14D, KDCI_7D)
 
 ### Fold-Safety Verification
-`SelectKBest` is instantiated fresh inside each fold's `Pipeline`, fit only on training rows, then applied to held-out test. Verified by code inspection of `src/walkforward_validation.py`. **Feature selection is fold-safe. No leakage exists.**
+`SelectKBest` is instantiated fresh inside each fold's `Pipeline`, fit only on training rows, then applied to held-out test. Verified by code inspection of `ml/evaluation/walkforward_validation.py`. **Feature selection is fold-safe. No leakage exists.**
 
 ### Reconciliation Result
 ```
@@ -67,7 +67,7 @@ All code outputs match MASTER_EVALUATION_REPORT.md exactly.
 P10/P90 bounds in `registry/manifest.json` are *delta* values (e.g. `p10_bound = -250`).
 Old code added them raw to a fixed rate, producing display values like `$-1475.00/MT`.
 
-**Fix in `src/forecast/uncertainty.py`:**
+**Fix in `ml/forecasting/uncertainty.py`:**
 ```python
 # Convert delta bounds → absolute level, clipping at physical floor of $0.00
 p10_level = max(0.0, current_rate + p10_bound)
@@ -75,7 +75,7 @@ p90_level = max(0.0, current_rate + p90_bound)
 p50_level = max(0.0, point_forecast)
 ```
 
-**Fix in `src/forecast/service.py`:** Fallback delta bounds now computed as `±0.25 × current_rate` (proportional).
+**Fix in `ml/forecasting/service.py`:** Fallback delta bounds now computed as `±0.25 × current_rate` (proportional).
 
 ### Post-Fix CLI Output (verified)
 ```
@@ -84,7 +84,7 @@ Forecast: $25.00/MT  |  P10: $18.75/MT  |  P90: $31.25/MT
 All bounds are non-negative and economically valid.
 
 ### Epistemic Disclaimer (in code)
-Bounds are empirical validation-residual intervals, **not** statistically guaranteed 80% prediction intervals. Documented in `src/forecast/uncertainty.py`.
+Bounds are empirical validation-residual intervals, **not** statistically guaranteed 80% prediction intervals. Documented in `ml/forecasting/uncertainty.py`.
 
 ---
 
@@ -288,18 +288,18 @@ KDCI_7D      | RandomForest | gated_accuracy=0.767 | status=promoted
 ## SECTION 15 — FILES CHANGED
 
 **Created (new architecture layer):**
-`configs/ports.yaml`, `configs/vessels.yaml`, `configs/cost_model.yaml`, `configs/decision_policy.yaml`, `configs/risk_policy.yaml`, `registry/manifest.json`, `src/domain/schemas.py`, `src/registry/registry.py`, `src/forecast/service.py`, `src/forecast/uncertainty.py`, `src/operational/port_repository.py`, `src/operational/vessel_repository.py`, `src/operational/feasibility_engine.py`, `src/risk/engine.py`, `src/cost/model.py`, `src/cost/idle_assessment.py`, `src/policy/expected_cost_policy.py`, `src/decision/engine.py`, `src/decision/schemas.py`, `src/decision/explanation.py`, `src/application/recommendation_service.py`, `src/application/__main__.py`, `ficos_cli.py`, `src/evaluation/decision_backtest.py`, `src/scenario/engine.py`, `docs/architecture.md`, `tests/test_domain.py`, `tests/test_config.py`, `tests/test_cost_model.py`, `tests/test_forecast_service.py`, `tests/test_scenario_engine.py`, `tests/test_backtest.py`
+`configs/ports.yaml`, `configs/vessels.yaml`, `configs/cost_model.yaml`, `configs/decision_policy.yaml`, `configs/risk_policy.yaml`, `registry/manifest.json`, `backend/domain/schemas.py`, `ml/registry/registry.py`, `ml/forecasting/service.py`, `ml/forecasting/uncertainty.py`, `backend/operational/port_repository.py`, `backend/operational/vessel_repository.py`, `backend/operational/feasibility_engine.py`, `backend/risk/engine.py`, `backend/cost/model.py`, `backend/cost/idle_assessment.py`, `backend/policy/expected_cost_policy.py`, `backend/decision/engine.py`, `backend/decision/schemas.py`, `backend/decision/explanation.py`, `backend/api/recommendation_service.py`, `backend/api/__main__.py`, `ficos_cli.py`, `ml/evaluation/decision_backtest.py`, `backend/scenario/engine.py`, `docs/architecture.md`, `tests/test_domain.py`, `tests/test_config.py`, `tests/test_cost_model.py`, `tests/test_forecast_service.py`, `tests/test_scenario_engine.py`, `tests/test_backtest.py`
 
 **Modified (bug fixes):**
-`src/forecast/uncertainty.py` — P10/P90 negative rate bug fixed  
-`src/forecast/service.py` — proportional fallback delta bounds  
-`src/operational/port_repository.py` — circular recursion fixed  
-`src/domain/schemas.py` — compatibility aliases added  
+`ml/forecasting/uncertainty.py` — P10/P90 negative rate bug fixed  
+`ml/forecasting/service.py` — proportional fallback delta bounds  
+`backend/operational/port_repository.py` — circular recursion fixed  
+`backend/domain/schemas.py` — compatibility aliases added  
 `tests/run_permutation_test.py` — real circular-shift + block permutation  
 `tests/test_feasibility.py`, `tests/test_decision_engine.py` — updated to v2 API
 
 **Preserved (zero changes):**
-`src/walkforward_validation.py` ✅ | `src/data_loader.py` ✅ | `src/features.py` ✅ | `MASTER_EVALUATION_REPORT.md` ✅
+`ml/evaluation/walkforward_validation.py` ✅ | `ml/data/data_loader.py` ✅ | `ml/features/features.py` ✅ | `MASTER_EVALUATION_REPORT.md` ✅
 
 ---
 

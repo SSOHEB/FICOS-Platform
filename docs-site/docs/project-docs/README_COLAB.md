@@ -4,7 +4,7 @@ title: README COLAB
 
 # Google Colab Freight Forecasting Benchmark Experiment Guide
 
-This guide provides instructions to run the freight forecasting benchmark notebook (`notebooks/colab_freight_forecasting_benchmark.ipynb`) in Google Colab.
+This guide provides instructions to run the freight forecasting benchmark notebook (`ml/notebooks/colab_freight_forecasting_benchmark.ipynb`) in Google Colab.
 
 ---
 
@@ -13,7 +13,7 @@ This guide provides instructions to run the freight forecasting benchmark notebo
 You can open and execute this notebook directly from GitHub in Google Colab:
 
 1. **Direct GitHub Colab Link**:
-   Open: [https://colab.research.google.com/github/SSOHEB/FICOS-Platform/blob/main/notebooks/colab_freight_forecasting_benchmark.ipynb](https://colab.research.google.com/github/SSOHEB/FICOS-Platform/blob/main/notebooks/colab_freight_forecasting_benchmark.ipynb)
+   Open: [https://colab.research.google.com/github/SSOHEB/FICOS-Platform/blob/main/ml/notebooks/colab_freight_forecasting_benchmark.ipynb](https://colab.research.google.com/github/SSOHEB/FICOS-Platform/blob/main/ml/notebooks/colab_freight_forecasting_benchmark.ipynb)
 
 2. **Select Runtime**:
    - **Runtime** -> **Change runtime type** -> **Python 3** (CPU or T4 GPU).

@@ -76,27 +76,27 @@ The platform decouples freight rate forecasting (Dataset A machine learning mode
 - `cost_model.yaml`: Bunker fuel prices (VLSFO/MGO), port disbursement fees, canal transit costs, demurrage rates.
 - `decision_policy.yaml`: Variance penalties, risk weighting factors, policy thresholds.
 
-### 2. Domain Schemas (`src/domain/schemas.py`)
+### 2. Domain Schemas (`backend/domain/schemas.py`)
 - Strongly typed Python dataclasses for all core entities: `CargoRequirement`, `VesselClass`, `Port`, `Route`, `ForecastResult`, `FeasibilityResult`, `RiskResult`, `CostBreakdown`, `PolicyEvaluation`.
 
-### 3. Model Registry (`registry/manifest.json`, `src/registry/`)
+### 3. Model Registry (`registry/manifest.json`, `ml/registry/`)
 - Centralized model manifest mapping `(asset_type, horizon_days)` to promoted model artifacts and empirical performance metrics (F1, Accuracy, P10/P90 residual calibration).
 
-### 4. Forecast Service & Uncertainty Engine (`src/forecast/`)
+### 4. Forecast Service & Uncertainty Engine (`ml/forecasting/`)
 - Obtains calibrated freight rate predictions and empirical P10/P90 confidence intervals without leaking operational assumptions into feature matrices.
 
-### 5. Operational Feasibility Layer (`src/operational/`)
+### 5. Operational Feasibility Layer (`backend/operational/`)
 - Gated physical constraint checker verifying vessel draft, LOA, beam, air draft, and DWT capacity against origin and destination port specifications.
 
-### 6. Risk Engine & Scenario Engine (`src/risk/`, `src/scenario/`)
+### 6. Risk Engine & Scenario Engine (`backend/risk/`, `backend/scenario/`)
 - Evaluates Dataset C environmental, weather, and geopolitical disruption signals to construct a composite 0-100 risk score and severity alerts.
 - Supports scenario replaying under alternative fuel prices, congestion delays, or weather conditions.
 
-### 7. Cost Model & Expected Cost Policy (`src/cost/`, `src/policy/`)
+### 7. Cost Model & Expected Cost Policy (`backend/cost/`, `backend/policy/`)
 - Comprehensive voyage cost accounting combining charter freight, bunker fuel consumption, port disbursements, canal transit fees, and idle delay penalties.
 - Evaluates candidate chartering strategies (SPOT, TIME_CHARTER, COA) under uncertainty.
 
-### 8. Decision Engine v2 & Recommendation Service (`src/decision/`, `src/application/`)
+### 8. Decision Engine v2 & Recommendation Service (`backend/decision/`, `backend/api/`)
 - Orchestrates all components, enforces physical gating, selects optimal strategy minimizing risk-adjusted cost, and generates human-readable audit explanations.
 
 ---

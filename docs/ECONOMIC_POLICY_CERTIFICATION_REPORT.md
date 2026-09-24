@@ -2,7 +2,7 @@
 
 **Canonical Baseline SHA**: `ef6970f3f96ac2bc55dcc02e40c490102ea10df3`  
 **Dataset SHA-256**: `e0f4c91eed7b4919200472c3fe7e0735e4fd12433383727b58f73c2fd8945fd5`  
-**Single Source of Truth Configuration**: `src/config/canonical_config.py`  
+**Single Source of Truth Configuration**: `backend/config/canonical_config.py`  
 **Machine-Readable Result Payload**: `outputs/authoritative_policy_results.json`  
 
 ---
@@ -257,7 +257,7 @@ FICOS ECONOMIC POLICY CERTIFICATION
 FINAL CLASSIFICATION: CERTIFIED IMPROVEMENT ✅
 GIT COMMIT:           ef6970f3f96ac2bc55dcc02e40c490102ea10df3
 DATASET SHA-256:      e0f4c91eed7b4919200472c3fe7e0735e4fd12433383727b58f73c2fd8945fd5
-CONFIG SSOT:         src/config/canonical_config.py
+CONFIG SSOT:         backend/config/canonical_config.py
 HYPERPARAMETERS:      N_TREES=100, SEED=42, n_jobs=1
 
 CERTIFIED OUT-OF-SAMPLE SAVINGS: +$7,607,420.00 (+0.4183%)

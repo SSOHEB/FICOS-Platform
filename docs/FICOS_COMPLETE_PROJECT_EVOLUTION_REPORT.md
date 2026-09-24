@@ -3,7 +3,7 @@
 **Project**: FICOS (Freight Intelligence & Chartering Optimization System)  
 **Authoritative Git SHA**: `ef6970f3f96ac2bc55dcc02e40c490102ea10df3`  
 **Dataset SHA-256**: `e0f4c91eed7b4919200472c3fe7e0735e4fd12433383727b58f73c2fd8945fd5`  
-**Single Source of Truth Configuration**: `src/config/canonical_config.py`  
+**Single Source of Truth Configuration**: `backend/config/canonical_config.py`  
 **Machine-Readable Result Payload**: `outputs/authoritative_policy_results.json`  
 
 ---
@@ -46,17 +46,17 @@ The initial system design established:
 
 | Exp ID | Chronological Order | Investigation Focus | Model / Policy Architecture | Key Metric / Result | Outcome / Status | Primary Artifact / Evidence |
 |---|---|---|---|---|---|---|
-| **EXP-01** | Step 1 (Early) | Freight Forecasting Baseline | Ridge, Lasso, RF, LightGBM, XGBoost | Initial point MAE & DA | Established baseline benchmarks | `notebooks/forecasting_architecture_benchmark.ipynb` |
-| **EXP-02** | Step 2 | Pinball Quantile Loss | Quantile Gradient Boosting ($P_{10}, P_{90}$) | Interval coverage | Provided uncertainty bounds; high point MAE | `notebooks/quantile_boosting_experiment.ipynb` |
-| **EXP-03** | Step 3 | Conformal Quantile Regression | LightGBM + CQR Calibration | 80% marginal coverage | Improved interval reliability; wide tails | `notebooks/cqr_experiment.ipynb` |
-| **EXP-04A** | Step 4A | Quantile LightGBM CQR | CQR on LightGBM Quantiles | Conditional coverage | Reduced tail coverage error | `notebooks/experiment_4a_quantile_lightgbm_cqr.ipynb` |
-| **EXP-04B** | Step 4B | Grouped Mondrian CQR | Mondrian CQR by Vessel & Regime | Group coverage | Better vessel-specific bounds; higher variance | `notebooks/experiment_4b_grouped_mondrian_cqr.ipynb` |
-| **EXP-04C** | Step 4C | Adaptive Conformal Inference | ACI with rolling quantum step $\gamma$ | Dynamic 90% coverage | Maintained coverage; reduced actionable N | `notebooks/experiment_4c_adaptive_weighted_conformal.ipynb` |
-| **EXP-05** | Step 5 | ACI Coverage Audit | Dynamic ACI Bounds Audit | Coverage audit | Confirmed non-stationary tracking | `notebooks/experiment_5_aci_audit.ipynb` |
-| **EXP-06_G** | Step 6 | Gate Quality & Precision | $P_{10}/P_{90}$ Percentile Bounds + $\tau=0.01$ | Gated Prec: 79.10% | Confirmed gating filters low-confidence noise | `notebooks/experiment_6_gate_quality.ipynb` |
-| **EXP-07** | Step 7 | Feature Selection & Sharper Base | `SelectKBest(f_regression, k=30)` | Reduced 1D MAE | Adopted k=30 feature selection | `notebooks/experiment_7_sharper_base_sparse_groups.ipynb` |
-| **EXP-08** | Step 8 | Model Family Challenger | RF vs LightGBM vs VWE vs Stacking | 1D RF promoted; 7D LightGBM rejected | Promoted 1D RF; 7D/14D/30D fallback | `notebooks/experiment_8_final_production_model_challenger.ipynb` |
-| **EXP-09** | Step 9 | Economic Charter Backtest | Canonical 1D RF_STANDARD Backtest | Net: -$503,745 (2025 WAIT: +$344K) | Uncovered FLEX cost drag | `notebooks/experiment_9_economic_charter_decision_backtest.ipynb` |
+| **EXP-01** | Step 1 (Early) | Freight Forecasting Baseline | Ridge, Lasso, RF, LightGBM, XGBoost | Initial point MAE & DA | Established baseline benchmarks | `ml/notebooks/forecasting_architecture_benchmark.ipynb` |
+| **EXP-02** | Step 2 | Pinball Quantile Loss | Quantile Gradient Boosting ($P_{10}, P_{90}$) | Interval coverage | Provided uncertainty bounds; high point MAE | `ml/notebooks/quantile_boosting_experiment.ipynb` |
+| **EXP-03** | Step 3 | Conformal Quantile Regression | LightGBM + CQR Calibration | 80% marginal coverage | Improved interval reliability; wide tails | `ml/notebooks/cqr_experiment.ipynb` |
+| **EXP-04A** | Step 4A | Quantile LightGBM CQR | CQR on LightGBM Quantiles | Conditional coverage | Reduced tail coverage error | `ml/notebooks/experiment_4a_quantile_lightgbm_cqr.ipynb` |
+| **EXP-04B** | Step 4B | Grouped Mondrian CQR | Mondrian CQR by Vessel & Regime | Group coverage | Better vessel-specific bounds; higher variance | `ml/notebooks/experiment_4b_grouped_mondrian_cqr.ipynb` |
+| **EXP-04C** | Step 4C | Adaptive Conformal Inference | ACI with rolling quantum step $\gamma$ | Dynamic 90% coverage | Maintained coverage; reduced actionable N | `ml/notebooks/experiment_4c_adaptive_weighted_conformal.ipynb` |
+| **EXP-05** | Step 5 | ACI Coverage Audit | Dynamic ACI Bounds Audit | Coverage audit | Confirmed non-stationary tracking | `ml/notebooks/experiment_5_aci_audit.ipynb` |
+| **EXP-06_G** | Step 6 | Gate Quality & Precision | $P_{10}/P_{90}$ Percentile Bounds + $\tau=0.01$ | Gated Prec: 79.10% | Confirmed gating filters low-confidence noise | `ml/notebooks/experiment_6_gate_quality.ipynb` |
+| **EXP-07** | Step 7 | Feature Selection & Sharper Base | `SelectKBest(f_regression, k=30)` | Reduced 1D MAE | Adopted k=30 feature selection | `ml/notebooks/experiment_7_sharper_base_sparse_groups.ipynb` |
+| **EXP-08** | Step 8 | Model Family Challenger | RF vs LightGBM vs VWE vs Stacking | 1D RF promoted; 7D LightGBM rejected | Promoted 1D RF; 7D/14D/30D fallback | `ml/notebooks/experiment_8_final_production_model_challenger.ipynb` |
+| **EXP-09** | Step 9 | Economic Charter Backtest | Canonical 1D RF_STANDARD Backtest | Net: -$503,745 (2025 WAIT: +$344K) | Uncovered FLEX cost drag | `ml/notebooks/experiment_9_economic_charter_decision_backtest.ipynb` |
 | **INCIDENT** | Step 10 | Reproducibility Forensic Audit | 50-tree vs 100-tree divergence | Divergence: -$340K vs -$503K | Retired 50-tree; hardened SSOT config | `docs/LOCAL_EXECUTION_DISCREPANCY_FORENSIC.md` |
 | **AUDIT** | Step 11 | Economic Attribution Audit | NOW vs WAIT vs FLEX Decomposition | NOW: $0, WAIT: +$3.72M, FLEX: -$4.23M | Proved FLEX formula was sole loss source | `docs/ECONOMIC_POLICY_ATTRIBUTION_AUDIT.md` |
 | **EXP-06_WF** | Step 12 | Walk-Forward Policy Optimization | Chronological Walk-Forward Tuned WAIT | **+$7,607,420.00 OOS Net** | **CERTIFIED IMPROVEMENT ✅** | `docs/ECONOMIC_POLICY_CERTIFICATION_REPORT.md` |
@@ -164,7 +164,7 @@ Investigation revealed that `run_final_reconciliation.py` introduced a local spe
 ## 12. Provenance & Reproducibility Hardening
 
 To prevent future non-determinism, the codebase was hardened:
-1. **Single Source of Truth**: Created [`src/config/canonical_config.py`](file:///c:/Users/soheb/OneDrive/Desktop/ficos%20final/src/config/canonical_config.py) defining `CANONICAL_N_TREES=100`, `CANONICAL_SEED=42`, `CANONICAL_N_JOBS=1`, dataset SHA-256 `e0f4c91eed7b4919...`.
+1. **Single Source of Truth**: Created [`backend/config/canonical_config.py`](file:///c:/Users/soheb/OneDrive/Desktop/ficos%20final/backend/config/canonical_config.py) defining `CANONICAL_N_TREES=100`, `CANONICAL_SEED=42`, `CANONICAL_N_JOBS=1`, dataset SHA-256 `e0f4c91eed7b4919...`.
 2. **Hard-Fail Validation**: Any execution attempting to use `N_TREES != 100`, `SEED != 42`, `n_jobs != 1`, or a modified dataset raises `ValueError` immediately.
 3. **Automated Regression Suite**: Created [`tests/test_reproducibility_regression.py`](file:///c:/Users/soheb/OneDrive/Desktop/ficos%20final/tests/test_reproducibility_regression.py) verifying pipeline determinism.
 
@@ -265,7 +265,7 @@ For each test year (2021–2025), the WAIT threshold $\tau_{\text{WAIT}}$ was tu
 
 ## 19. Why the Architecture Looks the Way It Does Now
 
-- **SSOT Configuration (`src/config/canonical_config.py`)**: Guarantees bitwise reproducibility by locking `N_TREES=100`, `SEED=42`, `n_jobs=1`, and dataset SHA.
+- **SSOT Configuration (`backend/config/canonical_config.py`)**: Guarantees bitwise reproducibility by locking `N_TREES=100`, `SEED=42`, `n_jobs=1`, and dataset SHA.
 - **1D `RF_STANDARD` Promotion**: Selected because it demonstrated genuine signal across 3/5 expanding-window folds without ensemble complexity.
 - **7D/14D/30D Fallback**: Enforces `FLEXIBLE_INDEX` fallback because long-horizon models failed statistical promotion thresholds.
 - **Walk-Forward Policy Layer (`EXP-06`)**: Eliminates the 0.25-day FLEX idle drag and tunes WAIT thresholds chronologically, converting -$503K loss into **+$7.61M net gain**.
@@ -331,7 +331,7 @@ For each test year (2021–2025), the WAIT threshold $\tau_{\text{WAIT}}$ was tu
 
 The FICOS platform evolved through three distinct scientific stages:
 1. **Predictive Discovery (Exps 1–8)**: Established that 1D Random Forest provides statistically significant directional signal (74.60% DA, 79.10% gated precision), while long-horizon models (7D/14D/30D) lack statistical superiority and must default to flexible indexing.
-2. **Engineering Hardening (Incident Debugging)**: Uncovered a subtle non-determinism bug where 50-tree vs 100-tree execution altered gating thresholds. Solved by locking SSOT configuration (`src/config/canonical_config.py`) and building a clean-room reproducibility gate.
+2. **Engineering Hardening (Incident Debugging)**: Uncovered a subtle non-determinism bug where 50-tree vs 100-tree execution altered gating thresholds. Solved by locking SSOT configuration (`backend/config/canonical_config.py`) and building a clean-room reproducibility gate.
 3. **Economic Policy Certification (Exps 9–06)**: Discovered that the -$503K baseline portfolio loss was accounted for by the FLEX routing formulation charging a $625/voyage demurrage penalty on 4,163 FLEX index voyages. By freezing the certified RF model and tuning WAIT thresholds chronologically per fold (`EXP-06`), FICOS achieved **+$7,607,420.00** out-of-sample net savings (+0.4183%) with **+$944,960.00** on the 2025 holdout.
 
 ---
@@ -340,7 +340,7 @@ The FICOS platform evolved through three distinct scientific stages:
 
 | Claim / Artifact | Primary Source File | Section / Function / Commit |
 |---|---|---|
-| SSOT Config & Provenance | [`src/config/canonical_config.py`](file:///c:/Users/soheb/OneDrive/Desktop/ficos%20final/src/config/canonical_config.py) | `validate_dataset_provenance()`, SHA `ef6970f3f96...` |
+| SSOT Config & Provenance | [`backend/config/canonical_config.py`](file:///c:/Users/soheb/OneDrive/Desktop/ficos%20final/backend/config/canonical_config.py) | `validate_dataset_provenance()`, SHA `ef6970f3f96...` |
 | Reproducibility Incident Audit | [`docs/LOCAL_EXECUTION_DISCREPANCY_FORENSIC.md`](file:///c:/Users/soheb/OneDrive/Desktop/ficos%20final/docs/LOCAL_EXECUTION_DISCREPANCY_FORENSIC.md) | Divergence DIV-001 |
 | Reproducibility Test Suite | [`tests/test_reproducibility_regression.py`](file:///c:/Users/soheb/OneDrive/Desktop/ficos%20final/tests/test_reproducibility_regression.py) | `test_reproducibility_dual_execution()` |
 | Policy Certification Engine | [`scratch/run_economic_policy_certification.py`](file:///c:/Users/soheb/OneDrive/Desktop/ficos%20final/scratch/run_economic_policy_certification.py) | Phases 1–10 execution |
@@ -363,7 +363,7 @@ The FICOS platform evolved through three distinct scientific stages:
   - 1D RF_STANDARD ML predictions generate **+$3.72M** net savings on WAIT decisions (83.95% precision).
   - The FLEX routing formulation accounted for the entire negative contribution of the canonical portfolio baseline (-$503K), rather than predictive model failure.
 - **Architecture Evolution**: Point Forecasting Benchmark $\to$ Quantile CQR / Mondrian / ACI $\to$ Gated 1D RF_STANDARD $\to$ SSOT Provenance Hardening $\to$ Chronological Walk-Forward Policy Optimization (`EXP-06`).
-- **Reproducibility Breakthrough**: SSOT config (`src/config/canonical_config.py`) locking `N_TREES=100`, `SEED=42`, `n_jobs=1`, dataset SHA, and automated dual clean-room regression tests (`max_abs_diff = 0.0`).
+- **Reproducibility Breakthrough**: SSOT config (`backend/config/canonical_config.py`) locking `N_TREES=100`, `SEED=42`, `n_jobs=1`, dataset SHA, and automated dual clean-room regression tests (`max_abs_diff = 0.0`).
 - **Economic Breakthrough**: Chronological walk-forward WAIT threshold tuning (`EXP-06`) turned portfolio economics from **`-$503,745.00`** into **`+$7,607,420.00`** net savings (+0.4183%) out-of-sample with zero future leakage.
 - **Final Certified Architecture**:
   - **1D**: `RF_STANDARD` + Walk-Forward Policy Engine (`EXP-06`).
