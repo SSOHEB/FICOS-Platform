@@ -72,7 +72,11 @@ if not os.path.exists("configs") and not os.path.exists("backend"):
     os.chdir("ficos_repo")
     print(f"[INFO] Working directory set to: {os.getcwd()}")
 else:
-    print(f"[INFO] Running in local/pre-cloned workspace: {os.getcwd()}")
+    print(f"[INFO] Running in existing workspace: {os.getcwd()}")
+    try:
+        subprocess.run(["git", "pull", "origin", "main"], check=False)
+    except Exception:
+        pass
 
 # 2. Extract Git Commit & Branch Information
 try:

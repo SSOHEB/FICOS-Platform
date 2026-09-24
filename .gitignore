@@ -36,11 +36,11 @@ id_ed25519
 *.secret
 
 # ------------------------------------------------------------------------------
-# 3. Datasets & Large Data Files (STRICTLY IGNORED)
+# 3. Datasets & Large Data Files (STRICTLY IGNORED EXCEPT CANONICAL MODELING DATASET)
 # ------------------------------------------------------------------------------
-data/
-data/**
-*.csv
+data/raw/
+data/interim/
+data/processed/
 *.xlsx
 *.xls
 *.parquet
@@ -49,6 +49,7 @@ data/**
 *.feather
 *.dta
 *.tsv
+!data/modeling_dataset.csv
 
 # ------------------------------------------------------------------------------
 # 4. Heavy Model Weights & Binary Checkpoints
