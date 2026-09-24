@@ -88,40 +88,50 @@ except Exception as e:
 
 # 3. Check Dataset SHA-256 if present
 dataset_paths = ["data/modeling_dataset.csv", "outputs/modeling_dataset.csv"]
-dataset_sha256 = "NOT_FOUND"
+dataset_sha256_raw = "NOT_FOUND"
+dataset_sha256_canonical = "NOT_FOUND"
+
 for dp in dataset_paths:
     if os.path.exists(dp):
-        hasher = hashlib.sha256()
         with open(dp, "rb") as f:
-            for chunk in iter(lambda: f.read(65536), b""):
-                hasher.update(chunk)
-        dataset_sha256 = hasher.hexdigest()
+            raw_bytes = f.read()
+        dataset_sha256_raw = hashlib.sha256(raw_bytes).hexdigest()
+        # Canonicalize line endings (CRLF canonical)
+        crlf_bytes = raw_bytes.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+        dataset_sha256_canonical = hashlib.sha256(crlf_bytes).hexdigest()
         break
 
 # 4. Display Provenance Summary
 print("=" * 70)
 print("FICOS PROVENANCE & ENVIRONMENT SUMMARY")
 print("=" * 70)
-print(f"Repository URL:       {REPO_URL}")
-print(f"Current Branch:       {current_branch}")
-print(f"Current Git Commit:   {current_commit}")
-print(f"Certified Baseline:   {CERTIFIED_SHA}")
-print(f"Dataset SHA-256:      {dataset_sha256}")
-print(f"Python Version:       {sys.version.split()[0]}")
-print(f"Platform / OS:        {platform.platform()}")
-print(f"Pandas Version:       {pd.__version__}")
-print(f"NumPy Version:        {np.__version__}")
-print(f"Timestamp (UTC):      {datetime.datetime.now(datetime.timezone.utc).isoformat()}")
+print(f"Repository URL:          {REPO_URL}")
+print(f"Current Branch:          {current_branch}")
+print(f"Current Git Commit:      {current_commit}")
+print(f"Certified Baseline SHA:  {CERTIFIED_SHA}")
+print(f"Dataset Raw SHA-256:     {dataset_sha256_raw}")
+print(f"Dataset Canonical Hash:  {dataset_sha256_canonical}")
+print(f"Certified Dataset Hash:  {CERTIFIED_DATASET_SHA256}")
+print(f"Python Version:          {sys.version.split()[0]}")
+print(f"Platform / OS:           {platform.platform()}")
+print(f"Pandas Version:          {pd.__version__}")
+print(f"NumPy Version:           {np.__version__}")
+print(f"Timestamp (UTC):         {datetime.datetime.now(datetime.timezone.utc).isoformat()}")
 print("=" * 70)
 
-# 5. Baseline Match Verification
+# 5. Dataset & Baseline Match Verification
+if dataset_sha256_canonical == CERTIFIED_DATASET_SHA256 or dataset_sha256_raw == CERTIFIED_DATASET_SHA256:
+    print("✅ DATASET VERIFIED: Hash matches certified baseline (2,581 rows x 482 cols).")
+else:
+    print(f"⚠️ DATASET UNMATCHED: Raw={dataset_sha256_raw}")
+
 if current_commit == CERTIFIED_SHA:
     print("✅ REPOSITORY EXACT MATCH: Current commit matches certified baseline SHA.")
 else:
     print("⚠️ WARNING: REPOSITORY STATE DIFFERS FROM CERTIFIED BASELINE")
-    print(f"  Current SHA:   {current_commit}")
-    print(f"  Certified SHA: {CERTIFIED_SHA}")
-    print("  Note: Baseline SHA is the certified reference point for EXP-06.")
+    print(f"  Current Commit:    {current_commit}")
+    print(f"  Certified Baseline: {CERTIFIED_SHA}")
+    print("  Note: Baseline commit represents the locked reference point for EXP-06 certification.")
 """)
 
     # SECTION 1
