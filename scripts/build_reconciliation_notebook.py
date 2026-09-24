@@ -263,106 +263,97 @@ experiments_data = [
         "Status": "REPLACED ⚠️"
     },
     {
-        "EXP-01",
-        "FLEX Pure Spot Index",
-        "cost_flex = cost_spot (Eliminate artificial flex idle)",
-        "P10 < 0 & P90 < 0",
-        "2016-2020",
-        "2021-2025",
-        641,
-        324,
-        83.95,
-        3725220.0,
-        344840.0,
-        "BENCHMARK STEP ✅"
+        "EXP ID": "EXP-01",
+        "Policy Name": "FLEX Pure Spot Index",
+        "Policy Formula": "cost_flex = cost_spot (Eliminate artificial flex idle)",
+        "Threshold (USD/MT)": "P10 < 0 & P90 < 0",
+        "Train/Calib Period": "2016-2020",
+        "Eval Period": "2021-2025",
+        "Retained N": 641,
+        "WAIT N": 324,
+        "Precision (%)": 83.95,
+        "Total Net Savings ($)": 3725220.0,
+        "2025 Holdout Net ($)": 344840.0,
+        "Status": "BENCHMARK STEP ✅"
     },
     {
-        "EXP-02",
-        "FLEX Bounded Premium",
-        "cost_flex = cost_spot + $100/voyage fee",
-        "P10 < 0 & P90 < 0",
-        "2016-2020",
-        "2021-2025",
-        641,
-        324,
-        83.95,
-        3308920.0,
-        344840.0,
-        "REJECTED (Suboptimal) ❌"
+        "EXP ID": "EXP-02",
+        "Policy Name": "FLEX Bounded Premium",
+        "Policy Formula": "cost_flex = cost_spot + $100/voyage fee",
+        "Threshold (USD/MT)": "P10 < 0 & P90 < 0",
+        "Train/Calib Period": "2016-2020",
+        "Eval Period": "2021-2025",
+        "Retained N": 641,
+        "WAIT N": 324,
+        "Precision (%)": 83.95,
+        "Total Net Savings ($)": 3308920.0,
+        "2025 Holdout Net ($)": 344840.0,
+        "Status": "REJECTED (Suboptimal) ❌"
     },
     {
-        "EXP-03",
-        "WAIT-Only Active Gating",
-        "WAIT active; NOW and FLEX default to spot index",
-        "P10 < 0 & P90 < 0",
-        "2016-2020",
-        "2021-2025",
-        641,
-        324,
-        83.95,
-        3725220.0,
-        344840.0,
-        "BENCHMARK STEP ✅"
+        "EXP ID": "EXP-03",
+        "Policy Name": "WAIT-Only Active Gating",
+        "Policy Formula": "WAIT active; NOW and FLEX default to spot index",
+        "Threshold (USD/MT)": "P10 < 0 & P90 < 0",
+        "Train/Calib Period": "2016-2020",
+        "Eval Period": "2021-2025",
+        "Retained N": 641,
+        "WAIT N": 324,
+        "Precision (%)": 83.95,
+        "Total Net Savings ($)": 3725220.0,
+        "2025 Holdout Net ($)": 344840.0,
+        "Status": "BENCHMARK STEP ✅"
     },
     {
-        "EXP-04",
-        "Monetary EV Threshold Gate",
-        "WAIT if pred_delta < -125 $/MT; else Spot",
-        "delta < -$125/MT",
-        "2016-2020",
-        "2021-2025",
-        348,
-        348,
-        84.48,
-        4006900.0,
-        342460.0,
-        "STATIC EV BASELINE ✅"
+        "EXP ID": "EXP-04",
+        "Policy Name": "Monetary EV Threshold Gate",
+        "Policy Formula": "WAIT if pred_delta < -125 $/MT; else Spot",
+        "Threshold (USD/MT)": "delta < -$125/MT",
+        "Train/Calib Period": "2016-2020",
+        "Eval Period": "2021-2025",
+        "Retained N": 348,
+        "WAIT N": 348,
+        "Precision (%)": 84.48,
+        "Total Net Savings ($)": 4006900.0,
+        "2025 Holdout Net ($)": 342460.0,
+        "Status": "STATIC EV BASELINE ✅"
     },
     {
-        "EXP-05",
-        "Dynamic Volatility Gate",
-        "Threshold = max(100, 1.5 * val_vol)",
-        "Dynamic Volatility",
-        "2016-2020",
-        "2021-2025",
-        175,
-        175,
-        88.57,
-        2575220.0,
-        132180.0,
-        "REJECTED (Over-constrained) ❌"
+        "EXP ID": "EXP-05",
+        "Policy Name": "Dynamic Volatility Gate",
+        "Policy Formula": "Threshold = max(100, 1.5 * val_vol)",
+        "Threshold (USD/MT)": "Dynamic Volatility",
+        "Train/Calib Period": "2016-2020",
+        "Eval Period": "2021-2025",
+        "Retained N": 175,
+        "WAIT N": 175,
+        "Precision (%)": 88.57,
+        "Total Net Savings ($)": 2575220.0,
+        "2025 Holdout Net ($)": 132180.0,
+        "Status": "REJECTED (Over-constrained) ❌"
     },
     {
-        "EXP-06",
-        "Walk-Forward Locked Policy",
-        "Per-fold, per-vessel out-of-fold threshold tuning",
-        "Fold-tuned tau in [-$25, -$300]",
-        "Walk-Forward Expanding",
-        "2021-2025 Locked",
-        1509,
-        1509,
-        80.52,
-        7607420.0,
-        944960.0,
-        "CERTIFIED PRODUCTION POLICY 🏆"
+        "EXP ID": "EXP-06",
+        "Policy Name": "Walk-Forward Locked Policy",
+        "Policy Formula": "Per-fold, per-vessel out-of-fold threshold tuning",
+        "Threshold (USD/MT)": "Fold-tuned tau in [-$25, -$300]",
+        "Train/Calib Period": "Walk-Forward Expanding",
+        "Eval Period": "2021-2025 Locked",
+        "Retained N": 1509,
+        "WAIT N": 1509,
+        "Precision (%)": 80.52,
+        "Total Net Savings ($)": 7607420.0,
+        "2025 Holdout Net ($)": 944960.0,
+        "Status": "CERTIFIED PRODUCTION POLICY 🏆"
     }
 ]
 
-# Create DataFrame
-exp_keys = ["EXP ID", "Policy Name", "Policy Formula", "Threshold (USD/MT)", "Train/Calib Period", "Eval Period", "Retained N", "WAIT N", "Precision (%)", "Total Net Savings ($)", "2025 Holdout Net ($)", "Status"]
-clean_exp_data = []
-for item in experiments_data:
-    if isinstance(item, dict):
-        clean_exp_data.append(item)
-    else:
-        clean_exp_data.append(dict(zip(exp_keys, item)))
-
-exp_df = pd.DataFrame(clean_exp_data)
+exp_df = pd.DataFrame(experiments_data)
 display(exp_df)
 
 # Plot Progression
 plt.figure(figsize=(10, 5))
-colors = ['red' if x < 0 else 'gray' if 'REJECTED' in s or 'REPLACED' in s else 'green' for x, s in zip(exp_df["Total Net Savings ($)"], exp_df["Status"])]
+colors = ['red' if x < 0 else 'gray' if ('REJECTED' in s or 'REPLACED' in s) else 'green' for x, s in zip(exp_df["Total Net Savings ($)"], exp_df["Status"])]
 colors[-1] = 'darkgreen'
 bars = plt.bar(exp_df["EXP ID"], exp_df["Total Net Savings ($)"] / 1e6, color=colors, edgecolor='black')
 plt.axhline(0, color='black', linestyle='--', linewidth=0.8)
