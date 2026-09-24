@@ -75,6 +75,7 @@ Thumbs.db
 .system_generated/
 .gemini/
 scratch/
+archive/scratch/
 
 # ------------------------------------------------------------------------------
 # 6. Frontend & Docs-Site Build Artifacts
