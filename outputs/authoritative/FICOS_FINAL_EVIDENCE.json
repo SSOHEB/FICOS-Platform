@@ -1,0 +1,311 @@
+{
+  "experiment_id": "FICOS_FINAL_HISTORICAL_COUNTERFACTUAL",
+  "created_at_utc": "2026-09-25T20:37:42.034228+00:00",
+  "dataset_identity": {
+    "path": "data/modeling_dataset.csv",
+    "sha256": "e0f4c91eed7b4919200472c3fe7e0735e4fd12433383727b58f73c2fd8945fd5",
+    "rows": 2581,
+    "columns": 482,
+    "date_range": [
+      "2016-01-04",
+      "2026-09-04"
+    ]
+  },
+  "source_identities": {
+    "interim_spot_prices": "7c82acc43764c77fa170b2403798c671e97e2c754ef35579d090e746e4acb4ec",
+    "raw_maritime_workbook": "5484d27a5f32f9cc80e69d4063e0fc40835ad03b7e3b5d222c49159dc2c71222",
+    "raw_port_workbook": "1ef3c969bfe244caa2d92b2c6e7095f08b0e4f395be3db8fb11091235a3d234e"
+  },
+  "forecast_population": {
+    "fresh_oos_rows": 4804,
+    "canonical_gate_retained": 641,
+    "gate_coverage": 0.1334304746,
+    "gated_directional_accuracy": 0.7909516381,
+    "model": "RF_STANDARD_FRESH_ABLATION",
+    "seed": 42
+  },
+  "opportunity_population": {
+    "historical_market_opportunities": 4804,
+    "status": "HISTORICAL_MARKET_OPPORTUNITY_NOT_SAIL_TRANSACTION"
+  },
+  "policy_benchmark": [
+    {
+      "policy": "ALWAYS_SPOT",
+      "historical_opportunities": 4804,
+      "cost_usd": 6819780525000.0,
+      "difference_vs_always_spot_usd": 0.0,
+      "mean_difference_per_opportunity_usd": 0.0,
+      "paired_bootstrap_95pct_difference_usd": "[0.00, 0.00]",
+      "feasibility": "ROW_LEVEL_NO_SHARED_CONSTRAINTS",
+      "evidence_type": "OBSERVED_MARKET_RATE_COUNTERFACTUAL"
+    },
+    {
+      "policy": "ALWAYS_CONTRACT",
+      "historical_opportunities": 4804,
+      "cost_usd": 6512890401375.0,
+      "difference_vs_always_spot_usd": 306890123625.0,
+      "mean_difference_per_opportunity_usd": 63882207.24916736,
+      "paired_bootstrap_95pct_difference_usd": "[63054720.85, 64788177.12]",
+      "feasibility": "ROW_LEVEL_NO_SHARED_CONSTRAINTS",
+      "evidence_type": "COUNTERFACTUAL_WITH_SCENARIO_CONTRACT_ECONOMICS"
+    },
+    {
+      "policy": "FIXED_HORIZON_POLICY",
+      "historical_opportunities": 4804,
+      "cost_usd": 6770702175000.0,
+      "difference_vs_always_spot_usd": 49078350000.0,
+      "mean_difference_per_opportunity_usd": 10216142.79766861,
+      "paired_bootstrap_95pct_difference_usd": "[8898276.96, 11434664.08]",
+      "feasibility": "ROW_LEVEL_NO_SHARED_CONSTRAINTS",
+      "evidence_type": "COUNTERFACTUAL_WITH_SCENARIO_CONTRACT_ECONOMICS"
+    },
+    {
+      "policy": "TIMING_ONLY",
+      "historical_opportunities": 4804,
+      "cost_usd": 6802773450000.0,
+      "difference_vs_always_spot_usd": 17007075000.0,
+      "mean_difference_per_opportunity_usd": 3540190.466278102,
+      "paired_bootstrap_95pct_difference_usd": "[2748946.32, 4376858.48]",
+      "feasibility": "ROW_LEVEL_NO_SHARED_CONSTRAINTS",
+      "evidence_type": "COUNTERFACTUAL_WITH_SCENARIO_CONTRACT_ECONOMICS"
+    },
+    {
+      "policy": "TIMING_PLUS_HOW",
+      "historical_opportunities": 4804,
+      "cost_usd": 6521958596625.0,
+      "difference_vs_always_spot_usd": 297821928375.0,
+      "mean_difference_per_opportunity_usd": 61994572.93401332,
+      "paired_bootstrap_95pct_difference_usd": "[60898909.48, 63218673.08]",
+      "feasibility": "ROW_LEVEL_NO_SHARED_CONSTRAINTS",
+      "evidence_type": "COUNTERFACTUAL_WITH_SCENARIO_CONTRACT_ECONOMICS"
+    },
+    {
+      "policy": "FICOS_PORTFOLIO",
+      "historical_opportunities": 12,
+      "cost_usd": NaN,
+      "difference_vs_always_spot_usd": NaN,
+      "mean_difference_per_opportunity_usd": NaN,
+      "paired_bootstrap_95pct_difference_usd": "UNAVAILABLE",
+      "feasibility": "EVALUATED_IN_ARCHITECTURAL_ABLATION_AND_STRESS_GRID",
+      "evidence_type": "COUNTERFACTUAL_SCENARIO_NOT_FULL_HISTORY"
+    }
+  ],
+  "architectural_ablation": {
+    "master": [
+      {
+        "eligible_voyages": 12,
+        "wait_decisions": 8,
+        "actionable_decisions": 4,
+        "spot_decisions": 12,
+        "multi_voyage_decisions": 0,
+        "contract_utilization_pct": 0.0,
+        "budget_utilization_pct": 98.0392156862745,
+        "capacity_utilization_pct": 0.0,
+        "system": "BASELINE_0_ALWAYS_SPOT",
+        "procurement_cost_usd": 15113175000.0,
+        "savings_vs_always_spot_usd": 0.0,
+        "mean_savings_per_voyage_usd": 0.0,
+        "worst_case_cost_usd": 15628356747.557491,
+        "cvar_cost_usd": 14971103641.582508,
+        "constraint_violations": 0,
+        "solver_status": "NOT_APPLICABLE",
+        "solver_time_seconds": NaN
+      },
+      {
+        "eligible_voyages": 12,
+        "wait_decisions": 8,
+        "actionable_decisions": 4,
+        "spot_decisions": 0,
+        "multi_voyage_decisions": 12,
+        "contract_utilization_pct": 100.0,
+        "budget_utilization_pct": 94.07438219791632,
+        "capacity_utilization_pct": 225.0,
+        "system": "BASELINE_1_INDEPENDENT_CONTRACT",
+        "procurement_cost_usd": 14501984625.0,
+        "savings_vs_always_spot_usd": 611190375.0,
+        "mean_savings_per_voyage_usd": 50932531.25,
+        "worst_case_cost_usd": 14992746944.560007,
+        "cvar_cost_usd": 14366027531.708109,
+        "constraint_violations": 0,
+        "solver_status": "NOT_APPLICABLE",
+        "solver_time_seconds": NaN
+      },
+      {
+        "eligible_voyages": 12,
+        "wait_decisions": 8,
+        "actionable_decisions": 4,
+        "spot_decisions": 4,
+        "multi_voyage_decisions": 0,
+        "contract_utilization_pct": 66.66666666666666,
+        "budget_utilization_pct": 49.55948446777993,
+        "capacity_utilization_pct": 0.0,
+        "system": "BASELINE_2_FORECAST_WHEN",
+        "procurement_cost_usd": 14785725000.0,
+        "savings_vs_always_spot_usd": 327450000.0,
+        "mean_savings_per_voyage_usd": 27287500.0,
+        "worst_case_cost_usd": 15055085238.079727,
+        "cvar_cost_usd": 14769868617.78806,
+        "constraint_violations": 0,
+        "solver_status": "NOT_APPLICABLE",
+        "solver_time_seconds": NaN
+      },
+      {
+        "eligible_voyages": 12,
+        "wait_decisions": 8,
+        "actionable_decisions": 4,
+        "spot_decisions": 0,
+        "multi_voyage_decisions": 4,
+        "contract_utilization_pct": 100.0,
+        "budget_utilization_pct": 47.52774818350842,
+        "capacity_utilization_pct": 75.0,
+        "system": "BASELINE_3_WHEN_HOW_INDEPENDENT",
+        "procurement_cost_usd": 14472856125.0,
+        "savings_vs_always_spot_usd": 640318875.0,
+        "mean_savings_per_voyage_usd": 53359906.25,
+        "worst_case_cost_usd": 14729769614.829523,
+        "cvar_cost_usd": 14458306041.629791,
+        "constraint_violations": 0,
+        "solver_status": "NOT_APPLICABLE",
+        "solver_time_seconds": NaN
+      },
+      {
+        "eligible_voyages": 12,
+        "wait_decisions": 8,
+        "actionable_decisions": 4,
+        "spot_decisions": 0,
+        "multi_voyage_decisions": 4,
+        "contract_utilization_pct": 100.0,
+        "budget_utilization_pct": 47.52774818350842,
+        "capacity_utilization_pct": 75.0,
+        "system": "SYSTEM_4_FICOS_DETERMINISTIC",
+        "procurement_cost_usd": 14472856125.0,
+        "savings_vs_always_spot_usd": 640318875.0,
+        "mean_savings_per_voyage_usd": 53359906.25,
+        "worst_case_cost_usd": 14729769614.829523,
+        "cvar_cost_usd": 14458306041.629791,
+        "constraint_violations": 0,
+        "solver_status": "OPTIMAL",
+        "solver_time_seconds": 0.0604387999046593
+      },
+      {
+        "eligible_voyages": 12,
+        "wait_decisions": 8,
+        "actionable_decisions": 4,
+        "spot_decisions": 0,
+        "multi_voyage_decisions": 4,
+        "contract_utilization_pct": 100.0,
+        "budget_utilization_pct": 47.52774818350842,
+        "capacity_utilization_pct": 75.0,
+        "system": "SYSTEM_5_FICOS_ROBUST",
+        "procurement_cost_usd": 14472856125.0,
+        "savings_vs_always_spot_usd": 640318875.0,
+        "mean_savings_per_voyage_usd": 53359906.25,
+        "worst_case_cost_usd": 14729769614.829523,
+        "cvar_cost_usd": 14458306041.629791,
+        "constraint_violations": 0,
+        "solver_status": "OPTIMAL",
+        "solver_time_seconds": 0.0057206000201404
+      },
+      {
+        "eligible_voyages": 12,
+        "wait_decisions": 8,
+        "actionable_decisions": 4,
+        "spot_decisions": 0,
+        "multi_voyage_decisions": 4,
+        "contract_utilization_pct": 100.0,
+        "budget_utilization_pct": 47.52774818350842,
+        "capacity_utilization_pct": 75.0,
+        "system": "SYSTEM_6_FICOS_MEAN_CVAR",
+        "procurement_cost_usd": 14472856125.0,
+        "savings_vs_always_spot_usd": 640318875.0,
+        "mean_savings_per_voyage_usd": 53359906.25,
+        "worst_case_cost_usd": 14729769614.829523,
+        "cvar_cost_usd": 14458306041.629791,
+        "constraint_violations": 0,
+        "solver_status": "OPTIMAL",
+        "solver_time_seconds": 0.0507484000409022
+      }
+    ],
+    "controlled_incremental": [
+      {
+        "architectural_layer": "Timing versus Always Spot",
+        "previous_system": "BASELINE_0_ALWAYS_SPOT",
+        "new_system": "BASELINE_2_FORECAST_WHEN",
+        "incremental_savings_usd": 327450000.0,
+        "incremental_worst_case_cost_usd": -573271509.4777641,
+        "decision_changes": 8,
+        "comparison_status": "CONTROLLED_WHEN_POSSIBLE"
+      },
+      {
+        "architectural_layer": "Independent HOW after WHEN",
+        "previous_system": "BASELINE_2_FORECAST_WHEN",
+        "new_system": "BASELINE_3_WHEN_HOW_INDEPENDENT",
+        "incremental_savings_usd": 312868875.0,
+        "incremental_worst_case_cost_usd": -325315623.2502022,
+        "decision_changes": 4,
+        "comparison_status": "CONTROLLED_WHEN_POSSIBLE"
+      },
+      {
+        "architectural_layer": "Coupling after WHEN/HOW",
+        "previous_system": "BASELINE_3_WHEN_HOW_INDEPENDENT",
+        "new_system": "SYSTEM_4_FICOS_DETERMINISTIC",
+        "incremental_savings_usd": 0.0,
+        "incremental_worst_case_cost_usd": 0.0,
+        "decision_changes": 0,
+        "comparison_status": "CONTROLLED_WHEN_POSSIBLE"
+      },
+      {
+        "architectural_layer": "Robust objective",
+        "previous_system": "SYSTEM_4_FICOS_DETERMINISTIC",
+        "new_system": "SYSTEM_5_FICOS_ROBUST",
+        "incremental_savings_usd": 0.0,
+        "incremental_worst_case_cost_usd": 0.0,
+        "decision_changes": 0,
+        "comparison_status": "CONTROLLED_WHEN_POSSIBLE"
+      },
+      {
+        "architectural_layer": "Mean-CVaR objective",
+        "previous_system": "SYSTEM_5_FICOS_ROBUST",
+        "new_system": "SYSTEM_6_FICOS_MEAN_CVAR",
+        "incremental_savings_usd": 0.0,
+        "incremental_worst_case_cost_usd": 0.0,
+        "decision_changes": 0,
+        "comparison_status": "CONTROLLED_WHEN_POSSIBLE"
+      }
+    ]
+  },
+  "coupling_stress": {
+    "grid_cells": 81,
+    "optimal_cells": 59,
+    "infeasible_cells": 22,
+    "evidence": "constraint feasibility and allocation changes; not causal savings"
+  },
+  "statistical_results": {
+    "historical_policy_bootstrap": "descriptive paired bootstrap intervals under counterfactual assumptions",
+    "causal_significance": "NOT_ESTABLISHED",
+    "private_cost_reconciliation": "UNAVAILABLE"
+  },
+  "assumption_counts": {
+    "scenario_assumptions": 6,
+    "private_fields_unavailable": 7
+  },
+  "private_sail_fields_unavailable": [
+    "contract prices",
+    "negotiated discounts",
+    "voyage-specific procurement volumes",
+    "realized procurement costs",
+    "historical procurement decisions",
+    "budget allocations",
+    "contract-capacity commitments"
+  ],
+  "reproducibility": {
+    "code": [
+      "scripts/run_historical_counterfactual.py",
+      "scripts/run_architectural_ablation.py",
+      "scripts/run_architectural_stress_grid.py"
+    ],
+    "canonical_model_config": "configs/canonical_config.py",
+    "seed": 42
+  },
+  "claim_boundary": "Public historical market-counterfactual evidence; no actual SAIL savings claim."
+}
