@@ -15,7 +15,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 ROOT = Path.cwd()
-assert (ROOT / "data" / "modeling_dataset.csv").exists(), "Run from the repository root."
+if not (ROOT / "data" / "modeling_dataset.csv").exists():
+    import subprocess
+    clone_root = Path("/content/FICOS-Platform")
+    if not (clone_root / "data" / "modeling_dataset.csv").exists():
+        subprocess.run(["git", "clone", "https://github.com/SSOHEB/FICOS-Platform.git", str(clone_root)], check=True)
+    ROOT = clone_root
 sys.path.insert(0, str(ROOT))
 RAW = ROOT / "data" / "modeling_dataset.csv"
 OUT = ROOT / "outputs" / "experiments"
