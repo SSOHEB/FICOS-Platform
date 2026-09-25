@@ -23,6 +23,10 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
+def optional_sha256(path: Path) -> str:
+    return sha256(path) if path.exists() else "NOT_AVAILABLE_IN_CLONE"
+
+
 def main() -> None:
     benchmark = pd.read_csv(CF / "policy_benchmark.csv").where(pd.notna, None).to_dict("records")
     master = pd.read_csv(ABL / "master_ablation_table.csv").where(pd.notna, None).to_dict("records")
@@ -32,7 +36,7 @@ def main() -> None:
         "experiment_id": "FICOS_FINAL_HISTORICAL_COUNTERFACTUAL",
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
         "dataset_identity": {"path": "data/modeling_dataset.csv", "sha256": sha256(ROOT / "data/modeling_dataset.csv"), "rows": 2581, "columns": 482, "date_range": ["2016-01-04", "2026-09-04"]},
-        "source_identities": {"interim_spot_prices": sha256(ROOT / "data/interim/cleaned_spot_prices.csv"), "raw_maritime_workbook": sha256(ROOT / "data/raw/maritime_macro_data.xlsx"), "raw_port_workbook": sha256(ROOT / "data/raw/baltic_freight_indices.xlsx")},
+        "source_identities": {"interim_spot_prices": optional_sha256(ROOT / "data/interim/cleaned_spot_prices.csv"), "raw_maritime_workbook": optional_sha256(ROOT / "data/raw/maritime_macro_data.xlsx"), "raw_port_workbook": optional_sha256(ROOT / "data/raw/baltic_freight_indices.xlsx")},
         "forecast_population": {"fresh_oos_rows": 4804, "canonical_gate_retained": 641, "gate_coverage": 0.1334304746, "gated_directional_accuracy": 0.7909516381, "model": "RF_STANDARD_FRESH_ABLATION", "seed": 42},
         "opportunity_population": {"historical_market_opportunities": 4804, "status": "HISTORICAL_MARKET_OPPORTUNITY_NOT_SAIL_TRANSACTION"},
         "policy_benchmark": benchmark,
