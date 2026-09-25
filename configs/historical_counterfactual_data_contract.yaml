@@ -1,0 +1,34 @@
+version: "1.0"
+status: "HISTORICAL_MARKET_COUNTERFACTUAL"
+observed:
+  - date
+  - vessel_class
+  - freight_rates
+  - macro_market_variables
+  - weather_features
+  - cyclone_features
+  - geopolitical_features
+  - port_traffic_and_capacity
+  - berth_constraints
+  - merchant_fleet
+reconstructed:
+  - leakage_safe_forecast
+  - validation_residual_uncertainty
+  - when_decision
+  - historical_market_opportunity
+scenario_assumption:
+  - voyage_volume
+  - contract_rate
+  - contract_discount
+  - contract_capacity
+  - budget
+  - execution_slippage
+private_data_unavailable:
+  - SAIL_contract_prices
+  - SAIL_negotiated_discounts
+  - SAIL_voyage_procurement_volumes
+  - SAIL_realized_procurement_costs
+  - SAIL_historical_procurement_decisions
+  - SAIL_budget_allocations
+  - SAIL_contract_capacity_commitments
+leakage_rule: "Only row fields available at decision date may enter state or forecast inputs."
