@@ -20,6 +20,8 @@ if not (ROOT / "data" / "modeling_dataset.csv").exists():
     clone_root = Path("/content/FICOS-Platform")
     if not (clone_root / "data" / "modeling_dataset.csv").exists():
         subprocess.run(["git", "clone", "https://github.com/SSOHEB/FICOS-Platform.git", str(clone_root)], check=True)
+    else:
+        subprocess.run(["git", "-C", str(clone_root), "pull", "--ff-only"], check=True)
     ROOT = clone_root
 sys.path.insert(0, str(ROOT))
 RAW = ROOT / "data" / "modeling_dataset.csv"
