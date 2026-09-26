@@ -1,6 +1,6 @@
 {
   "experiment_id": "FICOS_FINAL_HISTORICAL_COUNTERFACTUAL",
-  "created_at_utc": "2026-09-26T10:32:51.138739+00:00",
+  "created_at_utc": "2026-09-26T15:04:19.897287+00:00",
   "dataset_identity": {
     "path": "data/modeling_dataset.csv",
     "sha256": "e0f4c91eed7b4919200472c3fe7e0735e4fd12433383727b58f73c2fd8945fd5",
@@ -275,9 +275,9 @@
     ]
   },
   "coupling_stress": {
-    "grid_cells": 81,
-    "optimal_cells": 59,
-    "infeasible_cells": 22,
+    "grid_cells": 108,
+    "optimal_cells": 80,
+    "infeasible_cells": 28,
     "evidence": "constraint feasibility and allocation changes; not causal savings"
   },
   "statistical_results": {

@@ -25,7 +25,7 @@ from scripts.run_architectural_ablation import FEATURE_COUNT, SEED, VESSELS, fre
 OUT = ROOT / "outputs" / "experiments" / "architectural_stress_grid"
 N_VALUES = (4, 8, 12)
 DISCOUNTS = (0.01, 0.045, 0.10)
-CAPACITY_MULTIPLIERS = (0.25, 0.50, 1.00)
+CAPACITY_MULTIPLIERS = (0.25, 0.50, 1.00, 2.00)
 BUDGET_MULTIPLIERS = (0.90, 1.00, 1.10)
 
 

@@ -130,6 +130,8 @@ for cell in cells:
         "327.450": "0.08732",
         "$297.822M": "$79.419M",
         "$17.007M": "$4.535M",
+        "81 cells: 59 optimal, 22 infeasible": "108 cells: 80 optimal, 28 infeasible",
+        "Cells solved',59,'cells','SCENARIO','81-cell grid": "Cells solved',80,'cells','SCENARIO','108-cell grid",
     }.items():
         source = source.replace(old, new)
     cell["source"] = source.splitlines(True)

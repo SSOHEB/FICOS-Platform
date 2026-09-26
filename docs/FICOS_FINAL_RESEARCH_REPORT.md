@@ -19,7 +19,7 @@ The counterfactual cost differences are not realized SAIL savings. The corrected
 
 ## Architectural findings
 
-The corrected controlled ablation found +$87,320 modeled timing value versus Always Spot and +$83,431.70 for independent HOW after WHEN in the 12-opportunity scenario. Coupling, robust, and mean-CVaR produced no incremental cost change in that easy configuration. The 81-cell stress grid found 59 optimal and 22 infeasible cells; when capacity bound, coupling changed allocations and prevented infeasible contract volumes.
+The corrected controlled ablation found +$87,320 modeled timing value versus Always Spot and +$83,431.70 for independent HOW after WHEN in the 12-opportunity scenario. Coupling, robust, and mean-CVaR produced no incremental cost change in that easy configuration. The 108-cell stress grid found 80 optimal and 28 infeasible cells; when capacity bound, coupling changed allocations and prevented infeasible contract volumes. The full denominator is reported; infeasible cells are not silently treated as successful.
 
 ## Registry reconciliation
 

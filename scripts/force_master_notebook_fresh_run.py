@@ -67,6 +67,8 @@ for cell in nb["cells"]:
             "+$312.869M": "+$83,431.70",
             "$297.822M": "$79.419M",
             "$17.007M": "$4.535M",
+            "81 cells: 59 optimal, 22 infeasible": "108 cells: 80 optimal, 28 infeasible",
+            "Cells solved',59,'cells','SCENARIO','81-cell grid": "Cells solved',80,'cells','SCENARIO','108-cell grid",
             "Forbidden: **FICOS saved SAIL $79.419M.** The correct wording is: **Under the historical counterfactual assumptions, Timing + HOW produced a modeled $79.419M improvement relative to Always Spot.**": "Do not claim actual SAIL savings. The correct wording is: **Under the historical counterfactual assumptions, Timing + HOW produced a modeled USD 79.419M improvement relative to Always Spot.**",
             "The notebook reads authoritative saved artifacts and does not require paid APIs or credentials. The expensive fresh replay is cached in `outputs/experiments/historical_counterfactual/`; rerunning it is optional. No API key is read or displayed.": "The notebook performs a fresh raw replay from the canonical dataset and does not require paid APIs or credentials. Cached outputs are overwritten during the run and are not used as inputs. No API key is read or displayed.",
             "17.00708": "4.53522",

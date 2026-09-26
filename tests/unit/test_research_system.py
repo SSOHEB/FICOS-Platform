@@ -38,6 +38,16 @@ def test_coupling_activation_is_triggered_by_binding_capacity():
     assert decision.active
     assert "contract_capacity_at_or_above_threshold" in decision.reasons
 
+def test_coupling_activation_stays_off_for_slack_portfolio():
+    decision = assess_coupling_activation(
+        independent_contracts=4,
+        independent_contract_volume_mt=300_000,
+        independent_cost_usd=100,
+        constraints={"contract_capacity_mt": 600_000, "budget_usd": 200, "max_contracts": 8},
+    )
+    assert not decision.active
+    assert decision.reasons == ()
+
 def test_risk_activation_requires_preregistered_dispersion_threshold():
     dormant = assess_risk_activation([100, 101, 102, 103, 104])
     active = assess_risk_activation([100, 100, 100, 100, 110])
