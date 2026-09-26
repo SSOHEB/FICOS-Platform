@@ -1,0 +1,16 @@
+# Pre-registered activation policy for the portfolio layers.
+# These thresholds decide when an implemented research layer is needed; they
+# do not change the forecasting model, policy thresholds, or economic formula.
+
+coupling:
+  capacity_utilization_threshold: 1.0
+  budget_utilization_threshold: 1.0
+  contract_count_utilization_threshold: 1.0
+  operator: ">="
+  interpretation: "Activate joint allocation when the independent portfolio reaches or exceeds any shared constraint."
+
+risk:
+  scenario_p90_over_median_threshold: 0.05
+  operator: ">="
+  interpretation: "Activate Robust/CVaR when the independent plan's P90 scenario cost is at least 5% above its median scenario cost."
+

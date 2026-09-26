@@ -80,14 +80,22 @@ def main() -> None:
                     result = DeterministicMILPPlanner().solve(action_ops, constraints) if action_ops else None
                     independent_contracts = int(sum(s == "MULTI_VOYAGE_CONTRACT" for s in unconstrained_independent))
                     if result is None or result.solver_status != "OPTIMAL":
-                        rows.append({"opportunities": n, "wait_decisions": wait_count, "actionable_decisions": len(action_ops), "discount_pct": discount * 100, "capacity_mt": capacity, "budget_multiplier": budget_multiplier, "independent_contracts": independent_contracts, "joint_contracts": None, "decision_changes": None, "independent_capacity_violation_mt": max(0.0, independent_contracts * 75_000 - capacity), "joint_forecast_cost_usd": None, "independent_forecast_cost_usd": sum(o.strategy_costs[s] for o, s in zip(action_ops, unconstrained_independent)), "coupling_cost_difference_usd": None, "solver_status": "INFEASIBLE" if result is None else result.solver_status})
+                        rows.append({"opportunities": n, "wait_decisions": wait_count, "actionable_decisions": len(action_ops), "discount_pct": discount * 100, "capacity_mt": capacity, "budget_multiplier": budget_multiplier, "budget_usd": budget, "independent_contracts": independent_contracts, "joint_contracts": None, "decision_changes": None, "independent_capacity_violation_mt": max(0.0, independent_contracts * 75_000 - capacity), "joint_forecast_cost_usd": None, "independent_forecast_cost_usd": sum(o.strategy_costs[s] for o, s in zip(action_ops, unconstrained_independent)), "coupling_cost_difference_usd": None, "solver_status": "INFEASIBLE" if result is None else result.solver_status})
                         continue
                     joint = [s for _, s in result.selected]
                     independent_cost = sum(o.strategy_costs[s] for o, s in zip(action_ops, unconstrained_independent))
                     joint_cost = sum(o.strategy_costs[s] for o, s in zip(action_ops, joint))
-                    rows.append({"opportunities": n, "wait_decisions": wait_count, "actionable_decisions": len(action_ops), "discount_pct": discount * 100, "capacity_mt": capacity, "budget_multiplier": budget_multiplier, "independent_contracts": independent_contracts, "joint_contracts": int(sum(s == "MULTI_VOYAGE_CONTRACT" for s in joint)), "decision_changes": int(sum(a != b for a, b in zip(unconstrained_independent, joint))), "independent_capacity_violation_mt": max(0.0, independent_contracts * 75_000 - capacity), "joint_forecast_cost_usd": joint_cost, "independent_forecast_cost_usd": independent_cost, "coupling_cost_difference_usd": independent_cost - joint_cost, "solver_status": result.solver_status})
+                    rows.append({"opportunities": n, "wait_decisions": wait_count, "actionable_decisions": len(action_ops), "discount_pct": discount * 100, "capacity_mt": capacity, "budget_multiplier": budget_multiplier, "budget_usd": budget, "independent_contracts": independent_contracts, "joint_contracts": int(sum(s == "MULTI_VOYAGE_CONTRACT" for s in joint)), "decision_changes": int(sum(a != b for a, b in zip(unconstrained_independent, joint))), "independent_capacity_violation_mt": max(0.0, independent_contracts * 75_000 - capacity), "joint_forecast_cost_usd": joint_cost, "independent_forecast_cost_usd": independent_cost, "coupling_cost_difference_usd": independent_cost - joint_cost, "solver_status": result.solver_status})
 
     grid = pd.DataFrame(rows)
+    grid["independent_capacity_utilization"] = (grid["independent_contracts"] * 75_000.0) / grid["capacity_mt"]
+    grid["independent_budget_utilization"] = grid["independent_forecast_cost_usd"] / grid["budget_usd"]
+    grid["coupling_activation"] = grid[["independent_capacity_utilization", "independent_budget_utilization"]].ge(1.0).any(axis=1)
+    grid["coupling_activation_reason"] = np.where(
+        grid["independent_capacity_utilization"] >= 1.0,
+        "contract_capacity_at_or_above_threshold",
+        np.where(grid["independent_budget_utilization"] >= 1.0, "budget_at_or_above_threshold", "none"),
+    )
     grid.to_csv(OUT / "stress_grid_results.csv", index=False)
     summary = {"experiment_id": "FICOS_ARCHITECTURAL_STRESS_GRID", "timestamp_utc": datetime.now(timezone.utc).isoformat(), "dataset_sha256": sha256(data_path), "seed": SEED, "fresh_oos_predictions": len(predictions), "grid_rows": len(grid), "scenario_dimensions": {"opportunities": N_VALUES, "discount_pct": [d * 100 for d in DISCOUNTS], "capacity_multiplier": CAPACITY_MULTIPLIERS, "budget_multiplier": BUDGET_MULTIPLIERS}, "interpretation": "The grid varies scenario assumptions only; it does not modify the canonical forecasting model or claim commercial causality."}
     (OUT / "stress_grid_manifest.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")

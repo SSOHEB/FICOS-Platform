@@ -33,6 +33,15 @@ This is stronger and more defensible than claiming that coupling “saves money.
 
 Volume, contract discount, capacity, and budget remain scenario assumptions. The grid is a sensitivity analysis, not a replacement for a procurement ledger. The unconstrained independent baseline is intentionally retained as a counterfactual to reveal violations; it must not be described as a feasible competing portfolio.
 
+## Pre-registered activation policy
+
+The dormant layers remain part of FICOS. They are activated by the policy in `configs/portfolio_activation_policy.yaml`:
+
+- **Coupling activates** when the independently preferred portfolio reaches or exceeds shared contract capacity, shared budget, or maximum contract count. The trigger is `utilization >= 1.0`; it is not selected after inspecting economic outcomes.
+- **Robust/CVaR activates** when the independent plan's scenario P90 cost is at least 5% above its median scenario cost. Otherwise the deterministic plan remains active and the risk layer is recorded as dormant for that case.
+
+This creates a falsifiable regime definition. The current easy ablation is below the coupling trigger, which explains its zero incremental value. Binding stress cells cross the capacity trigger, and their outputs record activation state and reason in `stress_grid_results.csv`.
+
 ## Evidence
 
 Generated files are under `outputs/experiments/architectural_stress_grid/`:

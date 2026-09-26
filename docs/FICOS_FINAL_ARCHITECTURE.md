@@ -30,3 +30,5 @@ The WHEN and HOW decisions remain separate. Robust and mean-CVaR optimization re
 ## Final claims
 
 The evidence supports a reproducible forecast-to-decision architecture and measurable modeled value for selective timing and contract selection. Coupling becomes operationally important when shared constraints bind, but its lower-cost commercial value is not established. Robust and CVaR objectives were redundant in the current ablation configuration. Economic replay uses daily rate times voyage duration; it does not multiply rates by cargo volume.
+
+The dormant portfolio layers are retained with a pre-registered activation policy: coupling activates at or above shared-constraint utilization of 1.0, while Robust/CVaR activates when scenario P90 cost is at least 5% above median cost. These thresholds are operational gates, not claims that the layers have already demonstrated commercial value.
