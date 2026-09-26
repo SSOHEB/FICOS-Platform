@@ -100,6 +100,16 @@ def main() -> None:
     summary = {"experiment_id": "FICOS_ARCHITECTURAL_STRESS_GRID", "timestamp_utc": datetime.now(timezone.utc).isoformat(), "dataset_sha256": sha256(data_path), "seed": SEED, "fresh_oos_predictions": len(predictions), "grid_rows": len(grid), "scenario_dimensions": {"opportunities": N_VALUES, "discount_pct": [d * 100 for d in DISCOUNTS], "capacity_multiplier": CAPACITY_MULTIPLIERS, "budget_multiplier": BUDGET_MULTIPLIERS}, "interpretation": "The grid varies scenario assumptions only; it does not modify the canonical forecasting model or claim commercial causality."}
     (OUT / "stress_grid_manifest.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     print(grid.groupby("solver_status").size().to_string())
+    inactive = grid.loc[~grid["coupling_activation"]]
+    print("ACTIVATION AUDIT")
+    print({
+        "total_cells": int(len(grid)),
+        "coupling_active_cells": int(grid["coupling_activation"].sum()),
+        "coupling_inactive_cells": int((~grid["coupling_activation"]).sum()),
+        "inactive_discount_pct": sorted(inactive["discount_pct"].unique().tolist()),
+        "inactive_budget_multiplier": sorted(inactive["budget_multiplier"].unique().tolist()),
+        "inactive_capacity_utilization": sorted(inactive["independent_capacity_utilization"].unique().tolist()),
+    })
     print(grid[grid.solver_status.eq("OPTIMAL")].sort_values("decision_changes", ascending=False).head(10).to_string(index=False))
 
 
