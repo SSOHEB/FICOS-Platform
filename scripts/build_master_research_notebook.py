@@ -88,7 +88,7 @@ These failures shaped the final architecture: fewer unsupported claims, explicit
 
 Allowed: **FICOS combines leakage-safe forecasting, confidence-gated WHEN decisions, separate HOW choices, portfolio constraint handling, and counterfactual attribution for freight procurement.**
 
-Forbidden: **FICOS saved SAIL $297.822M.** The correct wording is: **Under the historical counterfactual assumptions, Timing + HOW produced a modeled $297.822M improvement relative to Always Spot.**"""),
+Do not claim actual SAIL savings. The correct wording is: **Under the historical counterfactual assumptions, Timing + HOW produced a modeled USD 79.419M improvement relative to Always Spot.**"""),
     code("""claims = pd.DataFrame([\n    ['Fresh OOS population','PROVEN','4,804 fresh rows from locked folds'],\n    ['Gated accuracy','PROVEN','79.10% on 641 retained rows; not all rows'],\n    ['Timing value','COUNTERFACTUAL','+$17.007M on historical market replay'],\n    ['Contract value','SCENARIO-DEPENDENT','+$297.822M using assumed 4.5% discount'],\n    ['Coupling','STRONGLY SUPPORTED','feasibility/allocation value when constraints bind'],\n    ['Robust/CVaR','UNPROVEN','zero incremental value in current ablation'],\n    ['Actual SAIL savings','PRIVATE-DATA-BLOCKED','no ledger or realized costs'],\n], columns=['Claim','Status','Allowed interpretation'])\ndisplay(claims)"""),
     md("""## 13. Final architecture and novelty map
 

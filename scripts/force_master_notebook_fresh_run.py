@@ -67,6 +67,7 @@ for cell in nb["cells"]:
             "+$312.869M": "+$83,431.70",
             "$297.822M": "$79.419M",
             "$17.007M": "$4.535M",
+            "Forbidden: **FICOS saved SAIL $79.419M.** The correct wording is: **Under the historical counterfactual assumptions, Timing + HOW produced a modeled $79.419M improvement relative to Always Spot.**": "Do not claim actual SAIL savings. The correct wording is: **Under the historical counterfactual assumptions, Timing + HOW produced a modeled USD 79.419M improvement relative to Always Spot.**",
             "The notebook reads authoritative saved artifacts and does not require paid APIs or credentials. The expensive fresh replay is cached in `outputs/experiments/historical_counterfactual/`; rerunning it is optional. No API key is read or displayed.": "The notebook performs a fresh raw replay from the canonical dataset and does not require paid APIs or credentials. Cached outputs are overwritten during the run and are not used as inputs. No API key is read or displayed.",
             "17.00708": "4.53522",
             "297.8219": "79.41918",
@@ -126,7 +127,8 @@ for cell in nb["cells"]:
     if cell.get("cell_type") == "code" and "master_results = pd.DataFrame" in "".join(cell.get("source", [])):
         source = "".join(cell["source"])
         source = source.replace("'notebook_status': 'COMPLETE_RESEARCH_SYNTHESIS'", "'notebook_status': 'FRESH_RAW_EXECUTION'")
-        source = source.replace("'private_sail_data': 'UNAVAILABLE'", "'private_sail_data': 'UNAVAILABLE', 'cached_outputs_used_as_inputs': False")
+        source = source.replace(", 'cached_outputs_used_as_inputs': False", "")
+        source = source.replace("'private_sail_data': 'UNAVAILABLE'", "'private_sail_data': 'UNAVAILABLE', 'cached_outputs_used_as_inputs': False", 1)
         cell["source"] = source.splitlines(True)
         cell["outputs"] = []
         cell["execution_count"] = None
