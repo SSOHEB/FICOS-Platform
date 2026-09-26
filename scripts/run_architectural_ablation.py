@@ -97,7 +97,7 @@ def make_opportunities(predictions: pd.DataFrame) -> list[VoyageOpportunity]:
             laycan_end=row.date, expected_duration_days=20, volume_mt=75_000.0, capacity_mt=82_000.0,
             timestamp=row.date, metadata={"when_decision": row.when_decision, "data_status": "SCENARIO_ASSUMPTION_FOR_MISSING_OPERATIONAL_FIELDS"},
         )
-        base = max(1.0, row.current_rate + row.predicted_delta) * voyage.volume_mt
+        base = max(1.0, row.current_rate + row.predicted_delta) * voyage.expected_duration_days
         costs = {
             "SPOT": base,
             "SHORT_TERM": base * 0.985,
@@ -115,7 +115,7 @@ def realized_cost(opportunities, predictions, strategies, wait_allowed=True):
         row = selected.iloc[i]
         rate = row.actual_rate if strategy == "WAIT" or (wait_allowed and row.when_decision == "WAIT") else row.current_rate
         discount = {"WAIT": 1.0, "SPOT": 1.0, "SHORT_TERM": 0.985, "MEDIUM_TERM": 0.970, "MULTI_VOYAGE_CONTRACT": 0.955 if i < 6 else 0.965}[strategy]
-        total += float(rate) * opportunity.voyage.volume_mt * discount
+        total += float(rate) * opportunity.voyage.expected_duration_days * discount
     return total
 
 
@@ -149,7 +149,7 @@ def main():
     scenario_costs = np.zeros((len(scenarios), len(opportunities), len(Strategy)))
     for s, rates in enumerate(scenarios):
         for i, opportunity in enumerate(opportunities):
-            base = rates[i] * opportunity.voyage.volume_mt
+            base = rates[i] * opportunity.voyage.expected_duration_days
             scenario_costs[s, i] = [base, base * .985, base * .970, base * (.955 if i < 6 else .965)]
     constraints = PlanningConstraints(budget_usd=sum(o.strategy_costs["SPOT"] for o in opportunities) * 1.02, contract_capacity_mt=400_000, max_contracts=len(opportunities))
     action_indices = [i for i, row in selected.iterrows() if row.when_decision != "WAIT"]
@@ -191,7 +191,7 @@ def main():
         contract_volume = sum(o.voyage.volume_mt for o, s in zip(opportunities, strategies) if s not in ("SPOT", "WAIT"))
         count["budget_utilization_pct"] = float(nominal_cost / constraints.budget_usd * 100)
         count["capacity_utilization_pct"] = float(contract_volume / constraints.contract_capacity_mt * 100)
-        scenario_total = np.array([sum((row.actual_rate if strategies[i] == "WAIT" else scenarios[j, i]) * opportunities[i].voyage.volume_mt * ({"WAIT": 1.0, "SPOT": 1.0, "SHORT_TERM": .985, "MEDIUM_TERM": .970, "MULTI_VOYAGE_CONTRACT": .955 if i < 6 else .965}[strategies[i]]) for i, row in selected.iterrows()) for j in range(len(scenarios))])
+        scenario_total = np.array([sum((row.actual_rate if strategies[i] == "WAIT" else scenarios[j, i]) * opportunities[i].voyage.expected_duration_days * ({"WAIT": 1.0, "SPOT": 1.0, "SHORT_TERM": .985, "MEDIUM_TERM": .970, "MULTI_VOYAGE_CONTRACT": .955 if i < 6 else .965}[strategies[i]]) for i, row in selected.iterrows()) for j in range(len(scenarios))])
         count.update({"system": name, "procurement_cost_usd": cost, "savings_vs_always_spot_usd": spot_cost - cost, "mean_savings_per_voyage_usd": (spot_cost - cost) / len(opportunities), "worst_case_cost_usd": float(scenario_total.max()), "cvar_cost_usd": float(np.quantile(scenario_total, .90)), "constraint_violations": len(solver.constraint_violations) if name.startswith("SYSTEM_") else 0, "solver_status": solver.solver_status if name.startswith("SYSTEM_") else "NOT_APPLICABLE", "solver_time_seconds": solve_times.get(name)})
         rows.append(count)
     master = pd.DataFrame(rows)

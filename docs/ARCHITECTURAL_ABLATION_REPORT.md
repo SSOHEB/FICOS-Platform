@@ -6,22 +6,22 @@ Generated from a fresh run of `scripts/run_architectural_ablation.py` on the can
 
 | System | Eligible | WAIT | Actionable | SPOT | Contract | Modeled cost | Savings vs spot | Worst-case cost | Solver |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| Always spot | 12 | 8 | 4 | 12 | 0 | $15.113B | $0 | $15.628B | N/A |
-| Independent contract | 12 | 8 | 4 | 0 | 12 | $14.502B | $611.190M | $14.993B | N/A |
-| Forecast + WHEN | 12 | 8 | 4 | 4 | 0 | $14.786B | $327.450M | $15.055B | N/A |
-| WHEN + independent HOW | 12 | 8 | 4 | 0 | 4 | $14.473B | $640.319M | $14.730B | N/A |
-| FICOS deterministic | 12 | 8 | 4 | 0 | 4 | $14.473B | $640.319M | $14.730B | OPTIMAL |
-| FICOS robust | 12 | 8 | 4 | 0 | 4 | $14.473B | $640.319M | $14.730B | OPTIMAL |
-| FICOS mean-CVaR | 12 | 8 | 4 | 0 | 4 | $14.473B | $640.319M | $14.730B | OPTIMAL |
+| Always spot | 12 | 8 | 4 | 12 | 0 | $4.030M | $0 | $4.168M | N/A |
+| Independent contract | 12 | 8 | 4 | 0 | 12 | $3.867M | $162,984 | $3.998M | N/A |
+| Forecast + WHEN | 12 | 8 | 4 | 4 | 0 | $3.943M | $87,320 | $4.015M | N/A |
+| WHEN + independent HOW | 12 | 8 | 4 | 0 | 4 | $3.859M | $170,752 | $3.928M | N/A |
+| FICOS deterministic | 12 | 8 | 4 | 0 | 4 | $3.859M | $170,752 | $3.928M | OPTIMAL |
+| FICOS robust | 12 | 8 | 4 | 0 | 4 | $3.859M | $170,752 | $3.928M | OPTIMAL |
+| FICOS mean-CVaR | 12 | 8 | 4 | 0 | 4 | $3.859M | $170,752 | $3.928M | OPTIMAL |
 
 ## Incremental interpretation
 
-The literal requested ladder is retained in `incremental_value_table.csv`. Because Baseline 1 and Baseline 2 change more than one behavior at once, the controlled comparisons in `controlled_incremental_value_table.csv` are the more defensible attribution:
+The literal requested ladder is retained in `incremental_value_table.csv`. Because Baseline 1 and Baseline 2 change more than one behavior at once, the controlled comparisons in `controlled_incremental_value_table.csv` are the more defensible attribution. The corrected economic unit is daily rate multiplied by the 20-day duration; cargo volume is used only for capacity constraints:
 
 | Layer | Controlled incremental result |
 |---|---:|
-| Timing versus always spot | +$327.450M modeled savings; 8 decisions changed |
-| Independent HOW after WHEN | +$312.869M modeled savings; 4 decisions changed |
+| Timing versus always spot | +$87,320 modeled savings; 8 decisions changed |
+| Independent HOW after WHEN | +$83,431.70 modeled savings; 4 decisions changed |
 | Cross-voyage coupling after WHEN/HOW | $0; no decisions changed |
 | Robust objective | $0; no decisions changed |
 | Mean-CVaR objective | $0; no decisions changed |

@@ -27,7 +27,7 @@ This notebook is a synthesis of the locked repository evidence. It is not a new 
 **Research question:** Given historically observable freight-market and operational conditions, what decisions would FICOS make, and how do those policies compare with credible alternatives?"""),
     md("""## Reproducibility contract
 
-The notebook reads authoritative saved artifacts and does not require paid APIs or credentials. The expensive fresh replay is cached in `outputs/experiments/historical_counterfactual/`; rerunning it is optional. No API key is read or displayed."""),
+The notebook performs a fresh raw replay from the canonical dataset and does not require paid APIs or credentials. Cached outputs are overwritten during the run and are not used as inputs. No API key is read or displayed."""),
     code("""from pathlib import Path\nimport json, hashlib, sys\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\nROOT = Path.cwd()\nif not (ROOT / 'data' / 'modeling_dataset.csv').exists():\n    candidates = [Path('/content/FICOS-Platform'), Path('/content/ficos final')]\n    ROOT = next((p for p in candidates if (p / 'data' / 'modeling_dataset.csv').exists()), ROOT)\nassert (ROOT / 'data' / 'modeling_dataset.csv').exists(), 'Run from the repository root or clone FICOS-Platform first.'\nOUT = ROOT / 'outputs' / 'experiments'\nCF = OUT / 'historical_counterfactual'\nABL = OUT / 'architectural_ablation'\nSTRESS = OUT / 'architectural_stress_grid'\nAUTH = ROOT / 'outputs' / 'authoritative'\nprint('Repository:', ROOT)\nprint('Evidence available:', all(p.exists() for p in [CF, ABL, STRESS, AUTH / 'FICOS_FINAL_EVIDENCE.json']))"""),
     md("""## Executive dashboard
 
@@ -117,6 +117,22 @@ FICOS is not merely a freight-rate predictor. It is a research-grade procurement
 
 Commercial SAIL savings cannot be claimed without the private procurement ledger. That limitation is explicit, preserved, and part of the result."""),
 ]
+
+for cell in cells:
+    source = "".join(cell.get("source", []))
+    for old, new in {
+        "+$17.007M": "+$4.535M",
+        "+$297.822M": "+$79.419M",
+        "+$327.450M": "+$87,320",
+        "+$312.869M": "+$83,431.70",
+        "17.00708": "4.53522",
+        "297.8219": "79.41918",
+        "327.450": "0.08732",
+        "$297.822M": "$79.419M",
+        "$17.007M": "$4.535M",
+    }.items():
+        source = source.replace(old, new)
+    cell["source"] = source.splitlines(True)
 
 notebook = {
     "cells": cells,

@@ -46,7 +46,7 @@ def opportunities(selected: pd.DataFrame, discount: float) -> list[VoyageOpportu
             laycan_end=row.date, expected_duration_days=20, volume_mt=75_000.0, capacity_mt=82_000.0,
             timestamp=row.date, metadata={"when_decision": row.when_decision},
         )
-        spot = max(1.0, row.current_rate + row.predicted_delta) * voyage.volume_mt
+        spot = max(1.0, row.current_rate + row.predicted_delta) * voyage.expected_duration_days
         costs = {"SPOT": spot, "SHORT_TERM": spot * (1 - discount * 0.33), "MEDIUM_TERM": spot * (1 - discount * 0.66), "MULTI_VOYAGE_CONTRACT": spot * (1 - discount)}
         result.append(VoyageOpportunity(voyage, row.current_rate, row.current_rate + row.predicted_delta, row.lower_bound, row.upper_bound, costs, "RISING" if row.predicted_delta > 0 else "FALLING", "validation residual P10/P90", ("SCENARIO_ASSUMPTION: volume", "SCENARIO_ASSUMPTION: discount", "SCENARIO_ASSUMPTION: capacity")))
     return result

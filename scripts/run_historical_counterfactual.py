@@ -24,7 +24,6 @@ from scripts.run_architectural_ablation import FEATURE_COUNT, fresh_forecasts
 
 OUT = ROOT / "outputs" / "experiments" / "historical_counterfactual"
 SEED = 42
-VOLUME_MT = 75_000.0
 CONTRACT_DISCOUNT = 0.045
 
 
@@ -37,8 +36,8 @@ def sha256(path: Path) -> str:
 
 
 def policy_costs(row: pd.Series) -> dict[str, float | None]:
-    current = float(row.current_rate) * VOLUME_MT
-    future = float(row.actual_rate) * VOLUME_MT
+    current = float(row.current_rate) * 20.0
+    future = float(row.actual_rate) * 20.0
     contract = current * (1.0 - CONTRACT_DISCOUNT)
     wait = row.when_decision == "WAIT"
     fixed_horizon_wait = float(row.predicted_delta) < 0.0
@@ -99,7 +98,7 @@ def main() -> None:
         series = costs[policy].dropna().to_numpy(float)
         difference = baseline.to_numpy(float) - series
         lo, hi = bootstrap_ci(difference)
-        benchmark_rows.append({"policy": policy, "historical_opportunities": len(series), "cost_usd": float(series.sum()), "difference_vs_always_spot_usd": float(difference.sum()), "mean_difference_per_opportunity_usd": float(difference.mean()), "paired_bootstrap_95pct_difference_usd": f"[{lo:.2f}, {hi:.2f}]", "feasibility": "ROW_LEVEL_NO_SHARED_CONSTRAINTS", "evidence_type": "COUNTERFACTUAL_WITH_SCENARIO_CONTRACT_ECONOMICS" if policy != "ALWAYS_SPOT" else "OBSERVED_MARKET_RATE_COUNTERFACTUAL"})
+        benchmark_rows.append({"policy": policy, "historical_opportunities": len(series), "cost_usd": float(series.sum()), "difference_vs_always_spot_usd": float(difference.sum()), "mean_difference_per_opportunity_usd": float(difference.mean()), "paired_bootstrap_95pct_difference_usd": f"[{lo:.2f}, {hi:.2f}]", "feasibility": "ROW_LEVEL_NO_SHARED_CONSTRAINTS", "evidence_type": "COUNTERFACTUAL_WITH_SCENARIO_CONTRACT_ECONOMICS" if policy in {"ALWAYS_CONTRACT", "TIMING_PLUS_HOW"} else "OBSERVED_MARKET_RATE_COUNTERFACTUAL"})
     benchmark_rows.append({"policy": "FICOS_PORTFOLIO", "historical_opportunities": 12, "cost_usd": None, "difference_vs_always_spot_usd": None, "mean_difference_per_opportunity_usd": None, "paired_bootstrap_95pct_difference_usd": "UNAVAILABLE", "feasibility": "EVALUATED_IN_ARCHITECTURAL_ABLATION_AND_STRESS_GRID", "evidence_type": "COUNTERFACTUAL_SCENARIO_NOT_FULL_HISTORY"})
     benchmark = pd.DataFrame(benchmark_rows)
     benchmark.to_csv(OUT / "policy_benchmark.csv", index=False)

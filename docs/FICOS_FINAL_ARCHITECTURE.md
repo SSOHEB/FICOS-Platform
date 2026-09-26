@@ -29,4 +29,4 @@ The WHEN and HOW decisions remain separate. Robust and mean-CVaR optimization re
 
 ## Final claims
 
-The evidence supports a reproducible forecast-to-decision architecture and measurable modeled value for selective timing and contract selection. Coupling becomes operationally important when shared constraints bind, but its lower-cost commercial value is not established. Robust and CVaR objectives were redundant in the current ablation configuration.
+The evidence supports a reproducible forecast-to-decision architecture and measurable modeled value for selective timing and contract selection. Coupling becomes operationally important when shared constraints bind, but its lower-cost commercial value is not established. Robust and CVaR objectives were redundant in the current ablation configuration. Economic replay uses daily rate times voyage duration; it does not multiply rates by cargo volume.

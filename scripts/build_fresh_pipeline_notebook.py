@@ -40,8 +40,8 @@ def source(cell):
 
 notebook = {"cells": [source(cell) for cell in cells], "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"}, "language_info": {"name": "python", "version": "3.11+"}}, "nbformat": 4, "nbformat_minor": 5}
 serialized = json.dumps(notebook, indent=1)
-serialized = serialized.replace(" * voyage.volume_mt * voyage.expected_duration_days", " * voyage.volume_mt")
-serialized = serialized.replace(" * opportunity.voyage.volume_mt * opportunity.voyage.expected_duration_days", " * opportunity.voyage.volume_mt")
+serialized = serialized.replace(" * voyage.volume_mt * voyage.expected_duration_days", " * voyage.expected_duration_days")
+serialized = serialized.replace(" * opportunity.voyage.volume_mt * opportunity.voyage.expected_duration_days", " * opportunity.voyage.expected_duration_days")
 NOTEBOOK.parent.mkdir(parents=True, exist_ok=True)
 NOTEBOOK.write_text(serialized, encoding="utf-8")
 print(NOTEBOOK)

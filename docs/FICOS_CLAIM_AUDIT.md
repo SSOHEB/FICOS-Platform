@@ -13,3 +13,4 @@
 | Forecast results prove actual SAIL impact | PRIVATE-DATA-BLOCKED | No SAIL decisions or realized costs |
 | FICOS is universally novel | UNPROVEN | No universal novelty claim made |
 | FICOS combines leakage-safe forecasting, WHEN/HOW separation, and counterfactual attribution for freight procurement | STRONGLY SUPPORTED | Implemented and documented architectural combination |
+| Current registry promotes 7D/14D models | PRIVATE-DATA-BLOCKED | Current `ml/registry/manifest.json` promotes four 1D pairs only; older benchmark documents are historical |

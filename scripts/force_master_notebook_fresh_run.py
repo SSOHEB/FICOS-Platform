@@ -57,6 +57,25 @@ for cell in nb["cells"]:
         cell["execution_count"] = None
         break
 
+for cell in nb["cells"]:
+    if cell.get("cell_type") in {"markdown", "code"}:
+        source = "".join(cell.get("source", []))
+        replacements = {
+            "+$17.007M": "+$4.535M",
+            "+$297.822M": "+$79.419M",
+            "+$327.450M": "+$87,320",
+            "+$312.869M": "+$83,431.70",
+            "$297.822M": "$79.419M",
+            "$17.007M": "$4.535M",
+            "The notebook reads authoritative saved artifacts and does not require paid APIs or credentials. The expensive fresh replay is cached in `outputs/experiments/historical_counterfactual/`; rerunning it is optional. No API key is read or displayed.": "The notebook performs a fresh raw replay from the canonical dataset and does not require paid APIs or credentials. Cached outputs are overwritten during the run and are not used as inputs. No API key is read or displayed.",
+            "17.00708": "4.53522",
+            "297.8219": "79.41918",
+            "327.450": "0.08732",
+        }
+        for old, new in replacements.items():
+            source = source.replace(old, new)
+        cell["source"] = source.splitlines(True)
+
 inventory_source = '''source_specs = [
     ("data/modeling_dataset.csv", "canonical matrix", "raw input used by this run"),
     ("data/interim/cleaned_spot_prices.csv", "spot provenance", "historical source"),
