@@ -53,6 +53,8 @@ class ProcurementDecisionOutput:
     # Timing & Strategy Recommendations (Separated WHEN vs HOW)
     recommended_timing: str                      # "NOW", "WAIT", "FLEXIBLE"
     recommended_contract_strategy: str          # "SPOT", "TIME_CHARTER", "COA", "FLEXIBLE_INDEX"
+    confidence_level: str                        # HIGH / MEDIUM / LOW confidence
+    uncertainty_level: str                       # LOW / MEDIUM / HIGH uncertainty
     timing_rationale: str                        # Why this entry timing was chosen
     strategy_rationale: str                      # Why this contract structure was chosen
     
@@ -84,6 +86,8 @@ class ProcurementDecisionOutput:
             "dest_port": self.dest_port.name,
             "recommended_timing": self.recommended_timing,
             "recommended_contract_strategy": self.recommended_contract_strategy,
+            "confidence_level": self.confidence_level,
+            "uncertainty_level": self.uncertainty_level,
             "timing_rationale": self.timing_rationale,
             "strategy_rationale": self.strategy_rationale,
             "single_voyage_expected_cost_usd": self.single_voyage_expected_cost_usd,
@@ -205,6 +209,27 @@ class ProcurementDecisionEngine:
             t_rationale = "Promoted coverage is available, but model has no strong directional commitment at this horizon."
             s_rationale = "Capital-preserving FLEXIBLE index-linked charter selected."
 
+        # Risk policy: high disruption risk removes a WAIT recommendation because
+        # waiting can eliminate the ability to fixture safely.
+        if risk.overall_level.value == "HIGH" and timing == "WAIT":
+            timing = "FLEXIBLE"
+            contract_strat = "FLEXIBLE_INDEX"
+            t_rationale = "High disruption risk makes waiting unsafe; preserving optionality through an index-linked structure."
+            s_rationale = "High-risk WAIT converted to FLEXIBLE_INDEX by the configured risk policy."
+
+        # HOW selection: compare every feasible strategy using adjusted expected
+        # cost, rather than selecting a contract solely from voyage count.
+        feasible_strategies = [s for s in strategy_comparison if s.is_feasible]
+        if timing == "FLEXIBLE" or not feasible_strategies:
+            contract_strat = "FLEXIBLE_INDEX"
+        elif feasible_strategies:
+            best = min(feasible_strategies, key=lambda s: s.adjusted_expected_cost_usd)
+            contract_strat = best.strategy_name
+            s_rationale = (
+                f"Selected '{contract_strat}' as the lowest adjusted expected-cost feasible strategy "
+                f"across SPOT, TIME_CHARTER, COA, and FLEXIBLE_INDEX."
+            )
+
         # Single voyage costs
         best_strat_detail = next((s for s in strategy_comparison if s.strategy_name == contract_strat), strategy_comparison[0])
         single_cost_usd = best_strat_detail.expected_cost_usd
@@ -243,6 +268,8 @@ class ProcurementDecisionEngine:
             "timing_rationale": t_rationale,
             "strategy_rationale": s_rationale,
             "forecast_summary": f"Point forecast ${forecast.point_forecast:.2f}/MT (P10=${forecast.p10:.2f}, P90=${forecast.p90:.2f})",
+            "confidence_level": {"LOW": "HIGH", "MEDIUM": "MEDIUM", "HIGH": "LOW"}.get(forecast.confidence.value, "LOW"),
+            "uncertainty_level": forecast.confidence.value,
             "forecast_provenance": forecast_prov,
             "gating_status": {
                 "physical_feasibility": feasibility.is_feasible,
@@ -261,6 +288,8 @@ class ProcurementDecisionEngine:
             num_voyages=num_voyages,
             recommended_timing=timing,
             recommended_contract_strategy=contract_strat,
+            confidence_level={"LOW": "HIGH", "MEDIUM": "MEDIUM", "HIGH": "LOW"}.get(forecast.confidence.value, "LOW"),
+            uncertainty_level=forecast.confidence.value,
             timing_rationale=t_rationale,
             strategy_rationale=s_rationale,
             single_voyage_expected_cost_usd=single_cost_usd,

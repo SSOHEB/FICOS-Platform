@@ -59,7 +59,9 @@ def test_forecast_provenance_propagation(setup_services):
     assert "model_used" in prov
     assert "production_status" in prov
     assert "validation_status" in prov
-    assert prov["production_status"] == "promoted"
+    assert prov["production_status"] == "fallback"
+    assert prov["fallback_used"] is True
+    assert prov["prediction_source"] == "current_rate_persistence"
 
 
 def test_contract_strategy_comparison_4way(setup_services):
@@ -115,6 +117,8 @@ def test_procurement_engine_timing_and_strategy_separation(setup_services):
     assert "forecast_provenance" in dict_out
     assert "explanation" in dict_out
     assert "strategy_comparison" in dict_out
+    assert dict_out["confidence_level"] in ["HIGH", "MEDIUM", "LOW"]
+    assert dict_out["uncertainty_level"] in ["LOW", "MEDIUM", "HIGH"]
 
 
 def test_flexible_fallback_during_unpromoted_regime(setup_services):
